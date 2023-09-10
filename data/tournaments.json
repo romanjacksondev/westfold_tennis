@@ -2,7 +2,7 @@
   "tournaments": [
     {
       "id": "1",
-      "name": "Billinghurst 250 I",
+      "name": "La Rotonda 250 I",
       "location": "Billinghurst",
       "rules": {
         "max_sets": "1",
@@ -13,7 +13,7 @@
     },
     {
       "id": "2",
-      "name": "Billinghurst 250 II",
+      "name": "La Rotonda 250 II",
       "location": "Billinghurst",
       "rules": {
         "max_sets": "1",
@@ -24,7 +24,7 @@
     },
     {
       "id": "3",
-      "name": "Billinghurst 250 III",
+      "name": "La Rotonda 250 III",
       "location": "Billinghurst",
       "rules": {
         "max_sets": 1,
@@ -48,6 +48,17 @@
       "id": "5",
       "name": "Solanas 500 II",
       "location": "Parque Leloir",
+      "rules": {
+        "max_sets": "1",
+        "max_games_per_set": "3"
+      },
+      "matches": ["1","2","3","4","5","6"],
+      "date": "2023-06-15"
+    },
+    {
+      "id": "6",
+      "name": "Ramos Mejia I",
+      "location": "Ramos Mejia",
       "rules": {
         "max_sets": "1",
         "max_games_per_set": "3"

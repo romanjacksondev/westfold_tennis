@@ -1,18 +1,12 @@
-import path from "path";
-import { promises as fs } from "fs";
 import type { NextApiRequest, NextApiResponse } from "next";
+import prisma from "prisma";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  //Find the absolute path of the json directory
-  const jsonDirectory = path.join(process.cwd(), "data");
-  //Read the json data file data.json
-  const fileContents = await fs.readFile(
-    jsonDirectory + "/tournaments.json",
-    "utf8"
-  );
+  const feed = await prisma.tournament.findMany();
+console.log("feed " + feed)
   //Return the content of the data file in json format
-  res.status(200).json(JSON.parse(fileContents));
+  res.status(200).json(feed);
 }

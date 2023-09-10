@@ -1,12 +1,9 @@
 {
   "/_app": "pages/_app.js",
-  "/_error": "pages/_error.js",
-  "/api/matches": "pages/api/matches.js",
-  "/api/matches/[id]": "pages/api/matches/[id].js",
-  "/api/tournaments": "pages/api/tournaments.js",
-  "/": "pages/index.html",
-  "/tournaments": "pages/tournaments.html",
-  "/tournaments/[id]": "pages/tournaments/[id].html",
   "/_document": "pages/_document.js",
-  "/404": "pages/404.html"
+  "/_error": "pages/_error.js",
+  "/": "pages/index.js",
+  "/tournaments": "pages/tournaments.js",
+  "/tournaments/[id]": "pages/tournaments/[id].js",
+  "/api/matches/[id]": "pages/api/matches/[id].js"
 }
