@@ -1,0 +1,17 @@
+{
+    "players": [
+        {
+            "id": "1",
+            "name": "Roman"
+        },{
+            "id": "2",
+            "name": "Alejandro" 
+        },{
+            "id": "3",
+            "name": "Rodolfo" 
+        },{
+            "id": "4",
+            "name": "Fernando" 
+        }
+    ]
+}
