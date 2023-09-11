@@ -1,5 +1,4 @@
 import Layout from "../../components/Layout";
-import { useRouter } from "next/router";
 import Link from "next/link";
 import utilStyles from "../../styles/utils.module.css";
 import prisma from "../../lib/prisma";
@@ -16,7 +15,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       },
     },
   });
-  console.log(res)
   const matchesList = JSON.parse(JSON.stringify(res));
 
   return {
@@ -25,13 +23,15 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 };
 
 export default function Tournament({ matchesList }) {
-  const router = useRouter();
-  const { id } = router.query;
+
+  const tournamentName = matchesList.length > 0 ? matchesList[0].tournament.name : ""
 
   return (
     <Layout>
-      <h1>{matchesList[0].tournament.name}</h1>
+      
+      <h1>{tournamentName}</h1>
       <h2>Partidos</h2>
+      
       {matchesList.map((match) => (
         <li className={utilStyles.listItem} key={match.id}>
           {match.winner}
