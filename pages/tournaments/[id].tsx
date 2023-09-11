@@ -8,7 +8,7 @@ import NewMatch from "../../components/newMatch";
 import { useRouter } from "next/router";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const res = await prisma.match.findMany({
+  let matches = await prisma.match.findMany({
     where: {
       tournamentId: String(params?.id),
     },
@@ -18,14 +18,17 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       },
     },
   });
-  const matchesList = JSON.parse(JSON.stringify(res));
+  const matchesList = JSON.parse(JSON.stringify(matches));
+
+  const players = await prisma.player.findMany();
+  const playersList = JSON.parse(JSON.stringify(players));
 
   return {
-    props: { matchesList },
+    props: { matchesList, playersList},
   };
 };
 
-export default function Tournament({ matchesList }) {
+export default function Tournament({ matchesList, playersList }) {
   const router = useRouter();
   const { id } = router.query;
   const tournamentName =
@@ -37,7 +40,7 @@ export default function Tournament({ matchesList }) {
       <h2>Partidos</h2>
 
       <AddEntityModal>
-        <NewMatch id={id} />
+        <NewMatch id={id} playersList={playersList}/>
       </AddEntityModal>
 
       {matchesList.map((match) => (

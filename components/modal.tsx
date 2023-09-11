@@ -20,7 +20,7 @@ const AddEntityModal = ({children}) => {
    return (
       <div>
          <button onClick={() => setIsOpen(true)}>Agregar nuevo</button>
-         <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} style={customStyles}>
+         <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} style={customStyles} ariaHideApp={false}>
             <h1>Agregar</h1>
             {children}
             <button onClick={() => setIsOpen(false)}>Cerrar</button>
