@@ -19,7 +19,7 @@ const AddEntityModal = ({children}) => {
    }
    return (
       <div>
-         <button onClick={() => setIsOpen(true)}>Crear Torneo</button>
+         <button onClick={() => setIsOpen(true)}>Agregar nuevo</button>
          <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} style={customStyles}>
             <h1>Agregar</h1>
             {children}

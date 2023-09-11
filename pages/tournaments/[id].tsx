@@ -3,6 +3,9 @@ import Link from "next/link";
 import utilStyles from "../../styles/utils.module.css";
 import prisma from "../../lib/prisma";
 import { GetServerSideProps } from "next";
+import AddEntityModal from "../../components/modal";
+import NewMatch from "../../components/newMatch";
+import { useRouter } from "next/router";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const res = await prisma.match.findMany({
@@ -23,20 +26,23 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 };
 
 export default function Tournament({ matchesList }) {
-
-  const tournamentName = matchesList.length > 0 ? matchesList[0].tournament.name : ""
+  const router = useRouter();
+  const { id } = router.query;
+  const tournamentName =
+    matchesList.length > 0 ? matchesList[0].tournament.name : "";
 
   return (
     <Layout>
-      
       <h1>{tournamentName}</h1>
       <h2>Partidos</h2>
-      
+
+      <AddEntityModal>
+        <NewMatch id={id} />
+      </AddEntityModal>
+
       {matchesList.map((match) => (
         <li className={utilStyles.listItem} key={match.id}>
           {match.winner}
-          {/* {data.players.players.find(f => f.id === e.players[0]).name} vs {data.players.players.find(f => f.id === e.players[1]).name}
-          <br /> */}
         </li>
       ))}
       <h2>
