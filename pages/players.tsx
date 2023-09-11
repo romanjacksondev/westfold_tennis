@@ -1,6 +1,5 @@
 import Link from "next/link";
-import Layout from "../components/Layout";
-import utilStyles from "../styles/utils.module.css";
+// import Layout from "../components/Layout";
 import { GetStaticProps } from "next";
 import prisma from "../lib/prisma";
 import AddEntityModal from "../components/modal";
@@ -17,12 +16,12 @@ export const getStaticProps: GetStaticProps = async () => {
 
 export default function Tournaments({ playersList }) {
   return (
-    <Layout>
+    <>
       <h1>Jugaaaadoooooresss</h1>
       <div className="w-96">
-        <ul className={utilStyles.list}>
+        <ul >
           {playersList?.map((player) => (
-            <li className={utilStyles.listItem} key={player.id}>
+            <li key={player.id}>
               <Link href={`/tournaments/${player.id}`}>{player.name}</Link>
               <br />
             </li>
@@ -35,6 +34,6 @@ export default function Tournaments({ playersList }) {
       <h2>
         <Link href="/">Volver al inicio</Link>
       </h2>
-    </Layout>
+      </>
   );
 }

@@ -1,14 +1,15 @@
-import Layout from "../components/Layout";
-import utilStyles from "../styles/utils.module.css";
+// import Layout from "../components/Layout";
+// import utilStyles from "../styles/utils.module.css";
 import Link from "next/link";
 
 export default function Home() {
   return (
-    <Layout>
-      <section className={utilStyles.headingMd}>
-        <p>Zona Oeste ATP Tour</p>
+    // <Layout>
+    <>
+      <section >
+        <h1 className="text-3xl font-bold">Zona Oeste ATP Tour</h1>
       </section>
-      <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
+      <section>
         <p>
           <Link href={`/tournaments`}>Torneos</Link>
         </p>
@@ -16,6 +17,7 @@ export default function Home() {
           <Link href={`/players`}>Jugadores</Link>
         </p>
       </section>
-    </Layout>
+      </>
+    // </Layout>
   );
 }
