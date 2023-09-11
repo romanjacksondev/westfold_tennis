@@ -9,7 +9,7 @@ const NewTournament = () => {
 
   const handleNewTournament = async () => {
     setIsLoading(true);
-    const res = await fetch("/api/new", {
+    const res = await fetch("/api/new_tournament", {
       method: "POST",
       body: JSON.stringify({
         name,

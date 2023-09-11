@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import Modal from 'react-modal'
 import NewTournament from './newTournament'
 
-const MyComponent = () => {
+const AddEntityModal = ({children}) => {
    const [isOpen, setIsOpen] = useState(false)
    const customStyles = {
       overlay: {
@@ -21,11 +21,11 @@ const MyComponent = () => {
       <div>
          <button onClick={() => setIsOpen(true)}>Crear Torneo</button>
          <Modal isOpen={isOpen} onRequestClose={() => setIsOpen(false)} style={customStyles}>
-            <h1>Nuevo Torneo</h1>
-            <NewTournament/>
+            <h1>Agregar</h1>
+            {children}
             <button onClick={() => setIsOpen(false)}>Cerrar</button>
          </Modal>
       </div>
    )
 }
-export default MyComponent
+export default AddEntityModal

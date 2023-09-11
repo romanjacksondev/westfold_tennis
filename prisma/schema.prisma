@@ -5,25 +5,43 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
- model Match {
-     id        String     @default(cuid()) @id
-     winner String
-     tournamentId  String?
-     tournament    Tournament?   @relation(fields: [tournamentId], references: [id])
- }
+model Match {
+  id               String             @id @default(cuid())
+  winner           String
+  tournamentId     String?
+  tournament       Tournament?        @relation(fields: [tournamentId], references: [id])
+  players          Player[]
+  PlayersOnMatches PlayersOnMatches[]
+}
 
+model Tournament {
+  id       String   @id @default(cuid())
+  name     String
+  location String?
+  winner   String
+  points   String
+  date     DateTime @default(now())
+  matches  Match[]
+}
 
- model Tournament {
-   id        String     @default(cuid()) @id
-   name     String
-   location   String?
-   winner String
-   points String
-   date DateTime @default(now())
-   matches Match[] 
- }
+model Player {
+  id               String             @id @default(cuid())
+  name             String
+  matches          Match[]
+  PlayersOnMatches PlayersOnMatches[]
+}
+
+model PlayersOnMatches {
+  players    Player   @relation(fields: [playerId], references: [id])
+  playerId   String // relation scalar field (used in the `@relation` attribute above)
+  matches    Match    @relation(fields: [matchId], references: [id])
+  matchId    String // relation scalar field (used in the `@relation` attribute above)
+  assignedAt DateTime @default(now())
+
+  @@id([playerId, matchId])
+}

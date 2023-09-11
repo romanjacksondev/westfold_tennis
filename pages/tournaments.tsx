@@ -4,7 +4,8 @@ import FormatDate from "../components/date";
 import utilStyles from "../styles/utils.module.css";
 import { GetStaticProps } from "next";
 import prisma from "../lib/prisma";
-import MyComponent from "../components/modal";
+import AddEntityModal from "../components/modal";
+import NewTournament from "../components/newTournament";
 
 export const getStaticProps: GetStaticProps = async () => {
   const res = await prisma.tournament.findMany();
@@ -38,7 +39,9 @@ export default function Tournaments({ tournamentsList }) {
             ))}
         </ul>
       </div>
-      <MyComponent />
+      <AddEntityModal>
+        <NewTournament />
+      </AddEntityModal>
       <h2>
         <Link href="/">Volver al inicio</Link>
       </h2>

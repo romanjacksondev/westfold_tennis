@@ -9,7 +9,12 @@ export default function Home() {
         <p>Zona Oeste ATP Tour</p>
       </section>
       <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
-        <Link href={`/tournaments`}>Torneos</Link>
+        <p>
+          <Link href={`/tournaments`}>Torneos</Link>
+        </p>
+        <p>
+          <Link href={`/players`}>Jugadores</Link>
+        </p>
       </section>
     </Layout>
   );
