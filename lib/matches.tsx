@@ -1,5 +1,16 @@
-import itemsData from '../data/matches.json';
+import prisma from "prisma";
 
-export function getMatchesById(id) {
-  return itemsData[id];
+export default async function getMatchesById(id) {
+   const res = await prisma.match.findMany({
+     where: {
+       tournamentId: String(id),
+     },
+   });
+   const matchesList = JSON.parse(JSON.stringify(res));
+
+   return {
+     props: { matchesList },
+   };
+
+  //  return itemsData[id];
 }

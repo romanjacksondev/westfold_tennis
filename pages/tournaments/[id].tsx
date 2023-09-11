@@ -1,29 +1,42 @@
-import Layout from "../../components/layout";
+import Layout from "../../components/Layout";
 import { useRouter } from "next/router";
-import { fetcher } from "../../utils/fetcher";
-import useSWR from "swr";
 import Link from "next/link";
 import utilStyles from "../../styles/utils.module.css";
+import prisma from "../../lib/prisma";
+import { GetServerSideProps } from "next";
 
-export default function Tournament() {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const res = await prisma.match.findMany({
+    where: {
+      tournamentId: String(params?.id),
+    },
+    include: {
+      tournament: {
+        select: { name: true },
+      },
+    },
+  });
+  console.log(res)
+  const matchesList = JSON.parse(JSON.stringify(res));
+
+  return {
+    props: { matchesList },
+  };
+};
+
+export default function Tournament({ matchesList }) {
   const router = useRouter();
   const { id } = router.query;
 
-  // Fetch item details by 'id' from the JSON file
-  const { data, error } = useSWR(`/api/matches/${id}`, fetcher);
-  //Handle the error state
-  if (error) return <div>Failed to load</div>;
-  //Handle the loading state
-  if (!data) return <div>Loading...</div>;
-  console.log(data)
   return (
     <Layout>
-      <h1>{data.tournamentName}</h1>
+      <h1>{matchesList[0].tournament.name}</h1>
       <h2>Partidos</h2>
-      {data.matches.map((e) => (
-        <li className={utilStyles.listItem} key={e.id}>
-          {data.players.players.find(f => f.id === e.players[0]).name} vs {data.players.players.find(f => f.id === e.players[1]).name}
-          <br />
+      {matchesList.map((match) => (
+        <li className={utilStyles.listItem} key={match.id}>
+          {match.winner}
+          {/* {data.players.players.find(f => f.id === e.players[0]).name} vs {data.players.players.find(f => f.id === e.players[1]).name}
+          <br /> */}
         </li>
       ))}
       <h2>
