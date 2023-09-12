@@ -23,46 +23,50 @@ const NewTournament = () => {
   };
 
   return (
-    <div className="p-3 mt-9 flex flex-col space-y-4 justify-center border-2 border-red-400 ">
-      <div className="p-2">
-        <input
-          type="text"
-          className="w-full p-2 rounded-lg text-black/90"
-          placeholder="Nombre del torneo"
-          onChange={(e) => setName(e.target.value)}
-          value={name}
-        />
-      </div>
+    <>
+      <label className="mb-3 block text-base font-medium text-black">
+        Nombre Torneo
+      </label>
+      <input
+        type="text"
+        placeholder="Nombre Torneo"
+        className="border-form-stroke text-body-color placeholder-body-color focus:border-primary active:border-primary w-full rounded-lg border-[1.5px] py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-[#F5F7FD]"
+        onChange={(e) => setName(e.target.value)}
+        value={name}
+      />
 
-      <div className="p-2">
-        <input
-          type="text"
-          className="w-full p-2 rounded-lg text-black/90"
-          placeholder="Ubicacion"
-          onChange={(e) => setLocation(e.target.value)}
-          value={location}
-        />
-      </div>
+      <label className="mb-3 block text-base font-medium text-black">
+        Ubicacion
+      </label>
+      <input
+        type="text"
+        placeholder="Ubicacion"
+        className="border-form-stroke text-body-color placeholder-body-color focus:border-primary active:border-primary w-full rounded-lg border-[1.5px] py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-[#F5F7FD]"
+        onChange={(e) => setLocation(e.target.value)}
+        value={location}
+      />
 
-      <div className="p-2">
-        <input
-          type="text"
-          className="w-full p-2 rounded-lg text-black/90"
-          placeholder="Ganador"
-          onChange={(e) => setWinner(e.target.value)}
-          value={winner}
-        />
-      </div>
+      <label className="mb-3 block text-base font-medium text-black">
+        Ganador
+      </label>
+      <input
+        type="text"
+        placeholder="Ganador"
+        className="border-form-stroke text-body-color placeholder-body-color focus:border-primary active:border-primary w-full rounded-lg border-[1.5px] py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-[#F5F7FD]"
+        onChange={(e) => setWinner(e.target.value)}
+        value={winner}
+      />
 
-      <div className="p-2">
-        <input
-          type="text"
-          className="w-full p-2 rounded-lg text-black/90"
-          placeholder="Puntos"
-          onChange={(e) => setPoints(e.target.value)}
-          value={points}
-        />
-      </div>
+      <label className="mb-3 block text-base font-medium text-black">
+        Puntos
+      </label>
+      <input
+        type="text"
+        placeholder="Puntos"
+        className="border-form-stroke text-body-color placeholder-body-color focus:border-primary active:border-primary w-full rounded-lg border-[1.5px] py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-[#F5F7FD]"
+        onChange={(e) => setPoints(e.target.value)}
+        value={points}
+      />
 
       <div className="flex justify-center">
         <button
@@ -73,7 +77,7 @@ const NewTournament = () => {
           {isLoading ? "Creando.." : "Crear"}
         </button>
       </div>
-    </div>
+    </>
   );
 };
 export default NewTournament;
