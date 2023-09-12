@@ -1,6 +1,6 @@
 import Layout from "../../components/Layout";
 import Link from "next/link";
-import utilStyles from "../../styles/utils.module.css";
+// import utilStyles from "../../styles/utils.module.css";
 import prisma from "../../lib/prisma";
 import { GetServerSideProps } from "next";
 import AddEntityModal from "../../components/modal";
@@ -44,7 +44,7 @@ export default function Tournament({ matchesList, playersList }) {
       </AddEntityModal>
 
       {matchesList.map((match) => (
-        <li className={utilStyles.listItem} key={match.id}>
+        <li key={match.id}>
           {match.winner}
         </li>
       ))}

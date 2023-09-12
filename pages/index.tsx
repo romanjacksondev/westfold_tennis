@@ -6,9 +6,13 @@ export default function Home() {
   return (
     // <Layout>
     <>
-      <section >
+      {/* <section >
         <h1 className="text-3xl font-bold">Zona Oeste ATP Tour</h1>
-      </section>
+      </section> */}
+      <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
+        Zona Oeste ATP Tour
+      </h1>
+
       <section>
         <p>
           <Link href={`/tournaments`}>Torneos</Link>
@@ -17,7 +21,15 @@ export default function Home() {
           <Link href={`/players`}>Jugadores</Link>
         </p>
       </section>
-      </>
+
+
+
+
+
+
+
+      
+    </>
     // </Layout>
   );
 }
