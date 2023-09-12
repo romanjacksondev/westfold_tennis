@@ -67,7 +67,6 @@ const NewTournament = () => {
         onChange={(e) => setPoints(e.target.value)}
         value={points}
       />
-
       <div className="flex justify-center">
         <button
           disabled={isLoading}
