@@ -1,4 +1,3 @@
-import Layout from "../../components/Layout";
 import Link from "next/link";
 // import utilStyles from "../../styles/utils.module.css";
 import prisma from "../../lib/prisma";
@@ -16,15 +15,15 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       tournament: {
         select: { name: true },
       },
+      players: true,
     },
   });
   const matchesList = JSON.parse(JSON.stringify(matches));
-
   const players = await prisma.player.findMany();
   const playersList = JSON.parse(JSON.stringify(players));
 
   return {
-    props: { matchesList, playersList},
+    props: { matchesList, playersList },
   };
 };
 
@@ -35,22 +34,37 @@ export default function Tournament({ matchesList, playersList }) {
     matchesList.length > 0 ? matchesList[0].tournament.name : "";
 
   return (
-    <Layout>
-      <h1>{tournamentName}</h1>
-      <h2>Partidos</h2>
+    <>
+      <div className="container mx-auto">
+        <section className="bg-white py-[70px]">
+          <div className="mx-auto px-4 sm:container">
+            <div className="border-stroke border-b">
+              <h2 className="mb-2 text-2xl font-semibold text-black">
+                {tournamentName}
+              </h2>
+            </div>
+          </div>
+          <div className="w-full">
+            <ul>
+              {matchesList.map((match) => (
+                <li key={match.id}>
+                  {match.players[0].name} vs {match.players[1].name}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <AddEntityModal>
+            <NewMatch id={id} playersList={playersList} />
+          </AddEntityModal>
+        </section>
+      </div>
 
-      <AddEntityModal>
-        <NewMatch id={id} playersList={playersList}/>
-      </AddEntityModal>
+      {/* <h1></h1>
+      <h2>Partidos</h2> */}
 
-      {matchesList.map((match) => (
-        <li key={match.id}>
-          {match.winner}
-        </li>
-      ))}
       <h2>
         <Link href={`/tournaments`}>Volver a lista de torneos</Link>
       </h2>
-    </Layout>
+    </>
   );
 }

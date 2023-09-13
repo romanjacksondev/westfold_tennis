@@ -1,8 +1,13 @@
 import Link from "next/link";
 import AddEntityModal from "./modal";
 import NewTournament from "./newTournament";
+import Table from "./table";
 
 export default function Tournament({ tournamentsList }) {
+  const orderedTour = tournamentsList.sort(
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+  );
+
   return (
     <div className="container mx-auto">
       <section className="bg-white py-[70px]">
@@ -15,22 +20,7 @@ export default function Tournament({ tournamentsList }) {
         </div>
         <div className="w-full">
           <ul>
-            {tournamentsList
-              .sort(
-                (a, b) =>
-                  new Date(a.date).getTime() - new Date(b.date).getTime()
-              )
-              .map((tournament) => (
-                <li
-                  key={tournament.id}
-                  className="text-body-color mb-4 flex text-base"
-                >
-                  <span className="bg-primary mr-2 mt-2 flex h-2 w-full max-w-[8px] items-center justify-center rounded-full text-base"></span>
-                  <Link href={`/tournaments/${tournament.id}`}>
-                    {tournament.name}
-                  </Link>
-                </li>
-              ))}
+            <Table records={orderedTour}></Table>
           </ul>
         </div>
         <AddEntityModal>
