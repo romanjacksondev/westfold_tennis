@@ -1,50 +1,111 @@
-import Link from "next/link";
+import React, { useState } from "react";
 
-export default function Navbar() {
+const Navbar = () => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <nav className="flex items-center justify-between flex-wrap bg-teal-500 p-6">
-      <div className="flex items-center flex-shrink-0 text-white mr-6">
-        <svg
-          className="fill-current h-8 w-8 mr-2"
-          width="54"
-          height="54"
-          viewBox="0 0 54 54"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path d="M13.5 22.1c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05zM0 38.3c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05z" />
-        </svg>
-        <span className="font-semibold text-xl tracking-tight">
-          Westfold Tennis
-        </span>
-      </div>
-      <div className="block lg:hidden">
-        <button className="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white">
-          <svg
-            className="fill-current h-3 w-3"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <title>Menu</title>
-            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-          </svg>
-        </button>
-      </div>
-      <div className="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-        <div className="text-sm lg:flex-grow">
-          <Link
-            href={`/tournaments`}
-            className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4"
-          >
-            Torneos
-          </Link>
-          <Link
-            href={`/players`}
-            className="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4"
-          >
-            Jugadores
-          </Link>
+    <header className={`flex items-center w-full bg-teal-500`}>
+      <div className="container">
+        <div className="relative flex items-center justify-between -mx-4">
+          <div className="flex items-center px-4 w-60">
+            <svg
+              className="fill-current h-8 w-8 mr-2"
+              width="54"
+              height="54"
+              viewBox="0 0 54 54"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path d="M13.5 22.1c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05zM0 38.3c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05z" />
+            </svg>
+            <span className="font-semibold text-xl tracking-tight">
+              Westfold Tennis
+            </span>
+          </div>
+          <div className="flex items-center justify-between w-full px-4">
+            <div>
+              <button
+                // @click="navbarOpen = !navbarOpen"
+                onClick={() => setOpen(!open)}
+                // :className="navbarOpen && 'navbarTogglerActive' "
+                id="navbarToggler"
+                className={` ${
+                  open && "navbarTogglerActive"
+                } absolute right-4 top-1/2 block -translate-y-1/2 rounded-lg px-3 py-[6px] ring-primary focus:ring-2 lg:hidden`}
+              >
+                <span className="relative my-[6px] block h-[2px] w-[30px] bg-body-color"></span>
+                <span className="relative my-[6px] block h-[2px] w-[30px] bg-body-color"></span>
+                <span className="relative my-[6px] block h-[2px] w-[30px] bg-body-color"></span>
+              </button>
+              <nav
+                // :className="!navbarOpen && 'hidden' "
+                id="navbarCollapse"
+                className={`absolute right-4 top-full w-full max-w-[250px] rounded-lg bg-teal-500 py-5 px-6 shadow lg:static lg:block lg:w-full lg:max-w-full lg:shadow-none ${
+                  !open && "hidden"
+                } `}
+              >
+                <ul className="block lg:flex">
+                  <ListItem
+                    navItemStyles="text-dark hover:text-primary"
+                    NavLink="/#"
+                  >
+                    Home
+                  </ListItem>
+                  <ListItem
+                    navItemStyles="text-dark hover:text-primary"
+                    NavLink="/tournaments"
+                  >
+                    Torneos
+                  </ListItem>
+                  <ListItem
+                    navItemStyles="text-dark hover:text-primary"
+                    NavLink="/players"
+                  >
+                    Jugadores
+                  </ListItem>
+                  {/* <ListItem
+                    navItemStyles="text-dark hover:text-primary"
+                    NavLink="/#"
+                  >
+                    Blog
+                  </ListItem> */}
+                </ul>
+              </nav>
+            </div>
+            {/* <div className="justify-end hidden pr-16 sm:flex lg:pr-0">
+              <a
+                href="/#"
+                className="py-3 text-base font-medium px-7 text-dark hover:text-primary"
+              >
+                Sign in
+              </a>
+
+              <a
+                href="/#"
+                className="py-3 text-base font-medium text-white rounded-lg bg-primary px-7 hover:bg-opacity-90"
+              >
+                Sign Up
+              </a>
+            </div> */}
+          </div>
         </div>
       </div>
-    </nav>
+    </header>
   );
-}
+};
+
+export default Navbar;
+
+const ListItem = ({ children, navItemStyles, NavLink }) => {
+  return (
+    <>
+      <li>
+        <a
+          href={NavLink}
+          className={`flex py-2 text-base font-medium lg:ml-12 lg:inline-flex ${navItemStyles}`}
+        >
+          {children}
+        </a>
+      </li>
+    </>
+  );
+};
