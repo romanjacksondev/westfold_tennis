@@ -16,7 +16,7 @@ model Match {
   tournamentId     String?
   tournament       Tournament?        @relation(fields: [tournamentId], references: [id])
   players          Player[]
-  PlayersOnMatches PlayersOnMatches[]
+  // PlayersOnMatches PlayersOnMatches[]
 }
 
 model Tournament {
@@ -33,15 +33,15 @@ model Player {
   id               String             @id @default(cuid())
   name             String
   matches          Match[]
-  PlayersOnMatches PlayersOnMatches[]
+  // PlayersOnMatches PlayersOnMatches[]
 }
 
-model PlayersOnMatches {
-  players    Player   @relation(fields: [playerId], references: [id])
-  playerId   String // relation scalar field (used in the `@relation` attribute above)
-  matches    Match    @relation(fields: [matchId], references: [id])
-  matchId    String // relation scalar field (used in the `@relation` attribute above)
-  assignedAt DateTime @default(now())
+// model PlayersOnMatches {
+//   players    Player   @relation(fields: [playerId], references: [id])
+//   playerId   String // relation scalar field (used in the `@relation` attribute above)
+//   matches    Match    @relation(fields: [matchId], references: [id])
+//   matchId    String // relation scalar field (used in the `@relation` attribute above)
+//   assignedAt DateTime @default(now())
 
-  @@id([playerId, matchId])
-}
+//   @@id([playerId, matchId])
+// }
