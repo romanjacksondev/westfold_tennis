@@ -1,6 +1,5 @@
 import Link from "next/link";
 import React from "react";
-import FormatDate from "./date";
 
 const TdStyle = {
   ThStyle: `w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-semibold lg:py-7 lg:px-4`,
@@ -19,23 +18,17 @@ const Table = ({ records }) => {
                 <thead className="text-center bg-primary">
                   <tr>
                     <th className={TdStyle.ThStyle}> Nombre </th>
-                    <th className={TdStyle.ThStyle}> Ganador </th>
-                    <th className={TdStyle.ThStyle}> Puntos </th>
-                    <th className={TdStyle.ThStyle}> Fecha </th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {records.map((tournament) => (
-                    <tr key={tournament.id}>
+                  {records.map((player) => (
+                    <tr key={player.id}>
                       <td className={TdStyle.TdStyle}>
-                        <Link href={`/tournaments/${tournament.id}`}>
-                          {tournament.name}
+                        <Link href={`/tournaments/${player.id}`}>
+                          {player.name}
                         </Link>
                       </td>
-                      <td className={TdStyle.TdStyle}>{tournament.winner}</td>
-                      <td className={TdStyle.TdStyle}>{tournament.points}</td>
-                      <td className={TdStyle.TdStyle}><FormatDate dateString={tournament.date}/></td>
                     </tr>
                   ))}
                 </tbody>
