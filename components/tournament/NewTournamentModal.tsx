@@ -1,6 +1,6 @@
-import React, { Children, useEffect, useRef, useState } from "react";
-import ButtonAddNew from "./ButtonAddNew";
+import React, { useEffect, useRef, useState } from "react";
 import NewTournamentForm from "./NewTournamentForm";
+import ButtonAddNew from "../ButtonAddNew";
 
 const NewTournamentModal = () => {
   const [modalOpen, setModalOpen] = useState(false);

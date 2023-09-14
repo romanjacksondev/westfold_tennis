@@ -2,8 +2,8 @@ import Link from "next/link";
 // import utilStyles from "../../styles/utils.module.css";
 import prisma from "../../lib/prisma";
 import { GetServerSideProps } from "next";
-import AddEntityModal from "../../components/modal";
-import NewMatch from "../../components/newMatch";
+// import AddEntityModal from "../../components/modal";
+// import NewMatch from "../../components/newMatch";
 import { useRouter } from "next/router";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
@@ -53,9 +53,9 @@ export default function Tournament({ matchesList, playersList }) {
               ))}
             </ul>
           </div>
-          <AddEntityModal>
+          {/* <AddEntityModal>
             <NewMatch id={id} playersList={playersList} />
-          </AddEntityModal>
+          </AddEntityModal> */}
         </section>
       </div>
 

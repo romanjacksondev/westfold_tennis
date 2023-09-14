@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import BasicInput from "./BasicInput";
+import BasicInput from "../BasicInput";
 
 const NewTournamentForm = ({ setter }) => {
   const [name, setName] = useState("");

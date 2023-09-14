@@ -1,6 +1,6 @@
 import { GetStaticProps } from "next";
 import prisma from "../lib/prisma";
-import Tournament from "../components/Tournament";
+import Tournament from "../components/tournament/Tournament";
 
 export const getStaticProps: GetStaticProps = async () => {
   const res = await prisma.tournament.findMany();

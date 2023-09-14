@@ -1,6 +1,6 @@
-import Table from "./table";
-import PageTitle from "./PageTitle";
+import PageTitle from "../PageTitle";
 import NewTournamentModal from "./NewTournamentModal";
+import Table from "./TournamentTable";
 
 export default function Tournament({ tournamentsList }) {
   const orderedTour = tournamentsList.sort(
