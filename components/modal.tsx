@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Modal from "react-modal";
+import ButtonAddNew from "./ButtonAddNew";
 
 const AddEntityModal = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,31 +18,23 @@ const AddEntityModal = ({ children }) => {
     },
   };
   return (
-    <div>
-      <button
-        onClick={() => setIsOpen(true)}
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      >
-        Agregar nuevo
-      </button>
+    <>
+      {/* <ButtonAddNew text="Agregar nuevo" setter={setIsOpen}/> */}
       <Modal
         isOpen={isOpen}
         onRequestClose={() => setIsOpen(false)}
         style={customStyles}
         ariaHideApp={false}
       >
-        {/* <h1>Agregar</h1> */}
         {children}
-        {/* <button onClick={() => setIsOpen(false)}>Cerrar</button> */}
         <button
-          //  disabled={isLoading}
           className="bg-blue-400 w-fit px-7 py-2 rounded-lg disabled:bg-gray-700"
           onClick={() => setIsOpen(false)}
         >
           Cerrar
         </button>
       </Modal>
-    </div>
+    </>
   );
 };
 export default AddEntityModal;

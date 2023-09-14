@@ -1,8 +1,10 @@
 import prisma from "../../lib/prisma";
 
 export default async function handler(req, res) {
+  console.log( typeof req.body)
   if (req.method === "POST") {
-    const body = req.body.data;
+    const body = JSON.parse(req.body);
+    console.log(typeof body)
     try {
       const response = await prisma.tournament.create({
         data: body,

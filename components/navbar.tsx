@@ -62,30 +62,15 @@ const Navbar = () => {
                   >
                     Jugadores
                   </ListItem>
-                  {/* <ListItem
+                  <ListItem
                     navItemStyles="text-dark hover:text-primary"
                     NavLink="/#"
                   >
-                    Blog
-                  </ListItem> */}
+                    Estadisticas
+                  </ListItem>
                 </ul>
               </nav>
             </div>
-            {/* <div className="justify-end hidden pr-16 sm:flex lg:pr-0">
-              <a
-                href="/#"
-                className="py-3 text-base font-medium px-7 text-dark hover:text-primary"
-              >
-                Sign in
-              </a>
-
-              <a
-                href="/#"
-                className="py-3 text-base font-medium text-white rounded-lg bg-primary px-7 hover:bg-opacity-90"
-              >
-                Sign Up
-              </a>
-            </div> */}
           </div>
         </div>
       </div>
