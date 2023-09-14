@@ -1,35 +1,5 @@
-// import Layout from "../components/Layout";
-// import utilStyles from "../styles/utils.module.css";
-import Link from "next/link";
+import Card from "../components/HomeCard";
 
 export default function Home() {
-  return (
-    // <Layout>
-    <>
-      {/* <section >
-        <h1 className="text-3xl font-bold">Zona Oeste ATP Tour</h1>
-      </section> */}
-      <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl">
-        Zona Oeste ATP Tour
-      </h1>
-
-      <section>
-        <p>
-          <Link href={`/tournaments`}>Torneos</Link>
-        </p>
-        <p>
-          <Link href={`/players`}>Jugadores</Link>
-        </p>
-      </section>
-
-
-
-
-
-
-
-      
-    </>
-    // </Layout>
-  );
+  return <Card></Card>;
 }
