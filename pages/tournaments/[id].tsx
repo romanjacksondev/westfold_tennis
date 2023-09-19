@@ -1,50 +1,55 @@
-import Link from "next/link";
 import prisma from "../../lib/prisma";
-import { GetServerSideProps } from "next";
-import MatchesTable from "../../components/match/MatchesTable";
+import { GetStaticPaths, GetStaticProps } from "next";
+import MatchesList from "../../components/match/MatchesList";
+import { useRouter } from "next/router";
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export default function Tournament({ matchesList }) {
+  const router = useRouter();
+  const { id } = router.query;
+  const tournamentName =
+    matchesList.length > 0 ? matchesList[0].tournament.name : "";
+
+  return (
+    <MatchesList matchesList={matchesList} tournamentId={id}></MatchesList>
+  );
+}
+
+export const getStaticPaths: GetStaticPaths<{ id: string }> = async () => {
+  let tournaments = await prisma.tournament.findMany();
+  const paths = tournaments.map(tournament => ({
+    params: { id: tournament.id },
+  }))
+  return {
+    paths: paths,
+    fallback: false, // can also be true or 'blocking'
+  };
+};
+
+export const getStaticProps: GetStaticProps = async (context) => {
+  const { params } = context;
+  const id = params.id;
   let matches = await prisma.match.findMany({
     where: {
-      tournamentId: String(params?.id),
+      tournamentId: String(id),
     },
     include: {
       tournament: {
         select: { name: true },
       },
-      players: true,
+      winner: {
+        select: { name: true },
+      },
+      player1: {
+        select: { name: true },
+      },
+      player2: {
+        select: { name: true },
+      },
     },
   });
   const matchesList = JSON.parse(JSON.stringify(matches));
-  const players = await prisma.player.findMany();
-  const playersList = JSON.parse(JSON.stringify(players));
 
   return {
-    props: { matchesList, playersList },
+    props: { matchesList },
   };
 };
-
-export default function Tournament({ matchesList, playersList }) {
-  const tournamentName =
-    matchesList.length > 0 ? matchesList[0].tournament.name : "";
-
-  return (
-    <>
-      <div className="container mx-auto">
-        <section className="bg-white py-[70px]">
-          <div className="mx-auto px-4 sm:container">
-            <div className="border-stroke border-b">
-              <h2 className="mb-2 text-2xl font-semibold text-black">
-                {tournamentName}
-              </h2>
-            </div>
-          </div>
-          <MatchesTable records={matchesList}></MatchesTable>
-        </section>
-      </div>
-      <h2>
-        <Link href={`/tournaments`}>Volver a lista de torneos</Link>
-      </h2>
-    </>
-  );
-}

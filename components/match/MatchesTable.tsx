@@ -8,9 +8,11 @@ const TdStyle = {
 };
 
 const MatchesTable = ({ records }) => {
+
   if (records.length === 0) {
     return <></>;
   } else {
+    return (
     <section className="pt-10 bg-white">
       <div className="container">
         <div className="flex flex-wrap -mx-4">
@@ -29,16 +31,16 @@ const MatchesTable = ({ records }) => {
                   {records.map((match) => (
                     <tr key={match.id}>
                       <td className={TdStyle.TdStyle}>
-                        {match.players[0].name}
+                        {match.player1.name}
                       </td>
                       {/* <Link href={`/tournaments/${player.id}`}>
                           {player.name}
                         </Link> */}
                       <td className={TdStyle.TdStyle}>
-                        {match.players[0].name}
+                        {match.winner.name}
                       </td>
                       <td className={TdStyle.TdStyle}>
-                        {match.players[1].name}
+                        {match.player2.name}
                       </td>
                     </tr>
                   ))}
@@ -48,7 +50,7 @@ const MatchesTable = ({ records }) => {
           </div>
         </div>
       </div>
-    </section>;
+    </section>)
   }
 };
 

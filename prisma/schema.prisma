@@ -10,12 +10,14 @@ datasource db {
 }
 
 model Player {
-  id          String       @id @default(cuid())
-  name        String
-  matches     Match[]
-  games       Game[]
-  sets        Set[]
-  tournaments Tournament[]
+  id             String       @id @default(cuid())
+  name           String
+  games          Game[]
+  sets           Set[]
+  tournaments    Tournament[]
+  winnerMatches  Match[]      @relation("Winner")
+  player1Matches Match[]      @relation("Player1")
+  player2Matches Match[]      @relation("Player2")
 }
 
 model Tournament {
@@ -31,10 +33,14 @@ model Tournament {
 
 model Match {
   id           String      @id @default(cuid())
-  winner       String
+  winnerId     String
+  winner       Player      @relation("Winner", fields: [winnerId], references: [id])
   tournamentId String?
   tournament   Tournament? @relation(fields: [tournamentId], references: [id])
-  players      Player[]
+  player1Id    String
+  player1      Player      @relation("Player1", fields: [player1Id], references: [id])
+  player2Id    String
+  player2      Player      @relation("Player2", fields: [player2Id], references: [id])
   sets         Set[]
 }
 

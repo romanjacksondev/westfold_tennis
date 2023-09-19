@@ -9,9 +9,6 @@ const TdStyle = {
 };
 
 const Table = ({ records }) => {
-
-console.log(records)
-
   if (records.length === 0) {
     return <></>;
   } else {

@@ -14,7 +14,6 @@ const NewTournamentForm = ({ setter }) => {
     fetch("/api/getPlayers")
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.response);
         setPlayerList(arrayAsOptions(data.response));
       });
   }, []);
