@@ -7,7 +7,7 @@ export default function Tournament({ tournamentsList }) {
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
 
-   const addButton = <NewTournamentModal />;
+  const addButton = <NewTournamentModal />;
 
   return (
     <>

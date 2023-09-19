@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
+import CustomDropdown from "./CustomDropdown";
 
 const NewMatch = ({ id, playersList }) => {
   const [winner, setWinner] = useState("");
@@ -35,7 +36,7 @@ const NewMatch = ({ id, playersList }) => {
   };
 
   return (
-      <div className="w-full max-w-xs">
+    <div className="w-full max-w-xs">
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2">
           Ganador del partido
@@ -57,11 +58,17 @@ const NewMatch = ({ id, playersList }) => {
         placeholder="Elegir jugador"
       />
       <p>Jugador 2</p>
-      <Dropdown
+      <CustomDropdown
+        options={playersAsOptions}
+        func={handlePlayer1}
+        placeholder="Elegir jugador"
+      />
+
+      {/* <Dropdown
         options={playersAsOptions}
         onChange={(option) => handlePlayer2(option)}
         placeholder="Elegir jugador"
-      />
+      /> */}
       <div className="flex justify-center">
         <button
           disabled={isLoading}
@@ -70,7 +77,6 @@ const NewMatch = ({ id, playersList }) => {
         >
           {isLoading ? "Creando.." : "Crear"}
         </button>
-        
       </div>
     </div>
   );

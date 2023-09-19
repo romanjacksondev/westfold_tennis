@@ -3,9 +3,7 @@ import NewPlayerModal from "./NewPlayerModal";
 import Table from "./PlayerTable";
 
 export default function Player({ playersList }) {
-
-   const addButton = <NewPlayerModal />;
-
+  const addButton = <NewPlayerModal />;
   return (
     <>
       <PageTitle title="Jugaaaadoooooresss" description="" button={addButton} />

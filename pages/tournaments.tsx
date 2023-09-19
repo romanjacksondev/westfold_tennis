@@ -3,8 +3,15 @@ import prisma from "../lib/prisma";
 import Tournament from "../components/tournament/Tournament";
 
 export const getStaticProps: GetStaticProps = async () => {
-  const res = await prisma.tournament.findMany();
+  const res = await prisma.tournament.findMany({
+    include: {
+      winner: {
+        select: { name: true },
+      },
+    },
+  });
   const tournamentsList = JSON.parse(JSON.stringify(res));
+console.log(tournamentsList)
   return {
     props: { tournamentsList },
     revalidate: 10,

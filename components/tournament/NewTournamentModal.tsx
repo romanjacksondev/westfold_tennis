@@ -70,7 +70,7 @@ const NewTournamentModal = () => {
               className={`mx-auto mb-6 inline-block h-1 w-[90px] rounded bg-primary`}
             ></span>
             {/* {children} */}
-            <NewTournamentForm setter={setData}></NewTournamentForm>
+            <NewTournamentForm setter={setData} />
 
             <div className="flex flex-wrap -mx-3">
               <div className="w-1/2 px-3">

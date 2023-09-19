@@ -6,14 +6,6 @@ const Card = () => {
       <section className="pt-20 lg:pt-[120px] pb-10 lg:pb-20 h-full bg-[#F3F4F6]">
         <div className="container grid sm:grid-cols-2 lg:grid-cols-3 gap-12 mt-12">
           <SingleCard
-            image="https://i.ibb.co/r2zns1m/image-01.jpg"
-            CardTitle=" Estadisticas"
-            titleHref="/#"
-            btnHref="/#"
-            CardDescription=" Estadisticas de cada jugador"
-            Button="Ver Mas"
-          />
-          <SingleCard
             image="https://i.ibb.co/0nbbWM9/image-02-1.jpg"
             CardTitle=" Torneos"
             titleHref="/tournaments"
@@ -27,6 +19,14 @@ const Card = () => {
             titleHref="/players"
             btnHref="/players"
             CardDescription=" El éxito llega para todos aquellos que están ocupados buscándolo. -Henry Thoreau"
+            Button="Ver Mas"
+          />
+          <SingleCard
+            image="https://i.ibb.co/r2zns1m/image-01.jpg"
+            CardTitle=" Estadisticas"
+            titleHref="/#"
+            btnHref="/#"
+            CardDescription=" Estadisticas de cada jugador"
             Button="Ver Mas"
           />
         </div>

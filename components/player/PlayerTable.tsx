@@ -8,37 +8,41 @@ const TdStyle = {
 };
 
 const Table = ({ records }) => {
-  return (
-    <section className="pt-10 bg-white">
-      <div className="container">
-        <div className="flex flex-wrap -mx-4">
-          <div className="w-full ">
-            <div className="max-w-full overflow-x-auto">
-              <table className="w-full table-auto">
-                <thead className="text-center bg-primary">
-                  <tr>
-                    <th className={TdStyle.ThStyle}> Nombre </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {records.map((player) => (
-                    <tr key={player.id}>
-                      <td className={TdStyle.TdStyle}>
-                        <Link href={`/tournaments/${player.id}`}>
-                          {player.name}
-                        </Link>
-                      </td>
+  if (records.length === 0) {
+    return <></>;
+  } else {
+    return (
+      <section className="pt-10 bg-white">
+        <div className="container">
+          <div className="flex flex-wrap -mx-4">
+            <div className="w-full ">
+              <div className="max-w-full overflow-x-auto">
+                <table className="w-full table-auto">
+                  <thead className="text-center bg-primary">
+                    <tr>
+                      <th className={TdStyle.ThStyle}> Nombre </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+
+                  <tbody>
+                    {records.map((player) => (
+                      <tr key={player.id}>
+                        <td className={TdStyle.TdStyle}>
+                          <Link href={`/tournaments/${player.id}`}>
+                            {player.name}
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  }
 };
 
 export default Table;

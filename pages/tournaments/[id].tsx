@@ -1,10 +1,7 @@
 import Link from "next/link";
-// import utilStyles from "../../styles/utils.module.css";
 import prisma from "../../lib/prisma";
 import { GetServerSideProps } from "next";
-// import AddEntityModal from "../../components/modal";
-// import NewMatch from "../../components/newMatch";
-import { useRouter } from "next/router";
+import MatchesTable from "../../components/match/MatchesTable";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   let matches = await prisma.match.findMany({
@@ -28,8 +25,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 };
 
 export default function Tournament({ matchesList, playersList }) {
-  const router = useRouter();
-  const { id } = router.query;
   const tournamentName =
     matchesList.length > 0 ? matchesList[0].tournament.name : "";
 
@@ -44,24 +39,9 @@ export default function Tournament({ matchesList, playersList }) {
               </h2>
             </div>
           </div>
-          <div className="w-full">
-            <ul>
-              {matchesList.map((match) => (
-                <li key={match.id}>
-                  {match.players[0].name} vs {match.players[1].name}
-                </li>
-              ))}
-            </ul>
-          </div>
-          {/* <AddEntityModal>
-            <NewMatch id={id} playersList={playersList} />
-          </AddEntityModal> */}
+          <MatchesTable records={matchesList}></MatchesTable>
         </section>
       </div>
-
-      {/* <h1></h1>
-      <h2>Partidos</h2> */}
-
       <h2>
         <Link href={`/tournaments`}>Volver a lista de torneos</Link>
       </h2>
