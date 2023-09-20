@@ -1,17 +1,27 @@
 import React, { useEffect, useRef, useState } from "react";
-import NewTournamentForm from "./NewTournamentForm";
+import NewSetForm from "./NewSetForm";
 import ButtonAddNew from "../ButtonAddNew";
 
-const NewTournamentModal = () => {
+const NewSetModal = ({ matchId }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const trigger = useRef(null);
   const modal = useRef(null);
-  const [data, setData] = useState();
+  const [data, setData] = useState({});
 
-  const handleNewTournament = async () => {
-    const res = await fetch("/api/new_tournament", {
+  const handleNewSet = async () => {
+    // setData({ ...data, [matchId]: matchId });
+
+    // winnerId: set.winnerId,
+    // matchId: set.matchId
+
+    const setData = {
+      ...data,
+      tournamentId: matchId,
+    };
+
+    const res = await fetch("/api/new_set", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify(setData),
     });
     if (res.status === 200) {
       setModalOpen(false);
@@ -64,12 +74,12 @@ const NewTournamentModal = () => {
             className="w-full max-w-[570px] rounded-[20px] bg-white py-12 px-8 text-center md:py-[60px] md:px-[70px]"
           >
             <h3 className="pb-2 text-xl font-bold text-dark sm:text-2xl">
-              Crear nuevo torneo
+            Agregar Set
             </h3>
             <span
               className={`mx-auto mb-6 inline-block h-1 w-[90px] rounded bg-primary`}
             ></span>
-            <NewTournamentForm setter={setData} />
+            <NewSetForm setter={setData} />
 
             <div className="flex flex-wrap -mx-3">
               <div className="w-1/2 px-3">
@@ -82,10 +92,10 @@ const NewTournamentModal = () => {
               </div>
               <div className="w-1/2 px-3">
                 <button
-                  onClick={() => handleNewTournament()}
+                  onClick={() => handleNewSet()}
                   className={`block w-full p-3 text-base font-medium text-center text-black hover:bg-green-600 transition border rounded-lg border-primary bg-primary hover:bg-opacity-90`}
-                >
-                  <a href={`/tournaments`}> Agregar </a>
+                >Agregar
+                  {/* <a href={`/tournaments/${tournamentId}`}> Agregar </a>  */}
                 </button>
               </div>
             </div>
@@ -96,4 +106,4 @@ const NewTournamentModal = () => {
   );
 };
 
-export default NewTournamentModal;
+export default NewSetModal;

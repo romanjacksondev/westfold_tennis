@@ -76,7 +76,6 @@ const NewMatchModal = ({ tournamentId }) => {
             <span
               className={`mx-auto mb-6 inline-block h-1 w-[90px] rounded bg-primary`}
             ></span>
-            {/* {children} */}
             <NewMatchForm setter={setData} />
 
             <div className="flex flex-wrap -mx-3">
@@ -93,8 +92,7 @@ const NewMatchModal = ({ tournamentId }) => {
                   onClick={() => handleNewMatch()}
                   className={`block w-full p-3 text-base font-medium text-center text-black hover:bg-green-600 transition border rounded-lg border-primary bg-primary hover:bg-opacity-90`}
                 >
-                  Agregar
-                  {/* <a href={`/tournaments`}> Agregar </a> */}
+                  <a href={`/tournaments/${tournamentId}`}> Agregar </a> 
                 </button>
               </div>
             </div>

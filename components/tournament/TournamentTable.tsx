@@ -25,6 +25,7 @@ const Table = ({ records }) => {
                       <th className={TdStyle.ThStyle}> Ganador </th>
                       <th className={TdStyle.ThStyle}> Puntos </th>
                       <th className={TdStyle.ThStyle}> Fecha </th>
+                      <th className={TdStyle.ThStyle}>  </th>
                     </tr>
                   </thead>
 
@@ -32,15 +33,19 @@ const Table = ({ records }) => {
                     {records.map((tournament) => (
                       <tr key={tournament.id}>
                         <td className={TdStyle.TdStyle}>
-                          <Link href={`/tournaments/${tournament.id}`}>
+                          {/* <Link href={`/tournaments/${tournament.id}`}> */}
                             {tournament.name}
-                          </Link>
+                          {/* </Link> */}
                         </td>
                         <td className={TdStyle.TdStyle}>{tournament.winner.name}</td>
                         <td className={TdStyle.TdStyle}>{tournament.points}</td>
                         <td className={TdStyle.TdStyle}>
                           <FormatDate dateString={tournament.date} />
                         </td>
+                        <td className={TdStyle.TdStyle}>
+                        <Link href={`/tournaments/${tournament.id}`}>
+                        Ver Detalles
+                          </Link></td>
                       </tr>
                     ))}
                   </tbody>

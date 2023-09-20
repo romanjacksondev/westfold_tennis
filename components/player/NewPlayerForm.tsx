@@ -19,7 +19,7 @@ const NewPlayerForm = ({ setter }) => {
 
   return (
     <>
-      <BasicInput text="Nombre" setter={setName} value={name} />
+      <BasicInput id={"player_name"} text="Nombre" setter={setName} value={name} />
       {/* <BasicInput text="Ubicacion" setter={setLocation} value={location} />
       <BasicInput text="Ganador" setter={setWinner} value={winner} />
       <BasicInput text="Puntos" setter={setPoints} value={points} /> */}
