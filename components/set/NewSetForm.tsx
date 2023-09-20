@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import CustomDropdown from "../CustomDropdown";
 import arrayAsOptions from "../../utils/arrayAsOptions";
+import BasicInput from "../BasicInput";
 
 const NewSetForm = ({ setter }) => {
   const [playerList, setPlayerList] = useState();
@@ -29,7 +30,7 @@ const NewSetForm = ({ setter }) => {
       <CustomDropdown
         options={playerList}
         func={setPlayer1}
-        placeholder={"Elegir jugador 1"}
+        placeholder={"Ganador"}
       />
       <CustomDropdown
         options={playerList}
@@ -43,7 +44,7 @@ const NewSetForm = ({ setter }) => {
       />
       {/* <BasicInput
         id={"resultado"}
-        text="Resultado"
+        text="Games"
         setter={setPoints}
         value={points}
       /> */}
