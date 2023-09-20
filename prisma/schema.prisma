@@ -1,5 +1,4 @@
 // schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,38 +9,52 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
-model Match {
-  id               String             @id @default(cuid())
-  winner           String
-  tournamentId     String?
-  tournament       Tournament?        @relation(fields: [tournamentId], references: [id])
-  players          Player[]
-  // PlayersOnMatches PlayersOnMatches[]
+model Player {
+  id             String       @id @default(cuid())
+  name           String
+  games          Game[]
+  sets           Set[]
+  tournaments    Tournament[]
+  winnerMatches  Match[]      @relation("Winner")
+  player1Matches Match[]      @relation("Player1")
+  player2Matches Match[]      @relation("Player2")
 }
 
 model Tournament {
   id       String   @id @default(cuid())
   name     String
   location String?
-  winner   String
+  winnerId String
+  winner   Player   @relation(fields: [winnerId], references: [id])
   points   String
   date     DateTime @default(now())
   matches  Match[]
 }
 
-model Player {
-  id               String             @id @default(cuid())
-  name             String
-  matches          Match[]
-  // PlayersOnMatches PlayersOnMatches[]
+model Match {
+  id           String      @id @default(cuid())
+  winnerId     String
+  winner       Player      @relation("Winner", fields: [winnerId], references: [id])
+  tournamentId String?
+  tournament   Tournament? @relation(fields: [tournamentId], references: [id])
+  player1Id    String
+  player1      Player      @relation("Player1", fields: [player1Id], references: [id])
+  player2Id    String
+  player2      Player      @relation("Player2", fields: [player2Id], references: [id])
+  sets         Set[]
 }
 
-// model PlayersOnMatches {
-//   players    Player   @relation(fields: [playerId], references: [id])
-//   playerId   String // relation scalar field (used in the `@relation` attribute above)
-//   matches    Match    @relation(fields: [matchId], references: [id])
-//   matchId    String // relation scalar field (used in the `@relation` attribute above)
-//   assignedAt DateTime @default(now())
+model Set {
+  id       String  @id @default(cuid())
+  winnerId String
+  winner   Player  @relation(fields: [winnerId], references: [id])
+  matchId  String
+  match    Match[]
+}
 
-//   @@id([playerId, matchId])
-// }
+model Game {
+  id       String @id @default(cuid())
+  winnerId String
+  winner   Player @relation(fields: [winnerId], references: [id])
+  playerId String
+}

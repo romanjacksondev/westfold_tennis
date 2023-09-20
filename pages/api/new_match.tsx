@@ -6,18 +6,10 @@ export default async function handler(req, res) {
     try {
       const response = await prisma.match.create({
         data: {
-          winner: match.winner,
           tournamentId: match.tournamentId,
-          players: {
-            connect: [
-              {
-                id: match.player1,
-              },
-              {
-                id: match.player2,
-              },
-            ],
-          },
+          player1Id: match.idPlayer1,
+          player2Id: match.idPlayer2,
+          winnerId: match.winnerId
         },
       });
       res.status(200).json({ response });

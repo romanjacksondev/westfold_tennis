@@ -9,43 +9,49 @@ const TdStyle = {
 };
 
 const Table = ({ records }) => {
-  return (
-    <section className="pt-10 bg-white">
-      <div className="container">
-        <div className="flex flex-wrap -mx-4">
-          <div className="w-full ">
-            <div className="max-w-full overflow-x-auto">
-              <table className="w-full table-auto">
-                <thead className="text-center bg-primary">
-                  <tr>
-                    <th className={TdStyle.ThStyle}> Nombre </th>
-                    <th className={TdStyle.ThStyle}> Ganador </th>
-                    <th className={TdStyle.ThStyle}> Puntos </th>
-                    <th className={TdStyle.ThStyle}> Fecha </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {records.map((tournament) => (
-                    <tr key={tournament.id}>
-                      <td className={TdStyle.TdStyle}>
-                        <Link href={`/tournaments/${tournament.id}`}>
-                          {tournament.name}
-                        </Link>
-                      </td>
-                      <td className={TdStyle.TdStyle}>{tournament.winner}</td>
-                      <td className={TdStyle.TdStyle}>{tournament.points}</td>
-                      <td className={TdStyle.TdStyle}><FormatDate dateString={tournament.date}/></td>
+  if (records.length === 0) {
+    return <></>;
+  } else {
+    return (
+      <section className="pt-10 bg-white">
+        <div className="container">
+          <div className="flex flex-wrap -mx-4">
+            <div className="w-full ">
+              <div className="max-w-full overflow-x-auto">
+                <table className="w-full table-auto">
+                  <thead className="text-center bg-primary">
+                    <tr>
+                      <th className={TdStyle.ThStyle}> Nombre </th>
+                      <th className={TdStyle.ThStyle}> Ganador </th>
+                      <th className={TdStyle.ThStyle}> Puntos </th>
+                      <th className={TdStyle.ThStyle}> Fecha </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+
+                  <tbody>
+                    {records.map((tournament) => (
+                      <tr key={tournament.id}>
+                        <td className={TdStyle.TdStyle}>
+                          <Link href={`/tournaments/${tournament.id}`}>
+                            {tournament.name}
+                          </Link>
+                        </td>
+                        <td className={TdStyle.TdStyle}>{tournament.winner.name}</td>
+                        <td className={TdStyle.TdStyle}>{tournament.points}</td>
+                        <td className={TdStyle.TdStyle}>
+                          <FormatDate dateString={tournament.date} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
-  );
+      </section>
+    );
+  }
 };
 
 export default Table;

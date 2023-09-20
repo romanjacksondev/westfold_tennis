@@ -7,14 +7,9 @@ export const getStaticProps: GetStaticProps = async () => {
   const playersList = JSON.parse(JSON.stringify(res));
   return {
     props: { playersList },
-    revalidate: 10,
   };
 };
 
-export default function Tournaments({ playersList }) {
-  return (
-    <>
-      <Player playersList={playersList} />
-    </>
-  );
+export default function Players({ playersList }) {
+  return <Player playersList={playersList} />;
 }

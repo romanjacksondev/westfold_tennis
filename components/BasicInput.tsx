@@ -1,4 +1,4 @@
-const BasicInput = ({ text, setter, value }) => {
+const BasicInput = ({ id, text, setter, value }) => {
   return (
     <>
       {/* <label className="mb-3 block text-base font-medium text-black">
@@ -6,6 +6,7 @@ const BasicInput = ({ text, setter, value }) => {
       </label> */}
       <div className="py-2">
         <input
+          id={id}
           type="text"
           placeholder={text}
           className="border-form-stroke text-body-color placeholder-body-color focus:border-primary active:border-primary w-full rounded-lg border-[1.5px] py-3 px-5 font-medium outline-none transition disabled:cursor-default disabled:bg-[#F5F7FD]"
