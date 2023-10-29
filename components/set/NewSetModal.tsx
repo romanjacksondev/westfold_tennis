@@ -2,23 +2,19 @@ import React, { useEffect, useRef, useState } from "react";
 import NewSetForm from "./NewSetForm";
 import ButtonAddNew from "../ButtonAddNew";
 
-const NewSetModal = ({ matchId }) => {
+const NewSetModal = ({ matchId, player1Id, player2Id }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const trigger = useRef(null);
   const modal = useRef(null);
   const [data, setData] = useState({});
 
   const handleNewSet = async () => {
-    // setData({ ...data, [matchId]: matchId });
-
-    // winnerId: set.winnerId,
-    // matchId: set.matchId
-
     const setData = {
       ...data,
-      tournamentId: matchId,
+      matchId: matchId,
+      player1Id: player1Id,
+      player2Id: player2Id
     };
-
     const res = await fetch("/api/new_set", {
       method: "POST",
       body: JSON.stringify(setData),

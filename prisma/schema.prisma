@@ -50,12 +50,14 @@ model Set {
   winner   Player  @relation(fields: [winnerId], references: [id])
   matchId  String
   match   Match? @relation(fields: [matchId], references: [id])
+  games Game[]
 }
 
 model Game {
   id       String @id @default(cuid())
   winnerId String
   winner   Player @relation(fields: [winnerId], references: [id])
-  playerId String
+  setId  String
+  set   Set? @relation(fields: [setId], references: [id])
 
 }
