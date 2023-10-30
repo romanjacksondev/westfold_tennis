@@ -1,4 +1,3 @@
-import Link from "next/link";
 import React from "react";
 import NewSetModal from "../set/NewSetModal";
 
@@ -14,7 +13,28 @@ const colorVariants = {
 };
 
 const MatchesTable = ({ records }) => {
-  console.log(records);
+  const gamesPerSet = records.reduce((games, match) => {
+    const player1 = match.player1Id;
+    const player2 = match.player2Id;
+    match.sets.forEach((set) => {
+      set.games.forEach((game) => {
+        if (game.winnerId === player1) {
+          if (!games[player1]) {
+            games[player1] = 0;
+          }
+          games[player1]++;
+        } else if (game.winnerId === player2) {
+          if (!games[player2]) {
+            games[player2] = 0;
+          }
+          games[player2]++;
+        }
+      });
+    });
+
+    return games;
+  }, {});
+
   if (records?.length === 0) {
     return <></>;
   } else {
@@ -48,10 +68,10 @@ const MatchesTable = ({ records }) => {
                         >
                           {match.player1.name}
                         </td>
-                        {/* <Link href={`/tournaments/${player.id}`}>
-                          {player.name}
-                        </Link> */}
-                        <td className={TdStyle.TdStyle}>{match.winner.name}</td>
+                        <td className={TdStyle.TdStyle}>
+                          {gamesPerSet[match.player1Id]} -{" "}
+                          {gamesPerSet[match.player2Id]}
+                        </td>
                         <td
                           className={`${
                             colorVariants[
