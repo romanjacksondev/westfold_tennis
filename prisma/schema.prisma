@@ -15,6 +15,7 @@ model Venue {
   phone       String
   address     String
   tournaments Tournament[]
+  points String
 }
 
 model Player {
@@ -35,7 +36,6 @@ model Tournament {
   venue    Venue    @relation(fields: [venueId], references: [id])
   winnerId String
   winner   Player   @relation(fields: [winnerId], references: [id])
-  points   String
   date     DateTime @default(now())
   matches  Match[]
 }

@@ -21,6 +21,7 @@ const Table = ({ records }) => {
                   <thead className="text-center bg-primary">
                     <tr>
                       <th className={TdStyle.ThStyle}> Nombre </th>
+                      <th className={TdStyle.ThStyle}> Puntos </th>
                       <th className={TdStyle.ThStyle}> Teléfono </th>
                       <th className={TdStyle.ThStyle}> Dirección </th>
                     </tr>
@@ -33,8 +34,11 @@ const Table = ({ records }) => {
                           {venue.name}
                         </td>
                         <td className={TdStyle.TdStyle}>
-                          {venue.phone}
+                          {venue.points}
                         </td>
+                        <td className={TdStyle.TdStyle}>
+                          {venue.phone}
+                        </td>                        
                         <td className={TdStyle.TdStyle}>
                           {venue.address}
                         </td>

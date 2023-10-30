@@ -2,7 +2,6 @@ import prisma from "../../lib/prisma";
 
 export default async function handler(req, res) {
   const match = JSON.parse(req.body);
-  console.log(match)
   if (req.method === "POST") {
     const gamesList = [];
     for (let index = 0; index < match.pointsPlayer1; index++) {

@@ -5,14 +5,16 @@ const NewVenueForm = ({ setter }) => {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [points, setPoints] = useState("");
 
   useEffect(() => {
     setter({
       name,
       phone,
       address,
+      points
     });
-  }, [name, phone, address]);
+  }, [name, phone, address, points]);
 
   return (
     <>
@@ -33,6 +35,12 @@ const NewVenueForm = ({ setter }) => {
         text="Dirección"
         setter={setAddress}
         value={address}
+      />
+      <BasicInput
+        id={"venue_points"}
+        text="Puntos Ganador"
+        setter={setPoints}
+        value={points}
       />
     </>
   );

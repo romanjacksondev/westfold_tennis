@@ -12,6 +12,7 @@ export const getStaticProps: GetStaticProps = async () => {
       winner: {
         select: { name: true },
       },
+      venue: true
     },
   });
   const tournamentsList = JSON.parse(JSON.stringify(res));

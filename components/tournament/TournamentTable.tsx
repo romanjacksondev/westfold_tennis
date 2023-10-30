@@ -38,7 +38,7 @@ const Table = ({ records }) => {
                           {/* </Link> */}
                         </td>
                         <td className={TdStyle.TdStyle}>{tournament.winner.name}</td>
-                        <td className={TdStyle.TdStyle}>{tournament.points}</td>
+                        <td className={TdStyle.TdStyle}>{tournament.venue.points}</td>
                         <td className={TdStyle.TdStyle}>
                           <FormatDate dateString={tournament.date} />
                         </td>

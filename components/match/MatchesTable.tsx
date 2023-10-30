@@ -30,11 +30,8 @@ const MatchesTable = ({ records }) => {
         result[set.id] = gamesCount;
       }
     });
-    console.log(result);
     return result;
   }, {});
-
-  console.log(gamesPerSet);
 
   if (records?.length === 0) {
     return <></>;
@@ -70,11 +67,18 @@ const MatchesTable = ({ records }) => {
                           {match.player1.name}
                         </td>
                         <td className={TdStyle.TdStyle}>
-                          {match.sets.map(
-                            (set) =>
-                              `${gamesPerSet[set.id][match.player1Id]} -
-                            ${gamesPerSet[set.id][match.player2Id]}`
-                          )}
+                          {match.sets.map((set) => {
+                            const points1 =
+                              gamesPerSet[set.id][match.player1Id] === undefined
+                                ? 0
+                                : gamesPerSet[set.id][match.player1Id];
+                            const points2 =
+                              gamesPerSet[set.id][match.player2Id] === undefined
+                                ? 0
+                                : gamesPerSet[set.id][match.player2Id];
+                            return `${points1} -
+                            ${points2}`;
+                          })}
                         </td>
                         <td
                           className={`${

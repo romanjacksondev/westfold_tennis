@@ -5,9 +5,9 @@ import arrayAsOptions from "../../utils/arrayAsOptions";
 
 const NewTournamentForm = ({ setter }) => {
   const [playerList, setPlayerList] = useState();
+  const [venuesList, setVenuesList] = useState();
   const [name, setName] = useState("");
-  const [location, setLocation] = useState("");
-  const [points, setPoints] = useState("");
+  const [venue, setVenue] = useState("");
   const [winner, setWinner] = useState("");
 
   useEffect(() => {
@@ -16,16 +16,20 @@ const NewTournamentForm = ({ setter }) => {
       .then((data) => {
         setPlayerList(arrayAsOptions(data.response));
       });
+      fetch("/api/getVenues")
+      .then((res) => res.json())
+      .then((data) => {
+        setVenuesList(arrayAsOptions(data.response));
+      });      
   }, []);
 
   useEffect(() => {
     setter({
       name,
-      location,
-      points,
+      venue,
       player_id: winner,
     });
-  }, [name, location, points, winner]);
+  }, [name, venue, winner]);
 
   return (
     <>
@@ -35,22 +39,15 @@ const NewTournamentForm = ({ setter }) => {
         setter={setName}
         value={name}
       />
-      <BasicInput
-        id={"tournament_location"}
-        text="Ubicacion"
-        setter={setLocation}
-        value={location}
-      />
+      <CustomDropdown
+        options={venuesList}
+        func={setVenue}
+        placeholder={"Elegir sede del torneo"}
+      />      
       <CustomDropdown
         options={playerList}
         func={setWinner}
         placeholder={"Elegir jugador ganador"}
-      />
-      <BasicInput
-        id={"tournament_points"}
-        text="Puntos"
-        setter={setPoints}
-        value={points}
       />
     </>
   );
