@@ -23,11 +23,6 @@ export default async function handler(req, res) {
           winnerId: set.winnerId,
           matchId: set.matchId,
           games: {
-            // create: [
-            //   { winnerId: set.player1Id },
-            //   { winnerId: set.player1Id },
-            //   { winnerId: set.player2Id },
-            // ],
             create: gamesList
           },
         },

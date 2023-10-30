@@ -13,27 +13,28 @@ const colorVariants = {
 };
 
 const MatchesTable = ({ records }) => {
-  const gamesPerSet = records.reduce((games, match) => {
-    const player1 = match.player1Id;
-    const player2 = match.player2Id;
+  const gamesPerSet = records.reduce((result, match) => {
     match.sets.forEach((set) => {
-      set.games.forEach((game) => {
-        if (game.winnerId === player1) {
-          if (!games[player1]) {
-            games[player1] = 0;
-          }
-          games[player1]++;
-        } else if (game.winnerId === player2) {
-          if (!games[player2]) {
-            games[player2] = 0;
-          }
-          games[player2]++;
-        }
-      });
-    });
+      const gamesCount = {};
 
-    return games;
+      set.games.forEach((game) => {
+        debugger;
+        const winnerId = game.winnerId;
+        if (!gamesCount[winnerId]) {
+          gamesCount[winnerId] = 0;
+        }
+        gamesCount[winnerId]++;
+      });
+
+      if (!result[set.id]) {
+        result[set.id] = gamesCount;
+      }
+    });
+    console.log(result);
+    return result;
   }, {});
+
+  console.log(gamesPerSet);
 
   if (records?.length === 0) {
     return <></>;
@@ -50,7 +51,7 @@ const MatchesTable = ({ records }) => {
                       <th className={TdStyle.ThStyle}> Jugador 1</th>
                       <th className={TdStyle.ThStyle}> Resultado </th>
                       <th className={TdStyle.ThStyle}> Jugador 2 </th>
-                      <th className={TdStyle.ThStyle}></th>
+                      {/* <th className={TdStyle.ThStyle}></th> */}
                     </tr>
                   </thead>
 
@@ -69,8 +70,11 @@ const MatchesTable = ({ records }) => {
                           {match.player1.name}
                         </td>
                         <td className={TdStyle.TdStyle}>
-                          {gamesPerSet[match.player1Id]} -{" "}
-                          {gamesPerSet[match.player2Id]}
+                          {match.sets.map(
+                            (set) =>
+                              `${gamesPerSet[set.id][match.player1Id]} -
+                            ${gamesPerSet[set.id][match.player2Id]}`
+                          )}
                         </td>
                         <td
                           className={`${
@@ -83,13 +87,13 @@ const MatchesTable = ({ records }) => {
                         >
                           {match.player2.name}
                         </td>
-                        <td className={TdStyle.TdStyle}>
+                        {/* <td className={TdStyle.TdStyle}>
                           <NewSetModal
                             matchId={match.id}
                             player1Id={match.player1Id}
                             player2Id={match.player2Id}
                           ></NewSetModal>
-                        </td>
+                        </td> */}
                       </tr>
                     ))}
                   </tbody>

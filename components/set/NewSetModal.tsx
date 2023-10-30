@@ -55,7 +55,7 @@ const NewSetModal = ({ matchId, player1Id, player2Id }) => {
       <div className="container mx-auto">
         <ButtonAddNew
           trigger={trigger}
-          text="Cargar datos pertido"
+          text="Cargar datos partido"
           setter={setModalOpen}
         />
         <div

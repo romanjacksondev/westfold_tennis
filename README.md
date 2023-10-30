@@ -1,1 +1,6 @@
-This is a starter template for [Learn Next.js](https://nextjs.org/learn).
+Improvements
+
+    -   General UI
+    -   Forms errors
+    -   Hamburguer button (color when open)
+    -   refresh of data after insert

@@ -67,11 +67,10 @@ const NewMatchModal = ({ tournamentId }) => {
           <div
             ref={modal}
             onFocus={() => setModalOpen(true)}
-            // onBlur={() => setModalOpen(false)}
             className="w-full max-w-[570px] rounded-[20px] bg-white py-12 px-8 text-center md:py-[60px] md:px-[70px]"
           >
             <h3 className="pb-2 text-xl font-bold text-dark sm:text-2xl">
-              Crear nuevo partido
+              Agregar partido
             </h3>
             <span
               className={`mx-auto mb-6 inline-block h-1 w-[90px] rounded bg-primary`}
