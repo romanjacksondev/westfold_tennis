@@ -20,7 +20,7 @@ const NewTournamentForm = ({ setter }) => {
       .then((res) => res.json())
       .then((data) => {
         setVenuesList(arrayAsOptions(data.response));
-      });      
+      });
   }, []);
 
   useEffect(() => {

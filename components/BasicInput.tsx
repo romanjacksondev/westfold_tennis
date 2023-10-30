@@ -1,9 +1,6 @@
 const BasicInput = ({ id, text, setter, value }) => {
   return (
     <>
-      {/* <label className="mb-3 block text-base font-medium text-black">
-        {text}
-      </label> */}
       <div className="py-2">
         <input
           id={id}

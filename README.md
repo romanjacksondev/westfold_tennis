@@ -9,3 +9,4 @@ Improvements
     -   cambiar el No Options Found de los dropdown
     -   standarize variables names
     -   add date picker for tournamenet
+    -   loading icon when waiting server

@@ -1,13 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import NewPlayerForm from "./NewPlayerForm";
 import ButtonAddNew from "../ButtonAddNew";
+import { useRouter } from "next/router";
 
 const NewPlayerModal = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const trigger = useRef(null);
   const modal = useRef(null);
   const [data, setData] = useState();
-
+  const router = useRouter();
+  
   const handleNewPlayer = async () => {
     const res = await fetch("/api/new_player", {
       method: "POST",
@@ -15,6 +17,7 @@ const NewPlayerModal = () => {
     });
     if (res.status === 200) {
       setModalOpen(false);
+      router.replace(router.asPath);
     }
   };
 

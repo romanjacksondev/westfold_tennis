@@ -1,5 +1,4 @@
 import React from "react";
-import NewSetModal from "../set/NewSetModal";
 
 const TdStyle = {
   ThStyle: `w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-semibold lg:py-7 lg:px-4`,
@@ -18,7 +17,6 @@ const MatchesTable = ({ records }) => {
       const gamesCount = {};
 
       set.games.forEach((game) => {
-        debugger;
         const winnerId = game.winnerId;
         if (!gamesCount[winnerId]) {
           gamesCount[winnerId] = 0;
@@ -37,6 +35,9 @@ const MatchesTable = ({ records }) => {
     return <></>;
   } else {
     return (
+
+
+
       <section className="pt-10 bg-white">
         <div className="container">
           <div className="flex flex-wrap -mx-4">
@@ -91,13 +92,6 @@ const MatchesTable = ({ records }) => {
                         >
                           {match.player2.name}
                         </td>
-                        {/* <td className={TdStyle.TdStyle}>
-                          <NewSetModal
-                            matchId={match.id}
-                            player1Id={match.player1Id}
-                            player2Id={match.player2Id}
-                          ></NewSetModal>
-                        </td> */}
                       </tr>
                     ))}
                   </tbody>

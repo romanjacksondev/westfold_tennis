@@ -1,13 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import NewMatchForm from "./NewMatchForm";
 import ButtonAddNew from "../ButtonAddNew";
+import { useRouter } from "next/router";
 
 const NewMatchModal = ({ tournamentId }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const trigger = useRef(null);
   const modal = useRef(null);
   const [data, setData] = useState({});
-
+  const router = useRouter();
+  
   const handleNewMatch = async () => {
     setData({ ...data, [tournamentId]: tournamentId });
 
@@ -22,6 +24,7 @@ const NewMatchModal = ({ tournamentId }) => {
     });
     if (res.status === 200) {
       setModalOpen(false);
+      router.replace(router.asPath);
     }
   };
 

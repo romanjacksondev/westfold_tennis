@@ -18,6 +18,6 @@ export const getStaticProps: GetStaticProps = async () => {
   const tournamentsList = JSON.parse(JSON.stringify(res));
   return {
     props: { tournamentsList },
-    revalidate: 10,
+    revalidate: 1,
   };
 };

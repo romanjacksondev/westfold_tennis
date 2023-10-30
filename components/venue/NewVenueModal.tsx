@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import NewVenueForm from "./NewVenueForm";
 import ButtonAddNew from "../ButtonAddNew";
+import { useRouter } from "next/router";
 
 const NewVenueModal = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const trigger = useRef(null);
   const modal = useRef(null);
   const [data, setData] = useState();
+  const router = useRouter();
 
   const handleNewVenue = async () => {
     const res = await fetch("/api/new_venue", {
@@ -15,6 +17,7 @@ const NewVenueModal = () => {
     });
     if (res.status === 200) {
       setModalOpen(false);
+      router.replace(router.asPath);
     }
   };
 

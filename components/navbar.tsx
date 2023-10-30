@@ -64,7 +64,7 @@ const Navbar = () => {
                   </ListItem>
                   <ListItem
                     navItemStyles="text-dark hover:text-primary"
-                    NavLink="/#"
+                    NavLink="/stats"
                   >
                     Estadisticas
                   </ListItem>

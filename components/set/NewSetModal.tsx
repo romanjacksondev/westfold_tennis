@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import NewSetForm from "./NewSetForm";
 import ButtonAddNew from "../ButtonAddNew";
+import { useRouter } from "next/router";
 
 const NewSetModal = ({ matchId, player1Id, player2Id }) => {
   const [modalOpen, setModalOpen] = useState(false);
   const trigger = useRef(null);
   const modal = useRef(null);
   const [data, setData] = useState({});
+  const router = useRouter();
 
   const handleNewSet = async () => {
     const setData = {
@@ -21,6 +23,7 @@ const NewSetModal = ({ matchId, player1Id, player2Id }) => {
     });
     if (res.status === 200) {
       setModalOpen(false);
+      router.replace(router.asPath);
     }
   };
 
