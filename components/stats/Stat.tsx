@@ -33,15 +33,15 @@ export default function Stat({ playersList }) {
         description=""
         button={""}
       />
-      <ul>
+      {/* <ul>
         {ranking.map((player) => (
           <li key={player.name}>
             {player.name} - {player.points}
           </li>
         ))}
-      </ul>
+      </ul> */}
 
-      {/* <Table records={playersList} ranking={ranking}></Table> */}
+      <Table records={playersList} ranking={ranking}></Table>
     </>
   );
 }

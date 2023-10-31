@@ -22,14 +22,15 @@ const Table = ({ records, ranking }) => {
                   <thead className="text-center bg-primary">
                     <tr>
                       <th className={TdStyle.ThStyle}> Nombre </th>
+                      <th className={TdStyle.ThStyle}> Puntos </th>
                     </tr>
                   </thead>
 
                   <tbody>
-                    {records.map((player) => (
-                      <tr key={player.id}>
+                    {ranking.map((player) => (
+                      <tr key={player.name}>
                         <td className={TdStyle.TdStyle}>{player.name}</td>
-                        
+                        <td className={TdStyle.TdStyle}>{player.points}</td>
                       </tr>
                     ))}
                   </tbody>
