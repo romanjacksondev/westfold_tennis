@@ -1,17 +1,17 @@
 import prisma from "../../lib/prisma";
 
 export default async function handler(req, res) {
+  const venue = JSON.parse(req.body);
   if (req.method === "POST") {
-    const tournament = JSON.parse(req.body);
     try {
-      const response = await prisma.tournament.create({
+      const response = await prisma.venue.create({
         data: {
-          name: tournament.name,
-          venueId: tournament.venue,
-          winnerId: tournament.player_id,
+          name: venue.name,
+          phone: venue.phone,
+          address: venue.address,
+          points: venue.points,
         },
       });
-
       res.status(200).json({ response });
     } catch (e) {
       console.log(e);

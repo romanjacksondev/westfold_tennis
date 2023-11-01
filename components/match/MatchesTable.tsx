@@ -1,6 +1,4 @@
-import Link from "next/link";
 import React from "react";
-import NewSetModal from "../set/NewSetModal";
 
 const TdStyle = {
   ThStyle: `w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-semibold lg:py-7 lg:px-4`,
@@ -14,11 +12,32 @@ const colorVariants = {
 };
 
 const MatchesTable = ({ records }) => {
-  console.log(records);
+  const gamesPerSet = records.reduce((result, match) => {
+    match.sets.forEach((set) => {
+      const gamesCount = {};
+
+      set.games.forEach((game) => {
+        const winnerId = game.winnerId;
+        if (!gamesCount[winnerId]) {
+          gamesCount[winnerId] = 0;
+        }
+        gamesCount[winnerId]++;
+      });
+
+      if (!result[set.id]) {
+        result[set.id] = gamesCount;
+      }
+    });
+    return result;
+  }, {});
+
   if (records?.length === 0) {
     return <></>;
   } else {
     return (
+
+
+
       <section className="pt-10 bg-white">
         <div className="container">
           <div className="flex flex-wrap -mx-4">
@@ -30,7 +49,7 @@ const MatchesTable = ({ records }) => {
                       <th className={TdStyle.ThStyle}> Jugador 1</th>
                       <th className={TdStyle.ThStyle}> Resultado </th>
                       <th className={TdStyle.ThStyle}> Jugador 2 </th>
-                      <th className={TdStyle.ThStyle}></th>
+                      {/* <th className={TdStyle.ThStyle}></th> */}
                     </tr>
                   </thead>
 
@@ -48,10 +67,20 @@ const MatchesTable = ({ records }) => {
                         >
                           {match.player1.name}
                         </td>
-                        {/* <Link href={`/tournaments/${player.id}`}>
-                          {player.name}
-                        </Link> */}
-                        <td className={TdStyle.TdStyle}>{match.winner.name}</td>
+                        <td className={TdStyle.TdStyle}>
+                          {match.sets.map((set) => {
+                            const points1 =
+                              gamesPerSet[set.id][match.player1Id] === undefined
+                                ? 0
+                                : gamesPerSet[set.id][match.player1Id];
+                            const points2 =
+                              gamesPerSet[set.id][match.player2Id] === undefined
+                                ? 0
+                                : gamesPerSet[set.id][match.player2Id];
+                            return `${points1} -
+                            ${points2}`;
+                          })}
+                        </td>
                         <td
                           className={`${
                             colorVariants[
@@ -62,13 +91,6 @@ const MatchesTable = ({ records }) => {
                           }`}
                         >
                           {match.player2.name}
-                        </td>
-                        <td className={TdStyle.TdStyle}>
-                          <NewSetModal
-                            matchId={match.id}
-                            player1Id={match.player1Id}
-                            player2Id={match.player2Id}
-                          ></NewSetModal>
                         </td>
                       </tr>
                     ))}

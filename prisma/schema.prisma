@@ -9,6 +9,15 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
+model Venue {
+  id          String       @id @default(cuid())
+  name        String
+  phone       String
+  address     String
+  tournaments Tournament[]
+  points String
+}
+
 model Player {
   id             String       @id @default(cuid())
   name           String
@@ -21,12 +30,12 @@ model Player {
 }
 
 model Tournament {
-  id       String   @id @default(cuid())
-  name     String
-  location String?
+  id   String @id @default(cuid())
+  name String
+  venueId  String
+  venue    Venue    @relation(fields: [venueId], references: [id])
   winnerId String
   winner   Player   @relation(fields: [winnerId], references: [id])
-  points   String
   date     DateTime @default(now())
   matches  Match[]
 }
@@ -45,19 +54,18 @@ model Match {
 }
 
 model Set {
-  id       String  @id @default(cuid())
+  id       String @id @default(cuid())
   winnerId String
-  winner   Player  @relation(fields: [winnerId], references: [id])
+  winner   Player @relation(fields: [winnerId], references: [id])
   matchId  String
-  match   Match? @relation(fields: [matchId], references: [id])
-  games Game[]
+  match    Match? @relation(fields: [matchId], references: [id])
+  games    Game[]
 }
 
 model Game {
   id       String @id @default(cuid())
   winnerId String
   winner   Player @relation(fields: [winnerId], references: [id])
-  setId  String
-  set   Set? @relation(fields: [setId], references: [id])
-
+  setId    String
+  set      Set?   @relation(fields: [setId], references: [id])
 }

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import React from "react";
-import FormatDate from "../../utils/FormatDate";
 
 const TdStyle = {
   ThStyle: `w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-semibold lg:py-7 lg:px-4`,
@@ -22,30 +21,26 @@ const Table = ({ records }) => {
                   <thead className="text-center bg-primary">
                     <tr>
                       <th className={TdStyle.ThStyle}> Nombre </th>
-                      <th className={TdStyle.ThStyle}> Ganador </th>
                       <th className={TdStyle.ThStyle}> Puntos </th>
-                      <th className={TdStyle.ThStyle}> Fecha </th>
-                      <th className={TdStyle.ThStyle}> </th>
+                      <th className={TdStyle.ThStyle}> Teléfono </th>
+                      <th className={TdStyle.ThStyle}> Dirección </th>
                     </tr>
                   </thead>
 
                   <tbody>
-                    {records.map((tournament) => (
-                      <tr key={tournament.id}>
-                        <td className={TdStyle.TdStyle}>{tournament.name}</td>
+                    {records.map((venue) => (
+                      <tr key={venue.id}>
                         <td className={TdStyle.TdStyle}>
-                          {tournament.winner.name}
+                          {venue.name}
                         </td>
                         <td className={TdStyle.TdStyle}>
-                          {tournament.venue.points}
+                          {venue.points}
                         </td>
                         <td className={TdStyle.TdStyle}>
-                          <FormatDate dateString={tournament.date} />
-                        </td>
+                          {venue.phone}
+                        </td>                        
                         <td className={TdStyle.TdStyle}>
-                          <Link href={`/tournaments/${tournament.id}`}>
-                            Ver Detalles
-                          </Link>
+                          {venue.address}
                         </td>
                       </tr>
                     ))}

@@ -1,1 +1,13 @@
-This is a starter template for [Learn Next.js](https://nextjs.org/learn).
+Improvements
+
+    -   General UI
+    -   Forms errors
+    -   Hamburguer button (color when open)
+    -   refresh of data after insert
+    -   reset modal form on re opening
+    -   improve APIs to serve multiple http verbs
+    -   cambiar el No Options Found de los dropdown
+    -   standarize variables names
+    -   add date picker for tournamenet
+    -   loading icon when waiting server
+    -   add tournament name and champion in tournament matches list

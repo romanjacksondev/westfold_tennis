@@ -1,12 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import NewTournamentForm from "./NewTournamentForm";
 import ButtonAddNew from "../ButtonAddNew";
+import { useRouter } from "next/router";
 
 const NewTournamentModal = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const trigger = useRef(null);
   const modal = useRef(null);
   const [data, setData] = useState();
+  const router = useRouter();
 
   const handleNewTournament = async () => {
     const res = await fetch("/api/new_tournament", {
@@ -15,6 +17,7 @@ const NewTournamentModal = () => {
     });
     if (res.status === 200) {
       setModalOpen(false);
+      router.replace(router.asPath);
     }
   };
 

@@ -18,7 +18,7 @@ const Navbar = () => {
               <path d="M13.5 22.1c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05zM0 38.3c1.8-7.2 6.3-10.8 13.5-10.8 10.8 0 12.15 8.1 17.55 9.45 3.6.9 6.75-.45 9.45-4.05-1.8 7.2-6.3 10.8-13.5 10.8-10.8 0-12.15-8.1-17.55-9.45-3.6-.9-6.75.45-9.45 4.05z" />
             </svg>
             <span className="font-semibold text-xl tracking-tight">
-              Westfold Tennis
+              Westfold Tennisssss
             </span>
           </div>
           <div className="flex items-center justify-between w-full px-4">
@@ -64,9 +64,15 @@ const Navbar = () => {
                   </ListItem>
                   <ListItem
                     navItemStyles="text-dark hover:text-primary"
-                    NavLink="/#"
+                    NavLink="/stats"
                   >
                     Estadisticas
+                  </ListItem>
+                  <ListItem
+                    navItemStyles="text-dark hover:text-primary"
+                    NavLink="/venues"
+                  >
+                    Sedes
                   </ListItem>
                 </ul>
               </nav>

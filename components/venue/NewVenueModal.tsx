@@ -1,26 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
-import NewMatchForm from "./NewMatchForm";
+import NewVenueForm from "./NewVenueForm";
 import ButtonAddNew from "../ButtonAddNew";
 import { useRouter } from "next/router";
 
-const NewMatchModal = ({ tournamentId }) => {
+const NewVenueModal = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const trigger = useRef(null);
   const modal = useRef(null);
-  const [data, setData] = useState({});
+  const [data, setData] = useState();
   const router = useRouter();
-  
-  const handleNewMatch = async () => {
-    setData({ ...data, [tournamentId]: tournamentId });
 
-    const matchData = {
-      ...data,
-      tournamentId: tournamentId,
-    };
-
-    const res = await fetch("/api/new_match", {
+  const handleNewVenue = async () => {
+    const res = await fetch("/api/new_venue", {
       method: "POST",
-      body: JSON.stringify(matchData),
+      body: JSON.stringify(data),
     });
     if (res.status === 200) {
       setModalOpen(false);
@@ -73,12 +66,12 @@ const NewMatchModal = ({ tournamentId }) => {
             className="w-full max-w-[570px] rounded-[20px] bg-white py-12 px-8 text-center md:py-[60px] md:px-[70px]"
           >
             <h3 className="pb-2 text-xl font-bold text-dark sm:text-2xl">
-              Agregar partido
+              Agregar Jugador
             </h3>
             <span
               className={`mx-auto mb-6 inline-block h-1 w-[90px] rounded bg-primary`}
             ></span>
-            <NewMatchForm setter={setData} />
+            <NewVenueForm setter={setData} />
 
             <div className="flex flex-wrap -mx-3">
               <div className="w-1/2 px-3">
@@ -91,10 +84,10 @@ const NewMatchModal = ({ tournamentId }) => {
               </div>
               <div className="w-1/2 px-3">
                 <button
-                  onClick={() => handleNewMatch()}
+                  onClick={() => handleNewVenue()}
                   className={`block w-full p-3 text-base font-medium text-center text-black hover:bg-green-600 transition border rounded-lg border-primary bg-primary hover:bg-opacity-90`}
                 >
-                  <a href={`/tournaments/${tournamentId}`}> Agregar </a> 
+                  <a href={`/venues`}> Agregar </a>
                 </button>
               </div>
             </div>
@@ -105,4 +98,4 @@ const NewMatchModal = ({ tournamentId }) => {
   );
 };
 
-export default NewMatchModal;
+export default NewVenueModal;

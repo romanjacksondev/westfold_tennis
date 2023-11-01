@@ -1,6 +1,4 @@
-import Link from "next/link";
 import React from "react";
-import FormatDate from "../../utils/FormatDate";
 
 const TdStyle = {
   ThStyle: `w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-semibold lg:py-7 lg:px-4`,
@@ -8,7 +6,7 @@ const TdStyle = {
   TdButton: `inline-block px-6 py-2 border rounded border-primary text-primary hover:bg-primary hover:text-white`,
 };
 
-const Table = ({ records }) => {
+const Table = ({ records, h2h }) => {
   if (records.length === 0) {
     return <></>;
   } else {
@@ -22,30 +20,23 @@ const Table = ({ records }) => {
                   <thead className="text-center bg-primary">
                     <tr>
                       <th className={TdStyle.ThStyle}> Nombre </th>
-                      <th className={TdStyle.ThStyle}> Ganador </th>
-                      <th className={TdStyle.ThStyle}> Puntos </th>
-                      <th className={TdStyle.ThStyle}> Fecha </th>
-                      <th className={TdStyle.ThStyle}> </th>
+                      <th className={TdStyle.ThStyle}> H2H </th>
                     </tr>
                   </thead>
 
                   <tbody>
-                    {records.map((tournament) => (
-                      <tr key={tournament.id}>
-                        <td className={TdStyle.TdStyle}>{tournament.name}</td>
+                    {records.map((p) => (
+                      <tr key={p.name}>
+                        <td className={TdStyle.TdStyle}>{p.name}</td>
                         <td className={TdStyle.TdStyle}>
-                          {tournament.winner.name}
-                        </td>
-                        <td className={TdStyle.TdStyle}>
-                          {tournament.venue.points}
-                        </td>
-                        <td className={TdStyle.TdStyle}>
-                          <FormatDate dateString={tournament.date} />
-                        </td>
-                        <td className={TdStyle.TdStyle}>
-                          <Link href={`/tournaments/${tournament.id}`}>
-                            Ver Detalles
-                          </Link>
+                          <ul>
+                            {h2h[p.id]?.map((h) => (
+                              <li>
+                                vs {records.find((pl) => pl.id === h.id).name}:{" "}
+                                {h.won} - {h.lost}
+                              </li>
+                            ))}
+                          </ul>
                         </td>
                       </tr>
                     ))}

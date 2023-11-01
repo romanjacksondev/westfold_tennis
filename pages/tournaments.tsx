@@ -12,11 +12,12 @@ export const getStaticProps: GetStaticProps = async () => {
       winner: {
         select: { name: true },
       },
+      venue: true
     },
   });
   const tournamentsList = JSON.parse(JSON.stringify(res));
   return {
     props: { tournamentsList },
-    revalidate: 10,
+    revalidate: 1,
   };
 };
