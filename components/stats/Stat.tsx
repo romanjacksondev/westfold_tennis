@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import PageTitle from "../PageTitle";
-import Table from "./StatTable";
+import RankingTable from "./RankingTable";
+import H2HTable from "./H2HTable";
 
 export default function Stat({ playersList }) {
   const [ranking, setRanking] = useState([]);
+  const [h2h, setH2h] = useState([]);
 
-  const fetchRankingData = () => {
+  const fetchStatsData = () => {
     fetch("/api/getRanking")
       .then((response) => {
         return response.json();
@@ -21,27 +23,25 @@ export default function Stat({ playersList }) {
         const ordered = array.sort((a, b) => b.points - a.points);
         setRanking(ordered);
       });
+
+    fetch("/api/getMatches")
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        setH2h(data);
+      });
   };
   useEffect(() => {
-    fetchRankingData();
+    fetchStatsData();
   }, []);
 
   return (
     <>
-      <PageTitle
-        title="Ranking y Estadísticas Generales"
-        description=""
-        button={""}
-      />
-      {/* <ul>
-        {ranking.map((player) => (
-          <li key={player.name}>
-            {player.name} - {player.points}
-          </li>
-        ))}
-      </ul> */}
-
-      <Table records={playersList} ranking={ranking}></Table>
+      <PageTitle title="Ranking" description="" button={""} />
+      <RankingTable records={playersList} ranking={ranking}></RankingTable>
+      <PageTitle title="H2H" description="" button={""} />
+      <H2HTable records={playersList} h2h={h2h}></H2HTable>
     </>
   );
 }

@@ -10,3 +10,4 @@ Improvements
     -   standarize variables names
     -   add date picker for tournamenet
     -   loading icon when waiting server
+    -   add tournament name and champion in tournament matches list
