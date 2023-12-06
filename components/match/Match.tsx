@@ -2,13 +2,13 @@ import PageTitle from "../PageTitle";
 import NewMatchModal from "./NewMatchModal";
 import Table from "./MatchesTable";
 
-export default function MatchesList({ matchesList, tournamentId }) {
+export default function Match({ matchesList, tournamentId, tournamentName }) {
   const addButton = <NewMatchModal tournamentId={tournamentId} />;
 
   return (
     <>
       <PageTitle
-        title="Los partidos del torneo"
+        title={`Partidos del torneo ${tournamentName}`}
         description=""
         button={addButton}
       />

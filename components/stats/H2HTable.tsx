@@ -31,7 +31,7 @@ const Table = ({ records, h2h }) => {
                         <td className={TdStyle.TdStyle}>
                           <ul>
                             {h2h[p.id]?.map((h) => (
-                              <li>
+                              <li key={h.id}>
                                 vs {records.find((pl) => pl.id === h.id).name}:{" "}
                                 {h.won} - {h.lost}
                               </li>
