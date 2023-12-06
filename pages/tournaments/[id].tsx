@@ -1,16 +1,13 @@
 import prisma from "../../lib/prisma";
 import { GetStaticPaths, GetStaticProps } from "next";
-import MatchesList from "../../components/match/MatchesList";
+import Match from "../../components/match/Match";
 import { useRouter } from "next/router";
 
-export default function Tournament({ matchesList }) {
+export default function Tournament({ matchesList, tournamentData }) {
   const router = useRouter();
   const { id } = router.query;
-  const tournamentName =
-    matchesList?.length > 0 ? matchesList[0].tournament.name : "";
-
   return (
-    <MatchesList matchesList={matchesList} tournamentId={id}></MatchesList>
+    <Match matchesList={matchesList} tournamentId={id} tournamentName={tournamentData.name}></Match>
   );
 }
 
@@ -53,7 +50,14 @@ export const getStaticProps: GetStaticProps = async (context) => {
     },
   });
   const matchesList = JSON.parse(JSON.stringify(matches));
+
+  const tournament = await prisma.tournament.findUnique({
+    where: {
+      id: String(id)
+    },
+  })
+ const tournamentData = JSON.parse(JSON.stringify(tournament));
   return {
-    props: { matchesList },
+    props: { matchesList, tournamentData },
   };
 };
