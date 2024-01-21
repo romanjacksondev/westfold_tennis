@@ -25,10 +25,11 @@ const NewVenueModal = () => {
   useEffect(() => {
     const clickHandler = ({ target }) => {
       if (!modal.current) return;
+      if (!trigger.current) return;
       if (
         !modalOpen ||
-        modal.current.contains(target) ||
-        trigger.current.contains(target)
+        (modal.current as any).contains(target) ||
+        (trigger.current as any).contains(target)
       )
         return;
       setModalOpen(false);

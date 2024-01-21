@@ -9,7 +9,7 @@ const NewMatchModal = ({ tournamentId }) => {
   const modal = useRef(null);
   const [data, setData] = useState({});
   const router = useRouter();
-  
+
   const handleNewMatch = async () => {
     setData({ ...data, [tournamentId]: tournamentId });
 
@@ -29,13 +29,14 @@ const NewMatchModal = ({ tournamentId }) => {
   };
 
   // close on click outside
+  //TODO fix any
   useEffect(() => {
     const clickHandler = ({ target }) => {
       if (!modal.current) return;
       if (
         !modalOpen ||
-        modal.current.contains(target) ||
-        trigger.current.contains(target)
+        (modal.current as any).contains(target) ||
+        (trigger.current as any).contains(target)
       )
         return;
       setModalOpen(false);
@@ -94,7 +95,7 @@ const NewMatchModal = ({ tournamentId }) => {
                   onClick={() => handleNewMatch()}
                   className={`block w-full p-3 text-base font-medium text-center text-black hover:bg-green-600 transition border rounded-lg border-primary bg-primary hover:bg-opacity-90`}
                 >
-                  <a href={`/tournaments/${tournamentId}`}> Agregar </a> 
+                  <a href={`/tournaments/${tournamentId}`}> Agregar </a>
                 </button>
               </div>
             </div>

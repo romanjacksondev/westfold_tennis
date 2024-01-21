@@ -4,7 +4,9 @@ import RankingTable from "./RankingTable";
 import H2HTable from "./H2HTable";
 
 export default function Stat({ playersList }) {
-  const [ranking, setRanking] = useState([]);
+  const [ranking, setRanking] = useState<{ name: string; points: number }[]>(
+    []
+  );
   const [h2h, setH2h] = useState([]);
 
   const fetchStatsData = () => {
@@ -13,8 +15,8 @@ export default function Stat({ playersList }) {
         return response.json();
       })
       .then((data) => {
-        const array = [];
-        playersList.map((player) => {
+        const array: { name: string; points: number }[] = [];
+        playersList.map((player: { name: string; points: number }) => {
           array.push({
             name: player.name,
             points: !data[player.name] ? 0 : data[player.name],
