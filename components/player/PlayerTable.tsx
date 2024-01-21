@@ -14,11 +14,11 @@ const Table = ({ records }) => {
     return (
       <section className="pt-10 bg-white">
         <div className="container">
-          <div className="flex flex-wrap -mx-4">
+          <div className="flex flex-wrap">
             <div className="w-full ">
               <div className="max-w-full overflow-x-auto">
                 <table className="w-full table-auto">
-                  <thead className="text-center bg-primary">
+                  <thead className="text-center bg-primary text-white">
                     <tr>
                       <th className={TdStyle.ThStyle}> Nombre </th>
                     </tr>

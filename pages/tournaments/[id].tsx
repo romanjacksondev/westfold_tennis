@@ -7,7 +7,11 @@ export default function Tournament({ matchesList, tournamentData }) {
   const router = useRouter();
   const { id } = router.query;
   return (
-    <Match matchesList={matchesList} tournamentId={id} tournamentName={tournamentData.name}></Match>
+    <Match
+      matchesList={matchesList}
+      tournamentId={id}
+      tournamentName={tournamentData.name}
+    ></Match>
   );
 }
 
@@ -24,6 +28,9 @@ export const getStaticPaths: GetStaticPaths<{ id: string }> = async () => {
 
 export const getStaticProps: GetStaticProps = async (context) => {
   const { params } = context;
+  if (!params) {
+    return { notFound: true };
+  }
   const id = params.id;
   let matches = await prisma.match.findMany({
     where: {
@@ -53,10 +60,10 @@ export const getStaticProps: GetStaticProps = async (context) => {
 
   const tournament = await prisma.tournament.findUnique({
     where: {
-      id: String(id)
+      id: String(id),
     },
-  })
- const tournamentData = JSON.parse(JSON.stringify(tournament));
+  });
+  const tournamentData = JSON.parse(JSON.stringify(tournament));
   return {
     props: { matchesList, tournamentData },
   };
