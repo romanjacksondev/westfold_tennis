@@ -19,7 +19,7 @@ export default function Layout({ children }) {
           className="absolute bottom-0 mb-10 z-99 text-white"
           onClick={() => setSkipThisShit(true)}
         >
-          Omitir esto, o no
+          Omitir esto, o no...
         </div>
       </div>
     );
