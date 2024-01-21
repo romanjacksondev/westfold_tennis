@@ -9,7 +9,7 @@ const NewPlayerModal = () => {
   const modal = useRef(null);
   const [data, setData] = useState();
   const router = useRouter();
-  
+
   const handleNewPlayer = async () => {
     const res = await fetch("/api/new_player", {
       method: "POST",
@@ -22,13 +22,15 @@ const NewPlayerModal = () => {
   };
 
   // close on click outside
+  // TODO fix any
   useEffect(() => {
     const clickHandler = ({ target }) => {
       if (!modal.current) return;
+      if (!trigger.current) return;
       if (
         !modalOpen ||
-        modal.current.contains(target) ||
-        trigger.current.contains(target)
+        (modal.current as any).contains(target) ||
+        (trigger.current as any).contains(target)
       )
         return;
       setModalOpen(false);

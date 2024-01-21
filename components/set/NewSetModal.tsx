@@ -15,7 +15,7 @@ const NewSetModal = ({ matchId, player1Id, player2Id }) => {
       ...data,
       matchId: matchId,
       player1Id: player1Id,
-      player2Id: player2Id
+      player2Id: player2Id,
     };
     const res = await fetch("/api/new_set", {
       method: "POST",
@@ -31,10 +31,12 @@ const NewSetModal = ({ matchId, player1Id, player2Id }) => {
   useEffect(() => {
     const clickHandler = ({ target }) => {
       if (!modal.current) return;
+      if (!trigger.current) return;
+
       if (
         !modalOpen ||
-        modal.current.contains(target) ||
-        trigger.current.contains(target)
+        (modal.current as any).contains(target) ||
+        (trigger.current as any).contains(target)
       )
         return;
       setModalOpen(false);
@@ -73,7 +75,7 @@ const NewSetModal = ({ matchId, player1Id, player2Id }) => {
             className="w-full max-w-[570px] rounded-[20px] bg-white py-12 px-8 text-center md:py-[60px] md:px-[70px]"
           >
             <h3 className="pb-2 text-xl font-bold text-dark sm:text-2xl">
-            Agregar Set
+              Agregar Set
             </h3>
             <span
               className={`mx-auto mb-6 inline-block h-1 w-[90px] rounded bg-primary`}
@@ -93,7 +95,8 @@ const NewSetModal = ({ matchId, player1Id, player2Id }) => {
                 <button
                   onClick={() => handleNewSet()}
                   className={`block w-full p-3 text-base font-medium text-center text-black hover:bg-green-600 transition border rounded-lg border-primary bg-primary hover:bg-opacity-90`}
-                >Agregar
+                >
+                  Agregar
                   {/* <a href={`/tournaments/${tournamentId}`}> Agregar </a>  */}
                 </button>
               </div>
