@@ -14,7 +14,7 @@ const Table = ({ records }) => {
     return (
       <section className="pt-10 bg-white">
         <div className="container">
-          <div className="flex flex-wrap -mx-4">
+          <div className="flex flex-wrap -">
             <div className="w-full ">
               <div className="max-w-full overflow-x-auto">
                 <table className="w-full table-auto">
@@ -30,18 +30,10 @@ const Table = ({ records }) => {
                   <tbody>
                     {records.map((venue) => (
                       <tr key={venue.id}>
-                        <td className={TdStyle.TdStyle}>
-                          {venue.name}
-                        </td>
-                        <td className={TdStyle.TdStyle}>
-                          {venue.points}
-                        </td>
-                        <td className={TdStyle.TdStyle}>
-                          {venue.phone}
-                        </td>                        
-                        <td className={TdStyle.TdStyle}>
-                          {venue.address}
-                        </td>
+                        <td className={TdStyle.TdStyle}>{venue.name}</td>
+                        <td className={TdStyle.TdStyle}>{venue.points}</td>
+                        <td className={TdStyle.TdStyle}>{venue.phone}</td>
+                        <td className={TdStyle.TdStyle}>{venue.address}</td>
                       </tr>
                     ))}
                   </tbody>
