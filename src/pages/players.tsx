@@ -1,6 +1,6 @@
 import { GetStaticProps } from "next";
-import prisma from "../lib/prisma";
-import Player from "../components/player/Player";
+import prisma from "../../lib/prisma";
+import Player from "../../components/player/Player";
 
 export default function Players({ playersList }) {
   return <Player playersList={playersList} />;

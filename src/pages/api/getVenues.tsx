@@ -1,8 +1,8 @@
-import prisma from "../../lib/prisma";
+import prisma from "../../../lib/prisma";
 
 export default async function handler(req, res) {
   try {
-    const response = await prisma.player.findMany();
+    const response = await prisma.venue.findMany();
     res.status(200).json({ response });
   } catch (e) {
     console.log(e);

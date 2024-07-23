@@ -1,6 +1,6 @@
 import { GetStaticProps } from "next";
-import prisma from "../lib/prisma";
-import Stat from "../components/stats/Stat";
+import prisma from "../../lib/prisma";
+import Stat from "../../components/stats/Stat";
 
 export default function Stats({ playersList }) {
   return <Stat playersList={playersList} />;

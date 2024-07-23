@@ -1,6 +1,6 @@
-import prisma from "../../lib/prisma";
+import prisma from "../../../lib/prisma";
 import { GetStaticPaths, GetStaticProps } from "next";
-import Match from "../../components/match/Match";
+import Match from "../../../components/match/Match";
 import { useRouter } from "next/router";
 
 export default function Tournament({ matchesList, tournamentData }) {
