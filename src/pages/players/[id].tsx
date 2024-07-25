@@ -1,4 +1,4 @@
-import prisma from "../../../lib/prisma";
+import prisma from "../../lib/prisma";
 import { GetStaticPaths, GetStaticProps } from "next";
 import PlayerDetails from "../../../components/player/PlayerDetails";
 

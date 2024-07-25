@@ -1,5 +1,5 @@
 import { GetStaticProps } from "next";
-import prisma from "../../lib/prisma";
+import prisma from "../lib/prisma";
 import Stat from "../../components/stats/Stat";
 
 export default function Stats({ playersList }) {

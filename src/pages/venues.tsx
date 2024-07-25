@@ -1,5 +1,5 @@
 import { GetStaticProps } from "next";
-import prisma from "../../lib/prisma";
+import prisma from "../lib/prisma";
 import Venue from "../../components/venue/Venue";
 
 export default function Venues({ venuesList }) {

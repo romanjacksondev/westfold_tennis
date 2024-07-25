@@ -21,13 +21,16 @@
         "name": "next"
       }
     ],
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "baseUrl": "src"
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "src/pages/_app.jsx",
+    "src/pages/_document.jsx"
   ],
   "exclude": [
     "node_modules"

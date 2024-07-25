@@ -1,6 +1,11 @@
-import { useEffect, useState } from "react";
-import HomeComponent from "../../components/HomeCard";
+import { useRouter } from 'next/router'
+import { paths } from 'lib/paths'
 
-export default function Home() {
-  return <HomeComponent />;
+const Home = () => {
+  const router = useRouter();
+
+  router.push(paths.torneos.root);
+  // return <HomeComponent />;
 }
+
+export default Home;
