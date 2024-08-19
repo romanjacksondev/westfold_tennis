@@ -1,12 +1,23 @@
 import { Button } from "components/Button";
 import { useSelectors } from 'store/selectors'
 import { useActions } from 'store/actions'
+import useSWR from 'swr'
+
+const fetcher = (...args) => fetch(...args).then((res) => res.json())
 
 const TorneosView = () => {
   const { setTournamentData } = useActions()
   const { tournaments } = useSelectors()
   console.log(tournaments)
   
+
+  const { data, error } = useSWR('/api/tournaments', fetcher)
+ 
+  // if (error) return <div>Failed to load</div>
+  // if (!data) return <div>Loading...</div>
+  console.log(data)
+
+
   const handleOnClick = () => {
     console.log("TEx<tin")
     setTournamentData({

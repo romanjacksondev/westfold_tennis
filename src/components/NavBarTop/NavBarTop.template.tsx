@@ -19,7 +19,7 @@ import User from 'assets/icons/user.svg'
 
 const NavBarTopTemplate = () => {
   // const { logout } = useSession()
-  const { user, config } = useSelectors()
+  const { config } = useSelectors()
   const [isOpen, setIsOpen] = useState(false)
   return (
     <nav className="bg-white px-6 md:px-20 py-4 h-[72px] grid grid-cols-3 border-b-2 border-gray-300 z-20 relative">
