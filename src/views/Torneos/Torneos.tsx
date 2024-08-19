@@ -2,6 +2,7 @@ import { Button } from "components/Button";
 import { useSelectors } from 'store/selectors'
 import { useActions } from 'store/actions'
 import useSWR from 'swr'
+import { format } from 'date-fns';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -63,7 +64,7 @@ const TorneosView = () => {
               <td className={Styles.TdStyle}>{tournament.venue.points}</td>
               <td className={Styles.TdStyle}>
                 {/* <FormatDate dateString={tournament.date} /> */}
-                {tournament.date}
+                {format(tournament.date, 'dd/MM/yyyy')}
               </td>
               <td className={Styles.TdStyle}>
                 {/* <Link href={`/tournaments/${tournament.id}`}> */}

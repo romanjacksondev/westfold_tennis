@@ -1,5 +1,5 @@
 // Components
-// import { ModalProvider } from 'components/Modal'
+ import { ModalProvider } from 'components/Modal'
 // import { ToastContainer } from 'react-toastify'
 // import { Bootstrap } from 'components/Bootstap'
 import { AppProvider } from 'store'
@@ -12,12 +12,12 @@ import 'assets/styles/global.css'
 const App = ({ Component, pageProps }) => {
   return (
     <AppProvider session={pageProps.session}>
-      {/* <ModalProvider>
-        <Bootstrap>
+     <ModalProvider>
+       {/*  <Bootstrap>
           <ToastContainer /> */}
           <Component {...pageProps} />
-        {/* </Bootstrap>
-      </ModalProvider> */}
+       {/*  </Bootstrap>*/}
+      </ModalProvider> 
     </AppProvider>
   )
 }
