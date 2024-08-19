@@ -13,7 +13,7 @@ const AppContext = React.createContext(null)
 const AppProvider = ({ children, session }: AppProviderProps) => {
   const initialState = {
     ...INITIAL_STATE,
-    user: { attributes: {}, session: session || {} },
+    // tournaments: { attributes: {}, session: session || {} },
   }
   const [state, dispatch] = React.useReducer(rootReducer, initialState)
   const store = React.useMemo(() => [state, dispatch], [state])
