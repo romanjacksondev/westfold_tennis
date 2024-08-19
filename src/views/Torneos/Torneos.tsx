@@ -3,18 +3,18 @@ import { useSelectors } from 'store/selectors'
 import { useActions } from 'store/actions'
 import useSWR from 'swr'
 
-const fetcher = (...args) => fetch(...args).then((res) => res.json())
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 const TorneosView = () => {
-  const { setTournamentData } = useActions()
-  const { tournaments } = useSelectors()
-  console.log(tournaments)
+  const { setTournamentData } = useActions();
+  // const { tournaments } = useSelectors()
+  // console.log(tournaments)
   
 
-  const { data, error } = useSWR('/api/tournaments', fetcher)
+  const { data, error } = useSWR('/api/tournaments', fetcher);
  
-  // if (error) return <div>Failed to load</div>
-  // if (!data) return <div>Loading...</div>
+   if (error) return <div>Failed to load</div>
+   if (!data) return <div>Loading...</div>
   console.log(data)
 
 
@@ -56,7 +56,7 @@ const TorneosView = () => {
         </thead>
 
         <tbody className="text-center">
-          {tournaments?.map((tournament) => (
+          {data.map((tournament) => (
             <tr key={tournament.id}>
               <td className={Styles.TdStyle}>{tournament.name}</td>
               <td className={Styles.TdStyle}>{tournament.winner.name}</td>
