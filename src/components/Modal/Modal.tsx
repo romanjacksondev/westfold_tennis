@@ -6,7 +6,7 @@ import clsx from 'clsx'
 import { usePortal } from 'hooks/usePortal'
 
 // Assets
-import image from 'assets/images/close.svg'
+import image from 'assets/images/close-button.svg'
 
 // Models
 import {

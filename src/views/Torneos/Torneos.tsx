@@ -1,13 +1,13 @@
-import { Button } from "components/Button";
-import { useSelectors } from 'store/selectors'
-import { useActions } from 'store/actions'
+// import { useSelectors } from 'store/selectors'
+// import { useActions } from 'store/actions'
 import useSWR from 'swr'
 import { format } from 'date-fns';
+import AddTournament from './components/AddTournament';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
 const TorneosView = () => {
-  const { setTournamentData } = useActions();
+  // const { setTournamentData } = useActions();
   // const { tournaments } = useSelectors()
   // console.log(tournaments)
   
@@ -19,17 +19,7 @@ const TorneosView = () => {
   console.log(data)
 
 
-  const handleOnClick = () => {
-    console.log("TEx<tin")
-    setTournamentData({
-      id: 3,
-      name: "CUALQUIERA",
-      winner: { name: "este" },
-      venue: { points: "987" },
-      tournament: "mcmnv",
-      date: "3-2-2",
-    });
-  }
+
 
   const Styles = {
     // ThStyle: `w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-semibold lg:py-7 lg:px-4`,
@@ -41,10 +31,8 @@ const TorneosView = () => {
 
   return (
     <>
-        <Button onClick={handleOnClick} className="w-40">
-          BOTONAZO
-        </Button>
 
+<AddTournament></AddTournament>
       <table className="w-full table-auto">
         <thead className="text-center bg-gray-300">
           <tr>
