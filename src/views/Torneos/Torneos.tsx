@@ -1,24 +1,22 @@
-// import { useSelectors } from 'store/selectors'
-// import { useActions } from 'store/actions'
-import useSWR from 'swr'
+import { useSelectors } from 'store/selectors'
+import { useActions } from 'store/actions'
 import { format } from 'date-fns';
 import AddTournament from './components/AddTournament';
-
-const fetcher = (url) => fetch(url).then((res) => res.json());
+import { useEffect, useState } from 'react';
 
 const TorneosView = () => {
-  // const { setTournamentData } = useActions();
-  // const { tournaments } = useSelectors()
-  // console.log(tournaments)
-  
-
-  const { data, error } = useSWR('/api/tournaments', fetcher);
- 
-   if (error) return <div>Failed to load</div>
-   if (!data) return <div>Loading...</div>
-  console.log(data)
+  const { getTournaments } = useActions();
+  const { tournaments } = useSelectors()
 
 
+  console.log("desde Store: " + JSON.stringify(tournaments))
+
+  useEffect(() => {
+    const getTournamentsData = async () => {
+      await getTournaments()
+    }
+    getTournamentsData()
+  }, [])
 
 
   const Styles = {
@@ -32,7 +30,7 @@ const TorneosView = () => {
   return (
     <>
 
-<AddTournament></AddTournament>
+      <AddTournament></AddTournament>
       <table className="w-full table-auto">
         <thead className="text-center bg-gray-300">
           <tr>
@@ -45,19 +43,16 @@ const TorneosView = () => {
         </thead>
 
         <tbody className="text-center">
-          {data.map((tournament) => (
+          {!tournaments.length && tournaments.map((tournament) => (
             <tr key={tournament.id}>
               <td className={Styles.TdStyle}>{tournament.name}</td>
               <td className={Styles.TdStyle}>{tournament.winner.name}</td>
               <td className={Styles.TdStyle}>{tournament.venue.points}</td>
               <td className={Styles.TdStyle}>
-                {/* <FormatDate dateString={tournament.date} /> */}
                 {format(tournament.date, 'dd/MM/yyyy')}
               </td>
               <td className={Styles.TdStyle}>
-                {/* <Link href={`/tournaments/${tournament.id}`}> */}
                 Ver Detalles
-                {/* </Link> */}
               </td>
             </tr>
           ))}

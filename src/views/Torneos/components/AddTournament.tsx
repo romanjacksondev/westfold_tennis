@@ -4,6 +4,8 @@ import AddTournamentForm from "./AddTournamentForm";
 
 export default function AddTournament() {
 
+
+
     const [openModal, setOpenModal] = useState(false)
 
     const handleOnClick = () => {
@@ -12,8 +14,8 @@ export default function AddTournament() {
 
     return <>
         {openModal && (<AddTournamentForm openModal={openModal} setOpenModal={setOpenModal}></AddTournamentForm>)}
-        <Button onClick={handleOnClick} className="w-40">
-            BOTONAZO
+        <Button onClick={handleOnClick} className="w-40" width="fixed" variant="text">
+            Crear Torneo
         </Button>
     </>
 }

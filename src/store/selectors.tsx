@@ -9,7 +9,8 @@ const useSelectors = () => {
     // Config
     config: state.config,
     // Tournament
-    tournaments: state.tournaments
+    tournaments: state.tournaments,
+    players: state.players
   }
 }
 
