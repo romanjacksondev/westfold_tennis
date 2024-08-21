@@ -10,9 +10,8 @@ const TorneosTemplate = ({ torneosList }) => {
         // TdStyle: `border-b border-l border-[#E8E8E8] bg-[#F3F6FF] py-5 px-2 text-center text-base font-medium text-dark`,
         // TdButton: `inline-block px-6 py-2 border rounded border-primary text-primary hover:bg-primary hover:text-white`,
     };
-console.info(torneosList)
-     console.log("torneosList.length en template: " + torneosList.length )
-     console.log("torneos en template: " + JSON.stringify(torneosList) )
+    //  console.log("torneosList.length en template: " + torneosList.length )
+    //  console.log("torneos en template: " + JSON.stringify(torneosList) )
     return (
         <>
             <AddTournament></AddTournament>

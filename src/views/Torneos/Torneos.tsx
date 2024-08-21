@@ -8,7 +8,7 @@ const TorneosView = () => {
   const { tournaments } = useSelectors()
   const [torneosList, setTorneosList] = useState([])
 
-   console.log("desde Store: " + JSON.stringify(tournaments))
+  //  console.log("desde Store: " + JSON.stringify(tournaments))
 
   useEffect(() => {
     const getTournamentsData = async () => {
@@ -18,10 +18,9 @@ const TorneosView = () => {
   }, [])
 
   useEffect(() => {
- console.log("tournaments: " + JSON.stringify(tournaments))
- console.log("tournaments size: " + tournaments?.length)
+//  console.log("tournaments: " + JSON.stringify(tournaments))
+//  console.log("tournaments size: " + tournaments?.length)
     if (tournaments?.length) {
-       console.log("ENTREEE")
       setTorneosList(tournaments)
     }
   }, [tournaments])

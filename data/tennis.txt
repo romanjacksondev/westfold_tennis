@@ -140,7 +140,7 @@ Rodo 1-2 9-8
 Roman 1-2 9-11
 ***********************
 Hidden Court I
-13/07
+13/07/24
 Rodo 4 - 1 roman
 Fer 4 - 2 Ale
 Ale 4 - 1 roman
@@ -154,7 +154,7 @@ Ale 1-2 7-9
 Roman 3-12
 ***********************
 Kauri Club
-20/07
+20/07/24
 Rodo 4 - 3 roman
 Fer 2 - 4 Ale
 Ale 3 - 4 roman
@@ -168,7 +168,7 @@ Fer 1-2  7-10
 Roman 1-2 9-11
 ***********************
 Hindu Club
-13/08
+13/08/24
 Rodo 3 - 4 roman
 Fer 4 - 2 Ale
 Ale 3 - 4 roman
