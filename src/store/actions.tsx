@@ -7,12 +7,24 @@ const useActions = () => {
   // Tournament data
   const getTournaments = async () => actions.getTournaments(dispatch) 
   const setTournamentData = (payload) => actions.setTournamentData(dispatch, payload)
-  const clearTournamentData = () => actions.clearTournamentData(dispatch)
+  const addTournament = (payload) => actions.addTournament(dispatch, payload)
+
+  //Player data
+  const getPlayers = async () => actions.getPlayers(dispatch)
+  const addPlayer = (payload) => actions.addPlayer(dispatch, payload)
+
+  //Player data
+  const getVenues = async () => actions.getVenues(dispatch)
+  const addVenue = (payload) => actions.addVenue(dispatch, payload)
 
   return {
     setTournamentData,
-    clearTournamentData,
-    getTournaments
+    getTournaments,
+    addTournament,
+    getPlayers,
+    addPlayer,
+    getVenues,
+    addVenue
   }
 }
 

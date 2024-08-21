@@ -1,5 +1,7 @@
 export const INITIAL_STATE = {
   tournaments: [],
+  players: [],
+  venues: [],
   config: {
     showSidebar: true,
   },

@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import santanderLogo from 'assets/icons/logotipo.svg'
+import santanderLogo from 'assets/icons/tennis-logotipo.svg'
 
 const SantanderLogo = () => {
   return (

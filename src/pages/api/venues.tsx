@@ -2,9 +2,9 @@ import prisma from "../../lib/prisma";
 
 export default async function handler(req, res) {
   try {
-    const players = await prisma.player.findMany( {} );
+    const venues = await prisma.venue.findMany({});
 
-    res.status(200).json(players);
+    res.status(200).json(venues);
   } catch (e) {
     console.log(e);
     res.status(500).json(e);

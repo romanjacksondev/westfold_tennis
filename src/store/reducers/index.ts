@@ -1,6 +1,6 @@
-// import { errorReducer } from './error'
 import { tournamentReducer } from './tournament'
-// import { adminReducer } from './admin'
+import { playerReducer } from './player'
+import { venueReducer } from './venue'
 
 const reduceReducers = (...reducers) => {
   return (state, action) =>
@@ -9,6 +9,6 @@ const reduceReducers = (...reducers) => {
 
 export const rootReducer = reduceReducers(
   tournamentReducer,
-  // errorReducer,
-  // adminReducer
+  playerReducer,
+  venueReducer
 )

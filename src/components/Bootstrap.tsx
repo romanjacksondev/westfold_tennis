@@ -4,13 +4,14 @@ import { useActions } from "store/actions"
 export const Bootstrap =  ({ children}: any) => {
 
     const [init, setInit] = useState(false)
-    const { getTournaments } = useActions()
+    const { getVenues, getPlayers } = useActions()
 
     useEffect(() => {
         if(!init){
-            getTournaments()
+            getPlayers()
+            getVenues()
             setInit(true)
         }
-    })
+    }, [init])
     return <>{children}</>
 }

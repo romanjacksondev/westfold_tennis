@@ -7,7 +7,6 @@ import { AppProvider } from 'store'
 // Assets
 // import 'react-toastify/dist/ReactToastify.css'
 import 'assets/styles/global.css'
-// import 'config/aws.js'
 
 const App = ({ Component, pageProps }) => {
   return (
