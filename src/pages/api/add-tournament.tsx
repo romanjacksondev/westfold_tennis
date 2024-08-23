@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 // console.log("en el api tournament: " + JSON.stringify(req.body));
 const tournament = req.body;
 try {
-    const tournaments = await prisma.tournament.create({
+    const response = await prisma.tournament.create({
       data:{
         name: tournament.name,
         venueId: tournament.venue.id,
@@ -15,7 +15,7 @@ try {
       }
     });
 
-    res.status(200).json(tournaments);
+    res.status(200).json(response);
   } catch (e) {
     console.log(e);
     res.status(500).json(e);

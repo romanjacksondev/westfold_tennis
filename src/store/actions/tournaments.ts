@@ -18,9 +18,7 @@ const setTournamentData = (dispatch, data) => {
 }
 
 const addTournament = async (dispatch, data) => {
-  // console.log("en el action data: " + JSON.stringify(data));
-
-  const response = await fetch('api/add-tournaments', {
+  const response = await fetch('api/add-tournament', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -29,8 +27,6 @@ const addTournament = async (dispatch, data) => {
     body: JSON.stringify(data)
   });
   const content = await response.json();
-
-  // console.log(content);
 
   dispatch({
     type: types.ADD_TOURNAMENT_DATA,

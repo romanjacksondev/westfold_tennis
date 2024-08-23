@@ -15,7 +15,7 @@ const useActions = () => {
 
   //Player data
   const getVenues = async () => actions.getVenues(dispatch)
-  const addVenue = (payload) => actions.addVenue(dispatch, payload)
+  const addVenue = async (payload) => actions.addVenue(dispatch, payload)
 
   return {
     setTournamentData,

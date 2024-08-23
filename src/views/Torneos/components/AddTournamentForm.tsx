@@ -15,7 +15,6 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
     // console.log(players)
     // console.log(venues)
     const onSubmit = async () => {
-        debugger
         const values = getValues()
         // console.log(values)
         const payload = {
