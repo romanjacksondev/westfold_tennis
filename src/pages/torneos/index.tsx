@@ -1,9 +1,9 @@
 import MainLayout from '../../layouts/Main'
-import Torneo from 'views/Torneos'
+import TournamentsView from 'views/Tournaments'
 
 const Torneos = () => (
   <MainLayout
-    component={Torneo}
+    component={TournamentsView}
     pageTitle={`Torneos`}
   />
 )

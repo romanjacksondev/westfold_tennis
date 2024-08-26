@@ -5,7 +5,7 @@ const Home = () => {
   const router = useRouter()
 
   useEffectOnce(() => {
-    router.push("/torneos")
+    // router.push("/torneos")
   })
 }
 

@@ -12,13 +12,9 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
     const { addTournament } = useActions();
     const { players, venues } = useSelectors()
 
-    // console.log(players)
-    // console.log(venues)
     const onSubmit = async () => {
         const values = getValues()
-        // console.log(values)
         const payload = {
-
             name: values.name,
             venue: values.venue,
             winner: values.winner,

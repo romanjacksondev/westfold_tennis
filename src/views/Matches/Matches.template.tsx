@@ -1,7 +1,6 @@
 import { format } from 'date-fns';
-import AddTournament from './components/AddTournament';
 
-const TorneosTemplate = ({ torneosList }) => {
+const PartidosTemplate = ({ partidosList }) => {
 
     const Styles = {
         // ThStyle: `w-1/6 min-w-[160px] border-l border-transparent py-4 px-3 text-lg font-semibold lg:py-7 lg:px-4`,
@@ -14,20 +13,20 @@ const TorneosTemplate = ({ torneosList }) => {
     //  console.log("torneos en template: " + JSON.stringify(torneosList) )
     return (
         <>
-            <AddTournament></AddTournament>
+            {/* <AddTournament></AddTournament> */}
             <table className="w-full table-auto">
                 <thead className="text-center bg-gray-300">
                     <tr>
-                        <th className={Styles.ThStyle}> Nombre </th>
-                        <th className={Styles.ThStyle}> Ganador </th>
-                        <th className={Styles.ThStyle}> Puntos </th>
-                        <th className={Styles.ThStyle}> Fecha </th>
+                        <th className={Styles.ThStyle}> Jugador </th>
+                        <th className={Styles.ThStyle}> Games </th>
+                        <th className={Styles.ThStyle}> Games </th>
+                        <th className={Styles.ThStyle}> Jugador </th>
                         <th className={Styles.ThStyle}> </th>
                     </tr>
                 </thead>
-
+{/* 
                 <tbody className="text-center">
-                    {torneosList.length > 0 && torneosList.map((tournament) => (
+                    {partidosList.length > 0 && partidosList.map((tournament) => (
                         <tr key={tournament.id}>
                             <td className={Styles.TdStyle}>{tournament.name}</td>
                             <td className={Styles.TdStyle}>{tournament.winner.name}</td>
@@ -40,7 +39,7 @@ const TorneosTemplate = ({ torneosList }) => {
                             </td>
                         </tr>
                     ))}
-                </tbody>
+                </tbody> */}
             </table>
         </>
 
@@ -48,4 +47,4 @@ const TorneosTemplate = ({ torneosList }) => {
 
 }
 
-export default TorneosTemplate
+export default PartidosTemplate

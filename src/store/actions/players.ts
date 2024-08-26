@@ -1,7 +1,7 @@
 import * as types from 'store/actionTypes'
 
 const getPlayers = async (dispatch) => {
-  const response = await fetch('api/players')
+  const response = await fetch('/api/players')
   const json = await response.json();
   dispatch({
     type: types.SET_PLAYERS_DATA,

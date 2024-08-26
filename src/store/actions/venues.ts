@@ -1,7 +1,7 @@
 import * as types from 'store/actionTypes'
 
 const getVenues = async (dispatch) => {
-  const response = await fetch('api/venues')
+  const response = await fetch('/api/venues')
   const json = await response.json();
   dispatch({
     type: types.SET_VENUES_DATA,

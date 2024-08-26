@@ -4,8 +4,6 @@ import AddTournamentForm from "./AddTournamentForm";
 
 export default function AddTournament() {
 
-
-
     const [openModal, setOpenModal] = useState(false)
 
     const handleOnClick = () => {

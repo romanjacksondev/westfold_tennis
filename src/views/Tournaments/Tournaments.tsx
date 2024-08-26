@@ -1,14 +1,12 @@
 import { useSelectors } from 'store/selectors'
 import { useActions } from 'store/actions'
 import { useEffect, useState } from 'react';
-import TorneosTemplate from './Torneos.template';
+import TournamentsTemplate from './Tournaments.template';
 
-const TorneosView = () => {
+const TournamentsView = () => {
   const { getTournaments } = useActions();
   const { tournaments } = useSelectors()
-  const [torneosList, setTorneosList] = useState([])
-
-  //  console.log("desde Store: " + JSON.stringify(tournaments))
+  const [tournamentsList, setTournamentsList] = useState([])
 
   useEffect(() => {
     const getTournamentsData = async () => {
@@ -18,17 +16,15 @@ const TorneosView = () => {
   }, [])
 
   useEffect(() => {
-//  console.log("tournaments: " + JSON.stringify(tournaments))
-//  console.log("tournaments size: " + tournaments?.length)
     if (tournaments?.length) {
-      setTorneosList(tournaments)
+      setTournamentsList(tournaments)
     }
   }, [tournaments])
 
 
   return (
-    <TorneosTemplate torneosList={torneosList}></TorneosTemplate>
+    <TournamentsTemplate tournamentsList={tournamentsList} />
   );
 };
 
-export default TorneosView;
+export default TournamentsView;
