@@ -11,7 +11,7 @@ const useActions = () => {
 
   //Player data
   const getPlayers = async () => actions.getPlayers(dispatch)
-  const addPlayer = (payload) => actions.addPlayer(dispatch, payload)
+  const addPlayer = async (payload) => actions.addPlayer(dispatch, payload)
 
   //Player data
   const getVenues = async () => actions.getVenues(dispatch)

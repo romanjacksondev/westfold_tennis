@@ -17,16 +17,16 @@ const setVenuesData = (dispatch, data) => {
 }
 
 const addVenue = async (dispatch, data) => {
-//logica para enviar nuevo venue a la base
-const response = await fetch('api/add-venue', {
-  method: 'POST',
-  headers: {
-    'Accept': 'application/json',
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(data)
-});
-const content = await response.json();
+  //logica para enviar nuevo venue a la base
+  const response = await fetch('api/add-venue', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  const content = await response.json();
 
   dispatch({
     type: types.ADD_VENUE,

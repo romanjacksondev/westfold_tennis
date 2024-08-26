@@ -12,7 +12,7 @@ const SedesTemplate = ({ venues }) => {
 
     return (
         <>
-                    <AddVenue></AddVenue>
+            <AddVenue></AddVenue>
             <table className="w-full table-auto">
                 <thead className="text-center bg-primary">
                     <tr>
