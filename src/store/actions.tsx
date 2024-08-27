@@ -20,6 +20,7 @@ const useActions = () => {
   //Match data
   const getMatches = async (payload) => actions.getMatches(dispatch, payload)
   const addMatch = async (payload) => actions.addMatch(dispatch, payload)
+  const clearMatches = async () => actions.clearMatches(dispatch)
 
   return {
     setTournamentData,
@@ -30,7 +31,8 @@ const useActions = () => {
     getVenues,
     addVenue,
     getMatches,
-    addMatch
+    addMatch,
+    clearMatches
   }
 }
 

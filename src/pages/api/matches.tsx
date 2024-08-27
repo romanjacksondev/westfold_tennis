@@ -9,6 +9,14 @@ export default async function handler(req, res) {
                 tournamentId: req.query.id
             },
             include: {
+                tournament: {
+                    select: {
+                        name: true, 
+                        winner: {
+                            select: { name: true },
+                        }
+                    }
+                },
                 player1: {
                     select: { name: true },
                 },
@@ -18,7 +26,7 @@ export default async function handler(req, res) {
                 sets: {
                     include: {
                         games: true
-                    }    
+                    }
                 }
             }
         });

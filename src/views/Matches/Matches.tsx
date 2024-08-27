@@ -6,7 +6,7 @@ import { useRouter } from 'next/router'
 
 const PartidosView = () => {
   const router = useRouter()
-  const { getMatches } = useActions();
+  const { getMatches, clearMatches } = useActions();
   const { matches } = useSelectors()
   const [matchesList, setMatchesList] = useState([])
 
@@ -14,10 +14,12 @@ const PartidosView = () => {
     const getMatchesData = async () => {
       await getMatches(router.query.id)
     }
+    clearMatches()
     getMatchesData()
   }, [])
 
   useEffect(() => {
+    
     if (matches?.length) {
       setMatchesList(matches)
     }

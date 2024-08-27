@@ -13,6 +13,13 @@ const TournamentsTemplate = ({ tournamentsList }) => {
     };
     //  console.log("torneosList.length en template: " + torneosList.length )
     //  console.log("torneos en template: " + JSON.stringify(torneosList) )
+
+    if(tournamentsList.length == 0) {
+        return (
+            "LOADING"
+        )
+    }
+
     return (
         <>
             <AddTournament></AddTournament>

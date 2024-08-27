@@ -21,6 +21,13 @@ const setMatchesData = (dispatch, data) => {
   })
 }
 
+const clearMatches = (dispatch) => {
+  dispatch({
+    type: types.CLEAR_MATCHES_DATA
+  })
+}
+
+
 const addMatch = async (dispatch, data) => {
   //logica para enviar nuevo match a la base
   const response = await fetch('/api/add-match', {
@@ -40,4 +47,4 @@ const addMatch = async (dispatch, data) => {
 }
 
 
-export { getMatches, setMatchesData, addMatch }
+export { getMatches, setMatchesData, addMatch, clearMatches }

@@ -10,6 +10,11 @@ export const matchReducer = (state, action) => {
       ...state,
       matches: state.matches.concat(action.payload),
     }),
+
+    [types.CLEAR_MATCHES_DATA]: () => ({
+      ...state,
+      matches: [],
+    }),
   };
   return reducers[action.type] ? reducers[action.type]() : state;
 };
