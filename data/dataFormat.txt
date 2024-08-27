@@ -1,0 +1,74 @@
+player: {
+    id
+    name
+}
+
+id: 1                  id: 2
+name: roman            name: ale    
+-------------------------------------------------
+game: {
+    id
+    winner: player_id
+}
+Un game dice que jugador lo ganó
+id: 1                   id: 2                 
+winner: player_1        winner: player_1
+-------------------------------------------------
+set: {
+    id
+    games: [game_id]
+}
+El set tiene la lista de games jugados
+El set permite calcular quien lo ganó contando la cantidad de games de cada jugador
+Por ejemplo:
+id: 1
+games: [
+        {
+            game_id: 1
+        },
+        {
+            game_id: 2
+        }
+]
+games_player_1: 2
+games_player_2: 0
+winner: player_1
+
+-------------------------------------------------
+match: {
+    id
+    players: [player_id]
+    sets: [set_id]
+}
+El match tiene la lista de sets jugados
+EL match tiene la lista de jugadores que participaron
+El match permite saber quien ganó contando la cantidad de sets de cada jugador
+
+id: 1
+players: [
+    player_1,
+    player_2
+]
+sets: [
+    {
+        set_id: 1
+    }
+]
+sets_player_1: 1
+sets_player_2: 0
+winner: player_1
+-------------------------------------------------
+tournament: {
+    id
+    name
+    location
+    rules: [
+        max_sets
+        max_games_per_set
+    ]
+    matches: [match_id]
+}
+El tournament tiene la lista de matches jugados
+El tournament permite saber quien salió campeon contando la cantidad de matches ganados
+-------------------------------------------------
+league
