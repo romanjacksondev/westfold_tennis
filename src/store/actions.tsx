@@ -3,9 +3,9 @@ import * as actions from './actions/index'
 
 const useActions = () => {
   const { dispatch } = useAppContext()
-  
+
   // Tournament data
-  const getTournaments = async () => actions.getTournaments(dispatch) 
+  const getTournaments = async () => actions.getTournaments(dispatch)
   const setTournamentData = (payload) => actions.setTournamentData(dispatch, payload)
   const addTournament = async (payload) => actions.addTournament(dispatch, payload)
 
@@ -13,9 +13,13 @@ const useActions = () => {
   const getPlayers = async () => actions.getPlayers(dispatch)
   const addPlayer = async (payload) => actions.addPlayer(dispatch, payload)
 
-  //Player data
+  //Venue data
   const getVenues = async () => actions.getVenues(dispatch)
   const addVenue = async (payload) => actions.addVenue(dispatch, payload)
+
+  //Match data
+  const getMatches = async (payload) => actions.getMatches(dispatch, payload)
+  const addMatch = async (payload) => actions.addMatch(dispatch, payload)
 
   return {
     setTournamentData,
@@ -24,7 +28,9 @@ const useActions = () => {
     getPlayers,
     addPlayer,
     getVenues,
-    addVenue
+    addVenue,
+    getMatches,
+    addMatch
   }
 }
 

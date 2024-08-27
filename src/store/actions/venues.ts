@@ -18,7 +18,7 @@ const setVenuesData = (dispatch, data) => {
 
 const addVenue = async (dispatch, data) => {
   //logica para enviar nuevo venue a la base
-  const response = await fetch('api/add-venue', {
+  const response = await fetch('/api/add-venue', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',

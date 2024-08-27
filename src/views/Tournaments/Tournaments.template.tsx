@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
 import AddTournament from './components/AddTournament';
+import Link from 'next/link';
 
 const TournamentsTemplate = ({ tournamentsList }) => {
 
@@ -36,7 +37,7 @@ const TournamentsTemplate = ({ tournamentsList }) => {
                                 {format(tournament.date, 'dd/MM/yyyy')}
                             </td>
                             <td className={Styles.TdStyle}>
-                                Ver Detalles
+                                <Link href={`/torneos/${tournament.id}`}>Ver Detalles</Link>
                             </td>
                         </tr>
                     ))}

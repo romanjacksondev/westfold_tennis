@@ -18,7 +18,7 @@ const setTournamentData = (dispatch, data) => {
 }
 
 const addTournament = async (dispatch, data) => {
-  const response = await fetch('api/add-tournament', {
+  const response = await fetch('/api/add-tournament', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',

@@ -1,11 +1,7 @@
 import MatchesView from 'views/Matches'
 import MainLayout from '../../../layouts/Main'
 
-interface Props {
-  id: string;
-}
-
-const Partidos = ({ id }: Props) => (
+const Partidos = () => (
   <MainLayout
     component={MatchesView}
     pageTitle={`Partidos`}

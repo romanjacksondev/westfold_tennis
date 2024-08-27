@@ -2,6 +2,7 @@ export const INITIAL_STATE = {
   tournaments: [],
   players: [],
   venues: [],
+  matches: [],
   config: {
     showSidebar: true,
   },

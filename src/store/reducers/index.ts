@@ -1,6 +1,7 @@
 import { tournamentReducer } from './tournament'
 import { playerReducer } from './player'
 import { venueReducer } from './venue'
+import { matchReducer } from './match'
 
 const reduceReducers = (...reducers) => {
   return (state, action) =>
@@ -10,5 +11,6 @@ const reduceReducers = (...reducers) => {
 export const rootReducer = reduceReducers(
   tournamentReducer,
   playerReducer,
-  venueReducer
+  venueReducer,
+  matchReducer
 )

@@ -18,7 +18,7 @@ const setPlayersData = (dispatch, data) => {
 
 const addPlayer = async (dispatch, data) => {
   //logica para enviar nuevo player a la base
-  const response = await fetch('api/add-player', {
+  const response = await fetch('/api/add-player', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',

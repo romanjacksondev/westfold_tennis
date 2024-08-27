@@ -2,32 +2,30 @@ import { useSelectors } from 'store/selectors'
 import { useActions } from 'store/actions'
 import { useEffect, useState } from 'react';
 import MatchesTemplate from './Matches.template';
+import { useRouter } from 'next/router'
 
 const PartidosView = () => {
-  const { getTournaments } = useActions();
-  // const { matches } = useSelectors()
-  const [partidosList, setPartidosList] = useState([])
+  const router = useRouter()
+  const { getMatches } = useActions();
+  const { matches } = useSelectors()
+  const [matchesList, setMatchesList] = useState([])
 
-  //  console.log("desde Store: " + JSON.stringify(tournaments))
+  useEffect(() => {
+    const getMatchesData = async () => {
+      await getMatches(router.query.id)
+    }
+    getMatchesData()
+  }, [])
 
-  // useEffect(() => {
-  //   const getTournamentsData = async () => {
-  //     await getTournaments()
-  //   }
-  //   getTournamentsData()
-  // }, [])
-
-//   useEffect(() => {
-// //  console.log("tournaments: " + JSON.stringify(tournaments))
-// //  console.log("tournaments size: " + tournaments?.length)
-//     if (tournaments?.length) {
-//       setTorneosList(tournaments)
-//     }
-//   }, [tournaments])
+  useEffect(() => {
+    if (matches?.length) {
+      setMatchesList(matches)
+    }
+  }, [matches])
 
 
   return (
-    <MatchesTemplate partidosList={partidosList}></MatchesTemplate>
+    <MatchesTemplate matchesList={matchesList}></MatchesTemplate>
   );
 };
 
