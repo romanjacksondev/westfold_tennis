@@ -1,7 +1,7 @@
 import { TextHeadingH1 } from "components/Text";
 import { calculatePlayerStats } from "lib/helpers";
 import { Stat } from './Stat.interface'
-import AddMatch from './components/AddMatch' 
+import AddMatch from './components/AddMatch'
 
 
 const PartidosTemplate = ({ matchesList }) => {
@@ -38,10 +38,9 @@ const PartidosTemplate = ({ matchesList }) => {
     if (matchesList.length == 0 || !matchesList[0].tournament) {
         return (
             <>
-            <AddMatch></AddMatch>
-            No se encontraron partidos 
+                <AddMatch></AddMatch>
+                No se encontraron partidos
             </>
-            
         )
     }
 

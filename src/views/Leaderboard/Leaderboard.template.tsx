@@ -31,8 +31,8 @@ const LeaderboardTemplate = ({ leaderboard }) => {
                     {leaderboard.length > 0 && leaderboard.map((lead, index) => (
                         <tr key={index}>
                             <td className={Styles.TdStyle}>{index + 1}</td>
-                            <td className={Styles.TdStyle}>{lead.name}</td>
-                            <td className={Styles.TdStyle}>{lead.points}</td>
+                            <td className={Styles.TdStyle}>{lead.key}</td>
+                            <td className={Styles.TdStyle}>{lead.value}</td>
                         </tr>
                     ))}
                 </tbody>

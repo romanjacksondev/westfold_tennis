@@ -3,12 +3,11 @@ import { TournamentType, Tournament } from '../views/Leaderboard/Leaderboard.int
 
 
 export const getNestedProperty = (obj: any, reference: string) => {
-    return reference.split('.').reduce((o,k) => o && o[k], obj)
+    return reference.split('.').reduce((o, k) => o && o[k], obj)
 }
 
-export const calculatePlayerStats = (matches): Stat[]  => {
+export const calculatePlayerStats = (matches): Stat[] => {
     const playerStats = {};
-
     matches.forEach(match => {
         const { winnerId, player1Id, player2Id, sets } = match;
 
@@ -106,6 +105,7 @@ export const calculatePlayerStats = (matches): Stat[]  => {
 
 // Función para obtener los puntos para una posición
 export const getPointsForPosition = (tournamentType: TournamentType, position: number): number => {
+
     const pointEntry = tournamentType.tournamentTypePoints.find(
         (entry) => position >= entry.initial_position && position <= entry.final_position
     );
@@ -115,21 +115,68 @@ export const getPointsForPosition = (tournamentType: TournamentType, position: n
 // Función para calcular puntos totales por jugador
 export const calculatePlayerPoints = (tournaments: Tournament[]): Record<string, number> => {
     const playerPoints: Record<string, number> = {};
+    for (let indexFor = 0; indexFor < tournaments.length; indexFor++) {
+        // console.log(tournaments[indexFor].name)
 
-    tournaments.forEach(tournament => {
-        tournament.matches.forEach(match => {
-            const winnerId = match.winnerId;
-            const position = tournament.matches.filter(m => m.winnerId === winnerId).length; // Posición por el número de victorias
-
-            const points = getPointsForPosition(tournament.tournamentType, position);
-            
-            if (!playerPoints[winnerId]) {
-                playerPoints[winnerId] = 0;
+        const positions = calculatePlayerStats(tournaments[indexFor].matches)
+        // console.log(positions)
+        positions.forEach((position, index) => {
+            const points = getPointsForPosition(tournaments[indexFor].tournamentType, index + 1);
+            // console.log("index+1 "  + index+1)    
+            // console.log("points " + points + " para " + position.name)
+            if (!playerPoints[position.name]) {
+                playerPoints[position.name] = 0;
             }
-            playerPoints[winnerId] += points;
+            playerPoints[position.name] += points;
         });
-    });
-
+        // console.log(playerPoints)
+    }
     return playerPoints;
 };
 
+
+export const createH2H = (matches) => {
+    // Inicializamos un objeto para guardar los resultados
+    const results = {};
+    // debugger
+    // Iteramos sobre cada partido en los datos
+    matches.forEach(match => {
+        // Obtenemos los nombres de los jugadores y el ganador
+        const jugador1 = match.player1.name;
+        const jugador2 = match.player2.name;
+        const ganador = match.winner.name;
+
+        // Inicializamos los jugadores en el objeto si no están
+        if (!results[jugador1]) {
+            results[jugador1] = { won: {}, lost: {} };
+        }
+        if (!results[jugador2]) {
+            results[jugador2] = { won: {}, lost: {} };
+        }
+
+        // Determinamos el resultado del partido para cada jugador
+        if (ganador === jugador1) {
+            // El jugador1 ganó
+            if (!results[jugador1].won[jugador2]) {
+                results[jugador1].won[jugador2] = 0;
+            }
+            if (!results[jugador2].lost[jugador1]) {
+                results[jugador2].lost[jugador1] = 0;
+            }
+            results[jugador1].won[jugador2]++;
+            results[jugador2].lost[jugador1]++;
+        } else if (ganador === jugador2) {
+            // El jugador2 ganó
+            if (!results[jugador2].won[jugador1]) {
+                results[jugador2].won[jugador1] = 0;
+            }
+            if (!results[jugador1].lost[jugador2]) {
+                results[jugador1].lost[jugador2] = 0;
+            }
+            results[jugador2].won[jugador1]++;
+            results[jugador1].lost[jugador2]++;
+        }
+    });
+
+    return results;
+}

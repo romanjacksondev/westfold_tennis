@@ -12,6 +12,7 @@ const getMatches = async (dispatch, data) => {
     type: types.SET_MATCHES_DATA,
     payload: json || [],
   })
+  return json
 }
 
 const setMatchesData = (dispatch, data) => {

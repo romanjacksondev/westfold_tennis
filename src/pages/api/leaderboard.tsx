@@ -30,7 +30,25 @@ export default async function handler(req, res) {
                         }
                     }
                 },
-                matches:true
+                matches:{
+                    include: {
+                        player1: {
+                            select: {
+                                name:true
+                            }
+                        },
+                        player2: {
+                            select: {
+                                name:true
+                            }
+                        },
+                        sets: {
+                            include: {
+                                games: true
+                            }
+                        }
+                    }
+                }
             }
         });
 

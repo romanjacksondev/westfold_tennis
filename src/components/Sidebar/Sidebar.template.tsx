@@ -18,6 +18,7 @@ import Hamburguer from 'assets/images/hamburguer.svg'
 import Tournament from 'assets/icons/tournament-bracket.svg'
 import Venue from 'assets/icons/tennis-court.svg'
 import Ranking from 'assets/icons/tennis-leaderboard.svg'
+import Stats from 'assets/icons/tennis-stats.svg'
 
 const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
   const router = useRouter()
@@ -42,6 +43,12 @@ const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
       label: 'Sedes',
       icon: Venue,
       path: "/sedes",
+    }
+    ,    
+    {
+      label: 'Estadisticas',
+      icon: Stats,
+      path: "/estadisticas",
     }
   ]
 
