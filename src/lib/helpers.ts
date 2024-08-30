@@ -1,3 +1,135 @@
+import { Stat } from "views/Matches/Stat.interface";
+import { TournamentType, Tournament } from '../views/Leaderboard/Leaderboard.interfaces'
+
+
 export const getNestedProperty = (obj: any, reference: string) => {
     return reference.split('.').reduce((o,k) => o && o[k], obj)
 }
+
+export const calculatePlayerStats = (matches): Stat[]  => {
+    const playerStats = {};
+
+    matches.forEach(match => {
+        const { winnerId, player1Id, player2Id, sets } = match;
+
+        // Inicializa los jugadores en el objeto playerStats si no existen
+        if (!playerStats[player1Id]) {
+            playerStats[player1Id] = {
+                id: player1Id,
+                name: match.player1?.name || 'Unknown',
+                matchesWon: 0,
+                matchesLost: 0,
+                gamesWon: 0,
+                gamesLost: 0
+            };
+        }
+
+        if (!playerStats[player2Id]) {
+            playerStats[player2Id] = {
+                id: player2Id,
+                name: match.player2?.name || 'Unknown',
+                matchesWon: 0,
+                matchesLost: 0,
+                gamesWon: 0,
+                gamesLost: 0
+            };
+        }
+
+        // Determina el resultado del partido para cada jugador
+        const matchResult = (winnerId === player1Id) ? player1Id : player2Id;
+        const losingPlayer = (winnerId === player1Id) ? player2Id : player1Id;
+
+        // Incrementa las estadísticas de los jugadores
+        playerStats[matchResult].matchesWon += 1;
+        playerStats[losingPlayer].matchesLost += 1;
+
+        sets && sets.forEach(set => {
+            const { games } = set;
+
+            games.forEach(game => {
+                const { winnerId: gameWinnerId } = game;
+
+                if (!playerStats[gameWinnerId]) {
+                    playerStats[gameWinnerId] = {
+                        id: gameWinnerId,
+                        name: gameWinnerId === player1Id ? match.player1?.name : match.player2?.name,
+                        matchesWon: 0,
+                        matchesLost: 0,
+                        gamesWon: 0,
+                        gamesLost: 0
+                    };
+                }
+
+                playerStats[gameWinnerId].gamesWon += 1;
+
+                const gameLoserId = (gameWinnerId === player1Id) ? player2Id : player1Id;
+
+                if (!playerStats[gameLoserId]) {
+                    playerStats[gameLoserId] = {
+                        id: gameLoserId,
+                        name: gameLoserId === player1Id ? match.player1?.name : match.player2?.name,
+                        matchesWon: 0,
+                        matchesLost: 0,
+                        gamesWon: 0,
+                        gamesLost: 0
+                    };
+                }
+
+                playerStats[gameLoserId].gamesLost += 1;
+            });
+        });
+    });
+
+    // Convierte el objeto playerStats en un array
+    const statsArray: Stat[] = Object.values(playerStats);
+
+    // Ordena el array por cantidad de partidos ganados, diferencia de juegos y juegos ganados
+    statsArray.sort((a, b) => {
+        // Primero, ordenar por cantidad de partidos ganados en orden descendente
+        if (b.matchesWon !== a.matchesWon) {
+            return b.matchesWon - a.matchesWon;
+        }
+
+        // Luego, ordenar por diferencia entre juegos ganados y perdidos en orden descendente
+        const diffA = a.gamesWon - a.gamesLost;
+        const diffB = b.gamesWon - b.gamesLost;
+        if (diffB !== diffA) {
+            return diffB - diffA;
+        }
+
+        // Finalmente, ordenar por cantidad de juegos ganados en orden descendente
+        return b.gamesWon - a.gamesWon;
+    });
+
+    return statsArray;
+};
+
+// Función para obtener los puntos para una posición
+export const getPointsForPosition = (tournamentType: TournamentType, position: number): number => {
+    const pointEntry = tournamentType.tournamentTypePoints.find(
+        (entry) => position >= entry.initial_position && position <= entry.final_position
+    );
+    return pointEntry ? pointEntry.points : 0;
+};
+
+// Función para calcular puntos totales por jugador
+export const calculatePlayerPoints = (tournaments: Tournament[]): Record<string, number> => {
+    const playerPoints: Record<string, number> = {};
+
+    tournaments.forEach(tournament => {
+        tournament.matches.forEach(match => {
+            const winnerId = match.winnerId;
+            const position = tournament.matches.filter(m => m.winnerId === winnerId).length; // Posición por el número de victorias
+
+            const points = getPointsForPosition(tournament.tournamentType, position);
+            
+            if (!playerPoints[winnerId]) {
+                playerPoints[winnerId] = 0;
+            }
+            playerPoints[winnerId] += points;
+        });
+    });
+
+    return playerPoints;
+};
+

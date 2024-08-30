@@ -16,11 +16,12 @@ const PartidosView = () => {
     }
     clearMatches()
     getMatchesData()
+
   }, [])
 
   useEffect(() => {
-    
     if (matches?.length) {
+      clearMatches()
       setMatchesList(matches)
     }
   }, [matches])

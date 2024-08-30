@@ -17,21 +17,27 @@ import Player from 'assets/icons/tennis-player.svg'
 import Hamburguer from 'assets/images/hamburguer.svg'
 import Tournament from 'assets/icons/tournament-bracket.svg'
 import Venue from 'assets/icons/tennis-court.svg'
+import Ranking from 'assets/icons/tennis-leaderboard.svg'
 
 const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
   const router = useRouter()
   // const { logout } = useSession()
   const items = [
     {
-      label: 'Jugadores',
-      icon: Player,
-      path: "/jugadores",
+      label: 'Ranking',
+      icon: Ranking,
+      path: "/leaderboard",
     },
     {
       label: 'Torneos',
       icon: Tournament,
       path: "/torneos",
     },
+    {
+      label: 'Jugadores',
+      icon: Player,
+      path: "/jugadores",
+    },    
     {
       label: 'Sedes',
       icon: Venue,

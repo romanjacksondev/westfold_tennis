@@ -39,7 +39,7 @@ model Tournament {
   date             DateTime       @default(now())
   matches          Match[]
   tournamentType   TournamentType @relation(fields: [tournamentTypeId], references: [id])
-  tournamentTypeId String         @default("cm0fxfur40000ij499uwoph06")
+  tournamentTypeId String
 }
 
 model TournamentType {
