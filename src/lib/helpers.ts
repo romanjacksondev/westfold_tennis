@@ -1,6 +1,4 @@
-import { Stat } from "views/Matches/Stat.interface";
-import { TournamentType, Tournament } from '../views/Leaderboard/Leaderboard.interfaces'
-
+import { TournamentType, Tournament, Stat } from 'interfaces';
 
 export const getNestedProperty = (obj: any, reference: string) => {
     return reference.split('.').reduce((o, k) => o && o[k], obj)
