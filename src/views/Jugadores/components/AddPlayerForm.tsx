@@ -30,9 +30,10 @@ export default function AddPlayerForm({ openModal, setOpenModal }) {
                 <TextInput
                     name="name"
                     register={register}
-                    placeholder={"Ale"}
+                    placeholder={"Ej. Ale"}
                     label={"Nombre del jugador"}
                     rules={{ required: "Requerido" }}
+                    errors={errors}
                 />
             </div>
         </ModalNewData>
