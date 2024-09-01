@@ -12,7 +12,7 @@ const EstadisticasView = () => {
         const prepareStats = async () => {
             const data = await getMatches("")
             const result = createH2H(data)
-            console.log(result)
+            // console.log(result)
             setH2h(result)
         }
         prepareStats()

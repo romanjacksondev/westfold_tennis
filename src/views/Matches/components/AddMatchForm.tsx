@@ -23,7 +23,7 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
             winner: values.gamesPlayer1 > values.gamesPlayer2 ? values.player1.id : values.player2.id,
             tournamentId: router.query.id
         }
-        console.log(router.query.id)
+        // console.log(router.query.id)
         addMatch(payload)
         setOpenModal(false)
     }
@@ -57,7 +57,7 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
                     placeholder={"4"}
                     label={"Games ganados Jugador 1"}
                     rules={{ required: "Requerido" }}
-                />                
+                />
                 <Select
                     name="player2"
                     placeholder="Ej. Rofer"
@@ -77,7 +77,7 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
                     placeholder={"2"}
                     label={"Games ganados Jugador 2"}
                     rules={{ required: "Requerido" }}
-                />       
+                />
             </div>
         </ModalNewData>
     )

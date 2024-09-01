@@ -2,6 +2,7 @@ import { DatePicker } from "components/DatePicker";
 import ModalNewData from "components/ModalNewData";
 import { Select } from "components/Select";
 import { TextInput } from "components/TextInput";
+import { TournamentCreateInput } from "interfaces";
 import { useForm } from 'react-hook-form'
 import { useActions } from "store/actions";
 import { useSelectors } from "store/selectors";
@@ -10,15 +11,16 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
 
     const { getValues, handleSubmit, register, control, formState: { errors } } = useForm({ mode: 'onSubmit' })
     const { addTournament } = useActions();
-    const { players, venues } = useSelectors()
+    const { players, venues, tournamentTypes } = useSelectors()
 
     const onSubmit = async () => {
         const values = getValues()
-        const payload = {
+        const payload: TournamentCreateInput = {
             name: values.name,
-            venue: values.venue,
-            winner: values.winner,
-            date: new Date()
+            venueId: values.venue.id,
+            winnerId: values.winner.id,
+            date: new Date(),
+            tournamentTypeId: values.tournamentType.id
         }
         // console.log(payload)
         addTournament(payload)
@@ -38,7 +40,7 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
                 <TextInput
                     name="name"
                     register={register}
-                    placeholder={"Solanas VIII"}
+                    placeholder={"Ej. Solanas VIII"}
                     label={"Nombre del torneo"}
                     rules={{ required: "Requerido" }}
                 >
@@ -58,7 +60,7 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
                 </Select>
                 <Select
                     name="venue"
-                    placeholder="Ej. SOlanas"
+                    placeholder="Ej. Solanas"
                     control={control}
                     isSearchable={false}
                     options={
@@ -68,6 +70,19 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
                     errors={errors}
                 >
                     Sede
+                </Select>
+                <Select
+                    name="tournamentType"
+                    placeholder="Ej. Master 1000"
+                    control={control}
+                    isSearchable={false}
+                    options={
+                        tournamentTypes
+                    }
+                    rules={{ required: "Requerido" }}
+                    errors={errors}
+                >
+                    Categoria del Torneo
                 </Select>
                 {/* TODO: No funciona el datepicket */}
                 {/* <DatePicker 

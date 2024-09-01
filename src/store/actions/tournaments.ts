@@ -26,12 +26,14 @@ const addTournament = async (dispatch, data) => {
     },
     body: JSON.stringify(data)
   });
-  const content = await response.json();
+  const json = await response.json();
 
   dispatch({
     type: types.ADD_TOURNAMENT_DATA,
     payload: data,
   })
+
+  return json;
 }
 
 

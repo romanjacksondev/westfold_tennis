@@ -1,3 +1,12 @@
+export interface Stat {
+    id: string;
+    name: string;
+    matchesWon: number;
+    matchesLost: number;
+    gamesWon: number;
+    gamesLost: number;
+  }
+
 export interface TournamentTypePoint {
     initial_position: number;
     final_position: number;
@@ -32,3 +41,11 @@ export interface Player {
     id: string;
     name: string;
 }
+
+export interface TournamentCreateInput {
+    name: string;
+    venueId: string;
+    winnerId: string;
+    date: Date ;
+    tournamentTypeId: string;
+  }
