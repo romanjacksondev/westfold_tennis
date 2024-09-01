@@ -26,7 +26,7 @@ export default function AddPlayerForm({ openModal, setOpenModal }) {
             size={'lg'}
             title={"Agregar Jugador"}
         >
-            <div className="grid grid-cols-1 gap-4 w-full">
+            {/* <div className="grid grid-cols-1 gap-4 w-full">
                 <TextInput
                     name="name"
                     register={register}
@@ -35,7 +35,20 @@ export default function AddPlayerForm({ openModal, setOpenModal }) {
                     rules={{ required: "Requerido" }}
                     errors={errors}
                 />
+            </div> */}
+            <div className="grid grid-cols-2 gap-4 w-full">
+                <TextInput
+                    name="name"
+                    register={register}
+                    placeholder={"Ej. Ale"}
+                    label={"Nombre del jugador"}
+                    rules={{ required: "Requerido" }}
+                >
+                </TextInput>
             </div>
+
+
+
         </ModalNewData>
     )
 
