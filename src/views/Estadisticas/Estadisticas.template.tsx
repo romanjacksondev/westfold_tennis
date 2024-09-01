@@ -78,7 +78,7 @@ const EstadisticasTemplate = ({ h2h }) => {
             <tr key={jugador1}>
               <td className={Styles.TdStyle}>{jugador1}</td>
               {jugadores.map(jugador2 => (
-                <td className={Styles.TdStyle} key={jugador2}>
+                <td className={Styles.TdStyle} key={jugador2}>      
                   <div><strong>Ganados:</strong> {h2h[jugador1].won[jugador2] || 0}</div>
                   <div><strong>Perdidos:</strong> {h2h[jugador1].lost[jugador2] || 0}</div>
                 </td>
