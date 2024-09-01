@@ -2,16 +2,21 @@ import prisma from "../../lib/prisma";
 
 export default async function handler(req, res) {
 
-    // console.log("buscando en bd: " + req.query.id)
+    console.log("buscando en bd: " + req.query.id)
+    var whereCondition = {}
+    if (req.query.id) {
+        whereCondition = {
+            tournamentId: req.query.id
+        }
+    }
+
     try {
         const matches = await prisma.match.findMany({
-            where: {
-                tournamentId: req.query.id
-            },
+            where: whereCondition,
             include: {
                 tournament: {
                     select: {
-                        name: true, 
+                        name: true,
                         winner: {
                             select: { name: true },
                         }
@@ -21,6 +26,9 @@ export default async function handler(req, res) {
                     select: { name: true },
                 },
                 player2: {
+                    select: { name: true },
+                },
+                winner: {
                     select: { name: true },
                 },
                 sets: {

@@ -1,0 +1,64 @@
+acumulado
+Fer     650+200+250+500+330+165+250+100  = 2445
+Roman   1000+330+100+200+200+100+100+100 = 2130
+Rodo    400+200+165+200+500+250+165+250  = 2130
+Ale     400+500+100+330+200+100+100+165  = 1895
+
+hindu 1000
+------
+Roman   1000
+Fer	    650
+Ale	    400
+Rodo    400
+
+kauri 500
+------
+Ale	    500
+Roman	330
+Rodo	200
+Fer     200
+
+hidden 250
+------
+Fer	    250
+Rodo	165
+Ale	    100
+Roman   100
+
+solanas iv
+------
+Fer     500	
+Ale	    330
+Rodo	200
+Roman   200
+
+solanas III
+------
+Rodo    500	
+Fer	    330
+Ale	    200
+Roman   200
+
+castelar I
+------
+Rodo    250	
+Fer	    165
+Ale	    100
+Roman   100
+
+rotonda IV
+------
+Fer     250	
+Rodo    165
+Ale	    100
+Roman   100
+
+ramos I
+------
+Rodo    250	
+Ale     165
+Fer	    100
+Roman   100
+
+
+

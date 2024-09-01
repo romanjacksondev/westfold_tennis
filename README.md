@@ -1,13 +1,13 @@
 Improvements
 
     -   General UI
-    -   Forms errors
-    -   Hamburguer button (color when open)
-    -   refresh of data after insert
-    -   reset modal form on re opening
     -   improve APIs to serve multiple http verbs
-    -   cambiar el No Options Found de los dropdown
     -   standarize variables names
     -   add date picker for tournamenet
     -   loading icon when waiting server
-    -   add tournament name and champion in tournament matches list
+
+
+como hacer backup db
+pg_dump --host ep-square-violet-03228723-pooler.us-east-1.postgres.vercel-storage.com --port 5432 --user default verceldb > backup.sql
+
+xOtlz6rZR7Tm

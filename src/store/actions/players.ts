@@ -7,6 +7,7 @@ const getPlayers = async (dispatch) => {
     type: types.SET_PLAYERS_DATA,
     payload: json || [],
   })
+  return json;
 }
 
 const setPlayersData = (dispatch, data) => {

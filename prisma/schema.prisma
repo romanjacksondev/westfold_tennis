@@ -15,7 +15,7 @@ model Venue {
   phone       String
   address     String
   tournaments Tournament[]
-  points String
+  points      String
 }
 
 model Player {
@@ -30,14 +30,33 @@ model Player {
 }
 
 model Tournament {
-  id   String @id @default(cuid())
-  name String
-  venueId  String
-  venue    Venue    @relation(fields: [venueId], references: [id])
-  winnerId String
-  winner   Player   @relation(fields: [winnerId], references: [id])
-  date     DateTime @default(now())
-  matches  Match[]
+  id               String         @id @default(cuid())
+  name             String
+  venueId          String
+  venue            Venue          @relation(fields: [venueId], references: [id])
+  winnerId         String
+  winner           Player         @relation(fields: [winnerId], references: [id])
+  date             DateTime       @default(now())
+  matches          Match[]
+  tournamentType   TournamentType @relation(fields: [tournamentTypeId], references: [id])
+  tournamentTypeId String
+}
+
+model TournamentType {
+  id                   String                 @id @default(cuid())
+  name                 String
+  tournaments          Tournament[]
+  tournamentTypePoints TournamentTypePoints[]
+}
+
+model TournamentTypePoints {
+  id String @id @default(cuid())
+
+  initial_position Int
+  final_position   Int
+  points           Int
+  tournamentType   TournamentType @relation(fields: [tournamentTypeId], references: [id])
+  tournamentTypeId String
 }
 
 model Match {
