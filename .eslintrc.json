@@ -1,6 +1,16 @@
 {
-    "extends": [
-      "next/core-web-vitals",
-      "plugin:prettier/recommended"
-    ]
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "next",
+    "next/core-web-vitals",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "rules": {
+    "no-console": "warn",
+    "@typescript-eslint/explicit-module-boundary-types": "off"
   }
+}
