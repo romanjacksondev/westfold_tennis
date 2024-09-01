@@ -33,8 +33,7 @@ export default function AddPlayerForm({ openModal, setOpenModal }) {
                     placeholder={"Ale"}
                     label={"Nombre del jugador"}
                     rules={{ required: "Requerido" }}
-                >
-                </TextInput>
+                />
             </div>
         </ModalNewData>
     )
