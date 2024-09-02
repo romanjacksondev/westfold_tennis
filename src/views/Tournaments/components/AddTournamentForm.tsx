@@ -85,13 +85,13 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
                     Categoria del Torneo
                 </Select>
                 {/* TODO: No funciona el datepicket */}
-                {/* <DatePicker 
-                    name={"date"} 
-                    placeholder="Fecha del torneo" 
-                    handleChange={(d) => console.log(d)} 
-                    control={control} 
+                <DatePicker
+                    name={"date"}
+                    placeholder="Fecha del torneo"
+                    handleChange={(d) => console.log(d)}
+                    control={control}
                     rules={{ required: "Requerido" }}>
-                </DatePicker> */}
+                </DatePicker>
             </div>
         </ModalNewData>
     )
