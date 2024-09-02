@@ -1,7 +1,7 @@
 import { TextHeadingH1 } from "components/Text";
 import { calculatePlayerStats } from "lib/helpers";
-import { Stat } from './Stat.interface'
 import AddMatch from './components/AddMatch'
+import { Stat } from "interfaces";
 
 
 const PartidosTemplate = ({ matchesList }) => {
