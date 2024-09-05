@@ -5,6 +5,7 @@ import { TournamentCreateInput } from "interfaces";
 import { useForm } from 'react-hook-form'
 import { useActions } from "store/actions";
 import { useSelectors } from "store/selectors";
+import PropTypes from 'prop-types';
 
 export default function AddTournamentForm({ openModal, setOpenModal }) {
 
@@ -14,25 +15,24 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
 
     const onSubmit = async () => {
         const values = getValues()
+        const playerName = players.find(player => player.id == values.winner.id).name
+        const venuePoints = venues.find(venue => venue.id == values.venue.id).points
+
         const payload: TournamentCreateInput = {
             name: values.name,
             venueId: values.venue.id,
             winnerId: values.winner.id,
-            date: new Date(),
-            tournamentTypeId: values.tournamentType.id
-        }
-        const playerName = players.find(player => player.id == values.winner.id).name
-        const venuePoints = venues.find(venue => venue.id == values.venue.id).points
-        const extraData = {
-            "winner": {
+            date: new Date(values.date),
+            tournamentTypeId: values.tournamentType.id,
+            winner: {
                 "name": playerName
             },
-            "venue": {
+            venue: {
                 "points": venuePoints
             }
         }
-        console.log(extraData)
-        addTournament(payload, extraData)
+
+        addTournament(payload)
         setOpenModal(false)
     }
 
@@ -107,3 +107,8 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
     )
 
 }    
+
+AddTournamentForm.propTypes = {
+    openModal: PropTypes.func.isRequired, 
+    setOpenModal: PropTypes.shape({}).isRequired, 
+};

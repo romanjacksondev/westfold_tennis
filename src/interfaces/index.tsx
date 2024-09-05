@@ -48,4 +48,7 @@ export interface TournamentCreateInput {
     winnerId: string;
     date: Date ;
     tournamentTypeId: string;
+    winner: object;
+    venue: object
+
   }

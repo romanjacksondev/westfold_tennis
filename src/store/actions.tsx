@@ -7,7 +7,7 @@ const useActions = () => {
   // Tournament data
   const getTournaments = async () => actions.getTournaments(dispatch)
   const setTournamentData = (payload) => actions.setTournamentData(dispatch, payload)
-  const addTournament = async (payload, extraData) => actions.addTournament(dispatch, payload, extraData)
+  const addTournament = async (payload) => actions.addTournament(dispatch, payload)
 
   //Player data
   const getPlayers = async () => actions.getPlayers(dispatch)

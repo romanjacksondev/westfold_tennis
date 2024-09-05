@@ -11,7 +11,8 @@ export default async function handler(req, res) {
         winner: {
           select: { name: true },
         },
-        venue: true
+        venue: {
+          select: { points: true }}
       },
     });
 

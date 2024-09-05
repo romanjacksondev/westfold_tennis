@@ -1,8 +1,5 @@
 import * as types from 'store/actionTypes'
 
-
-
-
 const getTournaments = async (dispatch) => {
   const response = await fetch('api/tournaments')
   const json = await response.json();
@@ -22,7 +19,7 @@ const setTournamentData = (dispatch, data) => {
   })
 }
 
-const addTournament = async (dispatch, payload, extraData) => {
+const addTournament = async (dispatch, payload) => {
   const response = await fetch('/api/add-tournament', {
     method: 'POST',
     headers: {
@@ -32,10 +29,7 @@ const addTournament = async (dispatch, payload, extraData) => {
     body: JSON.stringify(payload)
   });
   const json = await response.json();
-  // console.log(json)
   payload.id = json.id
-  payload.winner = extraData.winner
-  payload.venue = extraData.venue
 
   dispatch({
     type: types.ADD_TOURNAMENT_DATA,

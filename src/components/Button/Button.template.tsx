@@ -40,8 +40,6 @@ export const ButtonTemplate = ({
   loading = false,
 }: ButtonProps) => {
   const handleClick = (e) => {
-    console.log('Event:', e);
-    console.log(typeof onClick === 'function');
     if (!loading && !disabled && onClick) onClick(e)
   }
 
