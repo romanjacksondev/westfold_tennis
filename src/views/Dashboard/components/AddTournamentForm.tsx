@@ -1,4 +1,3 @@
-import { DatePicker } from "components/DatePicker";
 import ModalNewData from "components/ModalNewData";
 import { Select } from "components/Select";
 import { TextInput } from "components/TextInput";
@@ -22,8 +21,18 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
             date: new Date(),
             tournamentTypeId: values.tournamentType.id
         }
-        // console.log(payload)
-        addTournament(payload)
+        const playerName = players.find(player => player.id == values.winner.id).name
+        const venuePoints = venues.find(venue => venue.id == values.venue.id).points
+        const extraData = {
+            "winner": {
+                "name": playerName
+            },
+            "venue": {
+                "points": venuePoints
+            }
+        }
+        console.log(extraData)
+        addTournament(payload, extraData)
         setOpenModal(false)
     }
 
@@ -93,15 +102,6 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
                     type="date"
                 >
                 </TextInput>
-              
-                {/* TODO: No funciona el datepicket */}
-                {/* <DatePicker
-                    name={"date"}
-                    placeholder="Fecha del torneo"
-                    handleChange={(d) => console.log(d)}
-                    control={control}
-                    rules={{ required: "Requerido" }}>
-                </DatePicker> */}
             </div>
         </ModalNewData>
     )

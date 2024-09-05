@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
-import AddTournament from './components/AddTournament';
 import Link from 'next/link';
 import { Headline } from 'components/Text';
+import PropTypes from 'prop-types';
 
 const TournamentsTemplate = ({ tournamentsList }) => {
 
@@ -16,9 +16,10 @@ const TournamentsTemplate = ({ tournamentsList }) => {
         )
     }
 
+console.info(tournamentsList)
+
     return (
         <>
-            <AddTournament></AddTournament>
             <Headline >Historial de torneos</Headline> 
             <table className="w-full table-auto">
                 <thead className="text-center bg-gray-300">
@@ -48,9 +49,15 @@ const TournamentsTemplate = ({ tournamentsList }) => {
                 </tbody>
             </table>
         </>
-
     )
-
 }
+
+TournamentsTemplate.propTypes = {
+    tournamentsList: PropTypes.arrayOf( // Especifica que es una lista de objetos
+        PropTypes.shape({
+            name: PropTypes.string.isRequired, // Define las propiedades del objeto
+        })
+    ).isRequired, // La prop 'tournamentsList' es requerida
+};
 
 export default TournamentsTemplate
