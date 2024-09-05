@@ -1,4 +1,4 @@
-import AddVenue from "./components/AddVenue";
+import PropTypes from 'prop-types';
 
 const SedesTemplate = ({ venues }) => {
 
@@ -12,7 +12,6 @@ const SedesTemplate = ({ venues }) => {
 
     return (
         <>
-            <AddVenue></AddVenue>
             <table className="w-full table-auto">
                 <thead className="text-center bg-primary">
                     <tr>
@@ -37,5 +36,11 @@ const SedesTemplate = ({ venues }) => {
         </>
     );
 }
+
+SedesTemplate.propTypes = {
+    venues: PropTypes.arrayOf( 
+        PropTypes.shape({})
+    ).isRequired
+};
 
 export default SedesTemplate
