@@ -19,6 +19,7 @@ import Tournament from 'assets/icons/tournament-bracket.svg'
 import Venue from 'assets/icons/tennis-court.svg'
 import Ranking from 'assets/icons/tennis-leaderboard.svg'
 import Stats from 'assets/icons/tennis-stats.svg'
+import Dashboard from 'assets/icons/tennis-dashboard.svg'
 
 const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
   const router = useRouter()
@@ -51,7 +52,7 @@ const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
     },    
     {
       label: 'Dashboard',
-      icon: Stats,
+      icon: Dashboard,
       path: "/dashboard",
     }
   ]

@@ -63,6 +63,22 @@ module.exports = {
           letterSpacing: '-0.02em'
         }
       ],
+      'heading-h3':[
+        '2.75rem',
+        {
+          lineHeigth: '3.5rem',
+          fontWeith: '700',
+          letterSpacing: '-0.02em'
+        }
+      ],
+      'heading-h4':[
+        '2.125rem',
+        {
+          lineHeigth: '2.5rem',
+          fontWeith: '700',
+          letterSpacing: '-0.02em'
+        }
+      ],  
       headline:[
         '3rem',
         {

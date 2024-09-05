@@ -1,4 +1,4 @@
-import { TextHeadingH1 } from "components/Text";
+import { TextHeadingH4 } from "components/Text";
 import { calculatePlayerStats } from "lib/helpers";
 import { Stat } from "interfaces";
 import PropTypes from 'prop-types';
@@ -43,9 +43,8 @@ const PartidosTemplate = ({ matchesList }) => {
 
     return (
         <>
-            <TextHeadingH1>{matchesList[0].tournament.name}</TextHeadingH1>
-            <TextHeadingH1>Campeon:  {matchesList[0].tournament.winner.name}</TextHeadingH1>
-            <TextHeadingH1>Resumen del torneo</TextHeadingH1>
+            <TextHeadingH4>{matchesList[0].tournament.winner.name} campeon de {matchesList[0].tournament.name}</TextHeadingH4>
+            <TextHeadingH4>Resumen del torneo</TextHeadingH4>
             <table className="w-full table-auto">
                 <thead className="text-center bg-gray-300">
                     <tr>
@@ -68,7 +67,7 @@ const PartidosTemplate = ({ matchesList }) => {
                     ))}
                 </tbody>
             </table>
-            <TextHeadingH1>Partidos</TextHeadingH1>
+            <TextHeadingH4>Partidos</TextHeadingH4>
             <table className="w-full table-auto">
                 <thead className="text-center bg-gray-300">
                     <tr>
