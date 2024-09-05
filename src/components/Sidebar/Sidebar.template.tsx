@@ -38,17 +38,21 @@ const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
       label: 'Jugadores',
       icon: Player,
       path: "/jugadores",
-    },    
+    },
     {
       label: 'Sedes',
       icon: Venue,
       path: "/sedes",
-    }
-    ,    
+    },
     {
       label: 'Estadisticas',
       icon: Stats,
       path: "/estadisticas",
+    },    
+    {
+      label: 'Dashboard',
+      icon: Stats,
+      path: "/dashboard",
     }
   ]
 
