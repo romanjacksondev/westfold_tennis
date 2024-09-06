@@ -178,3 +178,43 @@ export const createH2H = (matches) => {
 
     return results;
 }
+
+export const countTournamentsByPlayer = (tournaments) => {
+  // Crear un objeto para almacenar las estadísticas
+  const stats = {};
+
+  // Iterar sobre el array de torneos
+  tournaments.forEach(tournament => {
+    const winner = tournament.winner.name;
+    const points = tournament.venue.points;
+
+    // Si el jugador no está en el objeto stats, inicializar su entrada
+    if (!stats[winner]) {
+      stats[winner] = {
+        total: 0,
+        points: {}
+      };
+    }
+
+    // Incrementar el total de torneos ganados
+    stats[winner].total += 1;
+
+    // Incrementar la cantidad de puntos en la categoría correspondiente
+    if (!stats[winner].points[points]) {
+      stats[winner].points[points] = 0;
+    }
+    stats[winner].points[points] += 1;
+  });
+
+  // Convertir el objeto stats a un array de objetos
+  const resultArray = Object.entries(stats).map(([name, { total, points }]) => ({
+    name,
+    total,
+    points
+  }));
+
+  // Ordenar el array por la cantidad de torneos ganados en orden descendente
+  resultArray.sort((a, b) => b.total - a.total);
+
+  return resultArray;
+}

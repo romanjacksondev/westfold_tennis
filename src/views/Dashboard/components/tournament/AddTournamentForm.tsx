@@ -105,7 +105,6 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
             </div>
         </ModalNewData>
     )
-
 }    
 
 AddTournamentForm.propTypes = {

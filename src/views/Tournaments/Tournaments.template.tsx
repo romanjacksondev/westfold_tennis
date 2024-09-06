@@ -53,11 +53,9 @@ console.info(tournamentsList)
 }
 
 TournamentsTemplate.propTypes = {
-    tournamentsList: PropTypes.arrayOf( // Especifica que es una lista de objetos
-        PropTypes.shape({
-            // name: PropTypes.string.isRequired, // Define las propiedades del objeto
-        })
-    ).isRequired, // La prop 'tournamentsList' es requerida
+    tournamentsList: PropTypes.arrayOf(
+        PropTypes.shape({})
+    ).isRequired
 };
 
 export default TournamentsTemplate

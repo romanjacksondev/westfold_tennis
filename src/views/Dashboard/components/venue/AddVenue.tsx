@@ -5,7 +5,6 @@ import AddVenueForm from "./AddVenueForm";
 export default function AddVenue() {
 
     const [openModal, setOpenModal] = useState(false)
-
     const handleOnClick = () => {
         setOpenModal(true)
     }

@@ -1,7 +1,7 @@
 import { format, subMonths } from 'date-fns';
+import PropTypes from 'prop-types';
 
 const LeaderboardTemplate = ({ leaderboard }) => {
-
 
     const Styles = {
         ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l`,
@@ -12,13 +12,12 @@ const LeaderboardTemplate = ({ leaderboard }) => {
 
     // Calcular la fecha hace 12 meses
     const twelveMonthsAgo = subMonths(today, 12);
-    
+
     // Formatear las fechas
     const todayFormatted = format(today, 'dd/MM/yyyy');
     const twelveMonthsAgoFormatted = format(twelveMonthsAgo, 'dd/MM/yyyy');
     return (
         <>
-        Desde {twelveMonthsAgoFormatted} Hasta {todayFormatted}
             <table className="w-full table-auto">
                 <thead className="text-center bg-gray-300">
                     <tr>
@@ -37,8 +36,15 @@ const LeaderboardTemplate = ({ leaderboard }) => {
                     ))}
                 </tbody>
             </table>
+            Desde {twelveMonthsAgoFormatted} hasta {todayFormatted}
         </>
     )
-
 }
+
+LeaderboardTemplate.propTypes = {
+    leaderboard: PropTypes.arrayOf(
+        PropTypes.shape({})
+    ).isRequired
+};
+
 export default LeaderboardTemplate

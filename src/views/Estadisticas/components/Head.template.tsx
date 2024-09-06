@@ -4,8 +4,8 @@ import PropTypes from 'prop-types';
 const HeadTemplate = ({ h2h }) => {
 
   const Styles = {
-    ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l`,
-    TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l`,
+    ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l text-center`,
+    TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l text-center`,
   };
   // console.info(h2h)
   const jugadores = Object.keys(h2h);
@@ -38,10 +38,10 @@ const HeadTemplate = ({ h2h }) => {
               {jugadores.map(jugador2 => (
                 <td className={Styles.TdStyle} key={jugador2}>
                   {
-                    (h2h[jugador1] == h2h[jugador2]) ? <div className="text-center">-</div> :
+                    (h2h[jugador1] == h2h[jugador2]) ? <div>-</div> :
                       <>
-                        <div className="text-center"><strong>Ganados:</strong> {h2h[jugador1].won[jugador2] || 0}</div>
-                        <div className="text-center"><strong>Perdidos:</strong> {h2h[jugador1].lost[jugador2] || 0}</div>
+                        <div><strong>Ganados:</strong> {h2h[jugador1].won[jugador2] || 0}</div>
+                        <div><strong>Perdidos:</strong> {h2h[jugador1].lost[jugador2] || 0}</div>
                       </>
                   }
                 </td>
