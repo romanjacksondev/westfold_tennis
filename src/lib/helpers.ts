@@ -1,4 +1,4 @@
-import { TournamentType, Tournament, Stat } from 'interfaces';
+import { TournamentCategory, Tournament, Stat } from 'interfaces';
 
 export const getNestedProperty = (obj: any, reference: string) => {
     return reference.split('.').reduce((o, k) => o && o[k], obj)
@@ -102,9 +102,9 @@ export const calculatePlayerStats = (matches): Stat[] => {
 };
 
 // Función para obtener los puntos para una posición
-export const getPointsForPosition = (tournamentType: TournamentType, position: number): number => {
+export const getPointsForPosition = (tournamentCategory: TournamentCategory, position: number): number => {
 
-    const pointEntry = tournamentType.tournamentTypePoints.find(
+    const pointEntry = tournamentCategory.tournamentCategoryPoints.find(
         (entry) => position >= entry.initial_position && position <= entry.final_position
     );
     return pointEntry ? pointEntry.points : 0;
@@ -119,7 +119,7 @@ export const calculatePlayerPoints = (tournaments: Tournament[]): Record<string,
         const positions = calculatePlayerStats(tournaments[indexFor].matches)
         // console.log(positions)
         positions.forEach((position, index) => {
-            const points = getPointsForPosition(tournaments[indexFor].tournamentType, index + 1);
+            const points = getPointsForPosition(tournaments[indexFor].tournamentCategory, index + 1);
             // console.log("index+1 "  + index+1)    
             // console.log("points " + points + " para " + position.name)
             if (!playerPoints[position.name]) {

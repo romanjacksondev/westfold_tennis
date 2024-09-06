@@ -2,16 +2,21 @@ import ModalNewData from "components/ModalNewData";
 import { TextInput } from "components/TextInput";
 import { useForm } from 'react-hook-form'
 import { useActions } from "store/actions";
+import PropTypes from 'prop-types';
 
 export default function AddPlayerForm({ openModal, setOpenModal }) {
 
-    const { getValues, handleSubmit, register, formState: { errors } } = useForm({ mode: 'onSubmit' })
+    const { getValues, handleSubmit, register } = useForm({ mode: 'onSubmit' })
     const { addPlayer } = useActions();
 
     const onSubmit = async () => {
         const values = getValues()
         const payload = {
-            name: values.name
+            name: values.name,
+            nickname: values.nickname,
+            lastname: values.lastname,
+            phone: values.phone,
+            mail: values.mail
         }
         addPlayer(payload)
         setOpenModal(false)
@@ -31,11 +36,43 @@ export default function AddPlayerForm({ openModal, setOpenModal }) {
                     name="name"
                     register={register}
                     placeholder={"Ej. Ale"}
-                    label={"Nombre del jugador"}
+                    label={"Nombre"}
                     rules={{ required: "Requerido" }}
-                >
-                </TextInput>
+                />
+                <TextInput
+                    name="nickname"
+                    register={register}
+                    placeholder={"Ej. Fettel"}
+                    label={"Apodo"}
+                    // rules={{ required: "Requerido" }}
+                />
+                <TextInput
+                    name="lastname"
+                    register={register}
+                    placeholder={"Ej. Miguel"}
+                    label={"Apellido"}
+                    // rules={{ required: "Requerido" }}
+                />
+                <TextInput
+                    name="phone"
+                    register={register}
+                    placeholder={"Ej. 11 4561-6547"}
+                    label={"Telefono"}
+                // rules={{ required: "Requerido" }}
+                />
+                <TextInput
+                    name="mail"
+                    register={register}
+                    placeholder={"Ej. mail@mailto"}
+                    label={"Mail"}
+                // rules={{ required: "Requerido" }}
+                />
             </div>
         </ModalNewData>
     )
 }    
+
+AddPlayerForm.propTypes = {
+    openModal: PropTypes.bool.isRequired,
+    setOpenModal: PropTypes.func.isRequired,
+};

@@ -13,6 +13,10 @@ const JugadoresTemplate = ({ players }) => {
                 <thead className="text-center bg-gray-300">
                     <tr>
                         <th className={Styles.ThStyle}> Nombre </th>
+                        <th className={Styles.ThStyle}> Apodo </th>
+                        <th className={Styles.ThStyle}> Apellido </th>
+                        <th className={Styles.ThStyle}> Telefono </th>
+                        <th className={Styles.ThStyle}></th>
                     </tr>
                 </thead>
 
@@ -22,6 +26,18 @@ const JugadoresTemplate = ({ players }) => {
                             <td className={Styles.TdStyle}>
                                 {player.name}
                             </td>
+                            <td className={Styles.TdStyle}>
+                                {player.nickname}
+                            </td>
+                            <td className={Styles.TdStyle}>
+                                {player.lastname}
+                            </td>
+                            <td className={Styles.TdStyle}>
+                                {player.phone}
+                            </td>
+                            <td className={Styles.TdStyle}>
+                                INFO
+                            </td>                                                                                    
                         </tr>
                     ))}
                 </tbody>

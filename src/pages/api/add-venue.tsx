@@ -10,8 +10,7 @@ try {
       data:{
         name: venue.name,
         phone: venue.phone,
-        address: venue.address,
-        points: venue.points
+        address: venue.address
       }
     });
 

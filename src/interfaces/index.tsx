@@ -7,15 +7,15 @@ export interface Stat {
     gamesLost: number;
   }
 
-export interface TournamentTypePoint {
+export interface TournamentCategoryPoint {
     initial_position: number;
     final_position: number;
     points: number;
 }
 
-export interface TournamentType {
+export interface TournamentCategory {
     name: string;
-    tournamentTypePoints: TournamentTypePoint[];
+    tournamentCategoryPoints: TournamentCategoryPoint[];
 }
 
 export interface Match {
@@ -32,8 +32,8 @@ export interface Tournament {
     venueId: string;
     winnerId: string;
     date: string;
-    tournamentTypeId: string;
-    tournamentType: TournamentType;
+    tournamentCategoryId: string;
+    tournamentCategory: TournamentCategory;
     matches: Match[];
 }
 
@@ -45,10 +45,11 @@ export interface Player {
 export interface TournamentCreateInput {
     name: string;
     venueId: string;
-    winnerId: string;
+    championId: string;
     date: Date ;
-    tournamentTypeId: string;
-    winner: object;
-    venue: object
-
+    tournamentCategoryId: string;
+    champion: object;
+    venue: object;
+    surfaceId: string
+    players: []
   }

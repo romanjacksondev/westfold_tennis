@@ -10,9 +10,9 @@ const DashboardView = () => {
     <>
       <AddTournament></AddTournament>
 
-      <AddVenue></AddVenue>
-
       <AddMatch></AddMatch>
+
+      <AddVenue></AddVenue>
 
       <AddPlayer></AddPlayer>
     </>

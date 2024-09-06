@@ -8,11 +8,11 @@ export default async function handler(req, res) {
           date: 'desc',
         }],
       include: {
-        winner: {
+        champion: {
           select: { name: true },
         },
         venue: {
-          select: { points: true }}
+          select: { name: true }}
       },
     });
 

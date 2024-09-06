@@ -37,19 +37,22 @@ model Venue {
   phone       String
   address     String
   tournaments Tournament[]
-  points      String
 }
 
 model Player {
   id             String       @id @default(cuid())
   name           String
+  nickname       String?
+  lastname       String?
+  mail           String?
+  phone          String?
   games          Game[]
   sets           Set[]
   tournaments    Tournament[] @relation("participations")
   winnerMatches  Match[]      @relation("Winner")
   player1Matches Match[]      @relation("Player1")
   player2Matches Match[]      @relation("Player2")
-  torneosGanados Tournament[] @relation("champion") // Relación uno a muchos (torneos ganados)
+  wonTournaments Tournament[] @relation("champion") // Relación uno a muchos (torneos ganados)
 }
 
 model TournamentCategory {

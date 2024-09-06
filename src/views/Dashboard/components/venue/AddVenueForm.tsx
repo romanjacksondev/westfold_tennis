@@ -2,28 +2,23 @@ import ModalNewData from "components/ModalNewData";
 import { TextInput } from "components/TextInput";
 import { useForm } from 'react-hook-form'
 import { useActions } from "store/actions";
-import { useSelectors } from "store/selectors";
 import PropTypes from 'prop-types';
-import { Select } from "components/Select";
 
 export default function AddVenueForm({ openModal, setOpenModal }) {
 
-    const { getValues, handleSubmit, control, register, formState: { errors } } = useForm({ mode: 'onSubmit' })
+    const { getValues, handleSubmit, register } = useForm({ mode: 'onSubmit' })
     const { addVenue } = useActions();
-    const { tournamentTypes } = useSelectors()
     
     const onSubmit = async () => {
         const values = getValues()
         const payload = {
             name: values.name,
             phone: values.phone,
-            address: values.address,
-            points: values.points
+            address: values.address
         }
         addVenue(payload)
         setOpenModal(false)
     }
-console.log(tournamentTypes)
     return (
         <ModalNewData
             buttonText={'Crear Sede'}
@@ -42,19 +37,6 @@ console.log(tournamentTypes)
                     rules={{ required: "Requerido" }}
                 >
                 </TextInput>
-                <Select
-                    name="tournamentType"
-                    placeholder="Ej. Master 1000"
-                    control={control}
-                    isSearchable={false}
-                    options={
-                        tournamentTypes
-                    }
-                    rules={{ required: "Requerido" }}
-                    errors={errors}
-                >
-                    Categoria
-                </Select>
                 <TextInput
                     name="phone"
                     register={register}

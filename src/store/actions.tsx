@@ -26,8 +26,10 @@ const useActions = () => {
   const getLeaderboard = async () => actions.getLeaderboard(dispatch)
 
   //Tournament Types
-  const getTournamentTypes = async () => actions.getTournamentTypes(dispatch)
+  const getTournamentCategories = async () => actions.getTournamentCategories(dispatch)
 
+  //Surface data
+  const getSurfaces = async () => actions.getSurfaces(dispatch)
 
   return {
     setTournamentData,
@@ -41,7 +43,8 @@ const useActions = () => {
     addMatch,
     clearMatches,
     getLeaderboard,
-    getTournamentTypes
+    getTournamentCategories,
+    getSurfaces
   }
 }
 
