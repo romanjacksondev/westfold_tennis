@@ -31,6 +31,7 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
             venue: {
                 "points": venuePoints
             },
+            tournamentCategory: values.tournamentCategory,
             players: values.players
         }
 

@@ -50,6 +50,7 @@ export interface TournamentCreateInput {
     tournamentCategoryId: string;
     champion: object;
     venue: object;
-    surfaceId: string
-    players: []
+    surfaceId: string;
+    tournamentCategory: object;
+    players: [];
   }

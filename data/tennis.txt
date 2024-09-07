@@ -180,10 +180,17 @@ Roman 3-0 12-8
 Fer 2-1  10-8
 Ale 1-2  9-10
 Rodo 0-3 7-12
-
-
-|       | rodo  | ale | fer | roman |
-| rodo  |   X   | 6-3 | 4-5 |  5-4  |
-| ale   |  3-6  |  X  | 0-9 |  5-4  |
-| fer   |  5-4  | 9-0 |  X  |  7-2  |
-| roman |  4-5  | 4-5 | 2-7 |   X   |
+***********************
+Hidden Court II - Cemento
+06/09/24
+Ale 4 - 2 Rodo
+Fer 4 - 1 Ale
+Rodo 4 - 0 Roman
+Fer 4(7) - (0)3 Roman
+Ale 4 - 1 Roman
+Fer 4(7) - (4)3 Rodo
+----------------
+Fer 3-0 12-7
+Ale 2-1  9-7
+Rodo 1-2  7-8
+Roman 0-3 4-12

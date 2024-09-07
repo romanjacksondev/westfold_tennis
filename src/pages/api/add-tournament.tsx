@@ -4,6 +4,9 @@ import prisma from "../../lib/prisma";
 export default async function handler(req, res) {
 
 const tournament: TournamentCreateInput = req.body;
+
+// console.log(tournament)
+
 try {
     const response = await prisma.tournament.create({
       data:{
