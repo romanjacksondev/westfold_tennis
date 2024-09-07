@@ -20,7 +20,7 @@ const EstadisticasView = () => {
         const prepareChampionships = async () => {
             const data = await getTournaments()
             const result = countTournamentsByPlayer(data)
-            console.log(result)
+            // console.log(result)
             setChampionships(result)
         }
 

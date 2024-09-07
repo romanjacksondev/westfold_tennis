@@ -40,7 +40,7 @@ export const calculatePlayerStats = (matches): Stat[] => {
         playerStats[matchResult].matchesWon += 1;
         playerStats[losingPlayer].matchesLost += 1;
 
-        sets && sets.forEach(set => {
+        sets.forEach(set => {
             const { games } = set;
 
             games.forEach(game => {
@@ -114,10 +114,10 @@ export const getPointsForPosition = (tournamentCategory: TournamentCategory, pos
 export const calculatePlayerPoints = (tournaments: Tournament[]): Record<string, number> => {
     const playerPoints: Record<string, number> = {};
     for (let indexFor = 0; indexFor < tournaments.length; indexFor++) {
-        // console.log(tournaments[indexFor].name)
+        // console.log("nombre torneo: ",tournaments[indexFor].name)
 
         const positions = calculatePlayerStats(tournaments[indexFor].matches)
-        // console.log(positions)
+        // console.log("positions: ",positions)
         positions.forEach((position, index) => {
             const points = getPointsForPosition(tournaments[indexFor].tournamentCategory, index + 1);
             // console.log("index+1 "  + index+1)    
@@ -186,7 +186,7 @@ export const countTournamentsByPlayer = (tournaments) => {
   // Iterar sobre el array de torneos
   tournaments.forEach(tournament => {
     const winner = tournament.champion.name;
-    const points = tournament.venue.points;
+    const points = tournament.tournamentCategory.name;
 
     // Si el jugador no está en el objeto stats, inicializar su entrada
     if (!stats[winner]) {

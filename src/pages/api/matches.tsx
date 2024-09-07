@@ -2,8 +2,7 @@ import prisma from "../../lib/prisma";
 
 export default async function handler(req, res) {
 
-    console.log("buscando en bd: " + req.query.id)
-    var whereCondition = {}
+    let whereCondition = {}
     if (req.query.id) {
         whereCondition = {
             tournamentId: req.query.id
@@ -17,7 +16,7 @@ export default async function handler(req, res) {
                 tournament: {
                     select: {
                         name: true,
-                        winner: {
+                        champion: {
                             select: { name: true },
                         }
                     }
@@ -38,7 +37,6 @@ export default async function handler(req, res) {
                 }
             }
         });
-        // console.log(JSON.stringify(matches))
         res.status(200).json(matches);
     } catch (e) {
         console.log(e);

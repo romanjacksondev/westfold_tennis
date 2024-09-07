@@ -49,7 +49,7 @@ const ChampionshipsTemplate = ({ championships }) => {
             <th className={Styles.ThStyle}>Nombre</th>
             <th className={Styles.ThStyle}>Total de Torneos Ganados</th>
             {pointTypes.map(point => (
-              <th className={Styles.ThStyle} key={point}>Categoria {point}</th>
+              <th className={Styles.ThStyle} key={point}>{point}</th>
             ))}
           </tr>
         </thead>

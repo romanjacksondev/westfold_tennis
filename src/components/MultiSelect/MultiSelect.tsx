@@ -117,9 +117,18 @@ const MultiSelect = ({
 }
 
 MultiSelect.propTypes = {
-    options: PropTypes.array.isRequired,
-    label: PropTypes.string.isRequired,
-
-}
+        name: PropTypes.string.isRequired,
+        control: PropTypes.object.isRequired,
+        rules: PropTypes.object,
+        options: PropTypes.array.isRequired,
+        label: PropTypes.string.isRequired,
+        placeholder: PropTypes.string,
+        isDisabled: PropTypes.bool,
+        isLoading: PropTypes.bool,
+        optionLabel: PropTypes.string,
+        optionValue: PropTypes.string,
+        defaultValue: PropTypes.array,
+        className: PropTypes.string
+    };
 
 export default MultiSelect

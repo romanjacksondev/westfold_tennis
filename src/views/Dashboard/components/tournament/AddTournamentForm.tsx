@@ -17,7 +17,7 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
         const values = getValues()
         const playerName = players.find(player => player.id == values.champion.id).name
         const venuePoints = venues.find(venue => venue.id == values.venue.id).points
-        console.log(values)
+        // console.log(values)
         const payload: TournamentCreateInput = {
             name: values.name,
             venueId: values.venue.id,

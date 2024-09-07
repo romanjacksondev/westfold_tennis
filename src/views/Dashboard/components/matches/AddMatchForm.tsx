@@ -4,7 +4,6 @@ import { TextInput } from "components/TextInput";
 import { useForm, useWatch } from 'react-hook-form'
 import { useActions } from "store/actions";
 import { useSelectors } from "store/selectors";
-import { useRouter } from 'next/router'
 import PropTypes from 'prop-types';
 import { useState } from "react";
 
@@ -13,7 +12,6 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
     const { getValues, handleSubmit, register, control, formState: { errors } } = useForm({ mode: 'onSubmit' })
     const { addMatch } = useActions();
     const { players, tournaments } = useSelectors()
-    const router = useRouter()
     // Estado local para manejar la cantidad de sets
     const [setQuantity, setSetQuantity] = useState(1);
 
@@ -33,8 +31,6 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
             winner: values[`gamesPlayer1_set${index + 1}`] > values[`gamesPlayer2_set${index + 1}`] ? values.player1.id : values.player2.id
         }));
 
-        console.log("sets: " , sets)
-
         let player1Wins = 0;
         let player2Wins = 0;
     
@@ -45,15 +41,13 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
                 player2Wins += 1;  // Jugador 2 gana este set
             }
         });
-
-        console.log("winner: " , player1Wins > player2Wins ? values.player1.id : values.player2.id)
-        
+        // console.log("winner: " , player1Wins > player2Wins ? values.player1.id : values.player2.id)
 
         const payload = {
             idPlayer1: values.player1.id,
             idPlayer2: values.player2.id,
             setQuantity: setQuantity,
-            tournamentId: router.query.id,
+            tournamentId: values.tournament.id,
             sets: sets,
             winner: player1Wins > player2Wins ? values.player1.id : values.player2.id
         }
@@ -92,7 +86,7 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
                     Torneo
                 </Select>
                 <Select
-                    name="asdasdas"
+                    name="setsQuantity"
                     placeholder="Ej. Ale"
                     defaultValue={{
                                 label:"1",
@@ -151,21 +145,6 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
                 >
                     Jugador 2
                 </Select>
-                {/* <TextInput
-                    name="gamesPlayer1"
-                    register={register}
-                    placeholder={"4"}
-                    label={"Games ganados Jugador 1"}
-                    rules={{ required: "Requerido" }}
-                />
-
-                <TextInput
-                    name="gamesPlayer2"
-                    register={register}
-                    placeholder={"2"}
-                    label={"Games ganados Jugador 2"}
-                    rules={{ required: "Requerido" }}
-                /> */}
                 {Array.from({ length: setQuantity }).map((_, index) => (
                     <div key={index} className="col-span-2">
                         <h3 className="text-sm font-medium mb-2">Set {index + 1}</h3>
@@ -190,7 +169,6 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
             </div>
         </ModalNewData>
     )
-
 }
 
 AddMatchForm.propTypes = {
