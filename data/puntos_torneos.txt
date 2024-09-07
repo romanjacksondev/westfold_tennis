@@ -1,0 +1,35 @@
+Grand Slam
+    Ganador: 2000 puntos
+    Finalista: 1300
+    Semifinal: 800
+    Cuartos de final: 400
+    R16: 200
+    R32: 100
+    R64: 50
+    R128: 10
+
+Masters 1000 (96 jugadores)
+    Ganador: 1000 puntos
+    Finalista: 650
+    Semifinal: 400
+    Cuartos de final: 200
+    R16: 100
+    R32:  50
+    R64: 30
+    R128: 10
+
+ATP 500 (48 jugadores)
+    Ganador: 500 puntos
+    Finalista: 330
+    Semifinal: 200
+    Cuartos de final: 100
+    R16: 50
+    R32: 25
+
+ATP 250 (48 jugadores)
+    Ganador: 250 puntos
+    Finalista: 165
+    Semifinal: 100
+    Cuartos de final: 50
+    R16: 25
+    R32: 13

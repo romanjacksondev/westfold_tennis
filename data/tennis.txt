@@ -1,17 +1,6 @@
-|       | rodo  | ale | fer | roman |
-| rodo  |   X   | 6-3 | 4-5 |  5-4  |
-| ale   |  3-6  |  X  | 0-9 |  5-4  |
-| fer   |  5-4  | 9-0 |  X  |  7-2  |
-| roman |  4-5  | 4-5 | 2-7 |   X   |
-
-
-19/02
-coronado open
-la quinta
-NO OFICIAL
 ***********************
 Solanas I
-05/05
+05/05/23
 Ale 2 - 3 rodo
 Roman 1 - 3 fer
 Rodo 3 - 2 fer
@@ -25,7 +14,7 @@ Roman 1-2 4 8
 Ale 0-3 6 9
 ***********************
 Solanas II
-19/05
+19/05/23
 Fer 1 - 3 Rodo
 Roman 3 - 2 Ale 
 Roman 3 - 1 rodo
@@ -39,7 +28,7 @@ Fer 2 - 1 7 6 +1
 Ale 0 - 3 6 9 -3
 ***********************
 La rotonda I
-21/07
+21/07/23
 Fer 3 - 0 rodo
 Ale 0 - 3 roman
 Ale 1 - fer 3
@@ -53,7 +42,7 @@ Roman 1 - 2 6 6
 Ale 0 - 3 1 9
 ***********************
 Rotonda II
-28/7
+28/7/23
 Rodo 0 - Ale 3
 Roman 0 - Fer 3
 Ale 1 - Fer 3
@@ -62,12 +51,12 @@ Ale 3 - 2 roman
 Fer 3 - 0 rodo
 ----------------
 Fer 3-0 9 1
-Ale 2-1 7 4
-Roman 1-2 4 8
+Ale 2-1 7 5
+Roman 1-2 5 8
 Rodo 0-3 2 9
 ***********************
 Rotonda III
-11/08
+11/08/23
 Fer 3 - 1 roman
 Rodo 3 - 0 Ale
 Fer 3 - 2 ale
@@ -80,8 +69,8 @@ Roman 2-1 7 6
 Rodo 1-2 4 6
 Ale 0-3 4 9
 ***********************
-08-09
-Ramos mejia 250 I
+Club Bomberitos I
+08/09/23
 Ale 1 - 4 fer
 Rodo 4 - 0 roman
 Ale 4 - 1 rodo
@@ -95,7 +84,7 @@ Fer 1-2 6 9
 Roman 1-2 5 9
 ***********************
 Rotonda IV
-22/09
+22/09/23
 Ale 6 - 4 rodo
 Ale 7 - 5 roman
 Rodo 6 - 4 fer
@@ -108,8 +97,8 @@ Fer 2 1 16-10 +6
 Ale 2 1 14-15 -1
 Roman 0 3 12 19 -7
 ***********************
-Castelar I
-06/10
+Sport Tenis Curuchet I (Castelar)
+06/10/23
 Rodo 4 - 2 fer
 Ale 4 - 1 roman
 Roman 4 - 3 rodo
@@ -123,7 +112,7 @@ Ale 1 2 9-9
 Roman 1 2 7-11
 ***********************
 Solanas III
-27/10
+27/10/23
 Rodo 4 - 2 roman
 Fer 4 - 2 Ale
 Ale 4 - 2 roman
@@ -135,82 +124,73 @@ Rodo 2 1 10-9
 Fer 2 1 9-8
 Ale 1 2 9-10
 Roman 1 2 8-9
-
-
-
-
-
-player: {
-    id
-    name
-}
-
-id: 1                  id: 2
-name: roman            name: ale    
--------------------------------------------------
-game: {
-    id
-    winner: player_id
-}
-Un game dice que jugador lo ganó
-id: 1                   id: 2                 
-winner: player_1        winner: player_1
--------------------------------------------------
-set: {
-    id
-    games: [game_id]
-}
-El set tiene la lista de games jugados
-El set permite calcular quien lo ganó contando la cantidad de games de cada jugador
-Por ejemplo:
-id: 1
-games: [
-        {
-            game_id: 1
-        },
-        {
-            game_id: 2
-        }
-]
-games_player_1: 2
-games_player_2: 0
-winner: player_1
-
--------------------------------------------------
-match: {
-    id
-    players: [player_id]
-    sets: [set_id]
-}
-El match tiene la lista de sets jugados
-EL match tiene la lista de jugadores que participaron
-El match permite saber quien ganó contando la cantidad de sets de cada jugador
-
-id: 1
-players: [
-    player_1,
-    player_2
-]
-sets: [
-    {
-        set_id: 1
-    }
-]
-sets_player_1: 1
-sets_player_2: 0
-winner: player_1
--------------------------------------------------
-tournament: {
-    id
-    name
-    location
-    rules: [
-        max_sets
-        max_games_per_set
-    ]
-    matches: [match_id]
-}
-El tournament tiene la lista de matches jugados
-El tournament permite saber quien salió campeon contando la cantidad de matches ganados
--------------------------------------------------
-league
+***********************
+Solanas IV
+06/12/23
+Rodo 2 - 4 ale
+Fer 3 - 4 Roman
+Fer 4 - 1 Ale
+Rodo 4 - 0 roman
+Ale 4 - 2 roman
+Rodo 3 - 4 Fer
+----------------
+Fer 2-1 11-8
+Ale 2-1 9-8  
+Rodo 1-2 9-8
+Roman 1-2 6-11
+***********************
+Hidden Court I
+13/07/24
+Rodo 4 - 1 roman
+Fer 4 - 2 Ale
+Ale 4 - 1 roman
+Rodo 3 - 4 Fer
+Fer 4 - 1 Roman
+Rodo 4 - 1 ale
+----------------
+Fer 3-0 12-6
+Rodo 2-1 11-6
+Ale 1-2 7-9 
+Roman 3-12
+***********************
+Kauri Club
+20/07/24
+Rodo 4 - 3 roman
+Fer 2 - 4 Ale
+Ale 3 - 4 roman
+Rodo 4 - 1 Fer
+Fer 4 - 2 Roman
+Rodo 2 - 4 ale
+----------------
+Ale 2-1  11-8
+Rodo 2-1 10-8
+Roman 1-2 9-11
+Fer 1-2  7-10
+***********************
+Hindu Club
+13/08/24
+Rodo 3 - 4 roman
+Fer 4 - 2 Ale
+Ale 3 - 4 roman
+Rodo 2 - 4 Fer
+Fer 2 - 4 Roman
+Rodo 2 - 4 ale
+----------------
+Roman 3-0 12-8
+Fer 2-1  10-8
+Ale 1-2  9-10
+Rodo 0-3 7-12
+***********************
+Hidden Court II - Cemento
+06/09/24
+Ale 4 - 2 Rodo
+Fer 4 - 1 Ale
+Rodo 4 - 0 Roman
+Fer 4(7) - (0)3 Roman
+Ale 4 - 1 Roman
+Fer 4(7) - (4)3 Rodo
+----------------
+Fer 3-0 12-7
+Ale 2-1  9-7
+Rodo 1-2  9-8
+Roman 0-3 4-12
