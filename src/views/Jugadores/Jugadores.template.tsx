@@ -1,3 +1,4 @@
+import { TextHeadingH4 } from 'components/Text';
 import PropTypes from 'prop-types';
 
 const JugadoresTemplate = ({ players }) => {
@@ -9,6 +10,7 @@ const JugadoresTemplate = ({ players }) => {
 
     return (
         <>
+            <TextHeadingH4>Jugadores</TextHeadingH4>
             <table className="w-full table-auto">
                 <thead className="text-center bg-gray-300">
                     <tr>
