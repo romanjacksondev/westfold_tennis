@@ -5,7 +5,7 @@ export interface Stat {
     matchesLost: number;
     gamesWon: number;
     gamesLost: number;
-  }
+}
 
 export interface TournamentCategoryPoint {
     initial_position: number;
@@ -46,11 +46,18 @@ export interface TournamentCreateInput {
     name: string;
     venueId: string;
     championId: string;
-    date: Date ;
+    date: Date;
     tournamentCategoryId: string;
     champion: object;
     venue: object;
     surfaceId: string;
     tournamentCategory: object;
     players: [];
-  }
+}
+
+export interface PlayerStats {
+    total: number;
+    points: {
+        [key: string]: number;
+    };
+}

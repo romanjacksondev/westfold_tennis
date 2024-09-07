@@ -16,7 +16,7 @@ const TournamentsTemplate = ({ tournamentsList }) => {
         )
     }
 
-console.info(tournamentsList)
+console.info("tournamentsList", tournamentsList)
 
     return (
         <>

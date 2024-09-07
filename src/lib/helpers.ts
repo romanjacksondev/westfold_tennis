@@ -1,4 +1,4 @@
-import { TournamentCategory, Tournament, Stat } from 'interfaces';
+import { TournamentCategory, Tournament, Stat, PlayerStats } from 'interfaces';
 
 export const getNestedProperty = (obj: any, reference: string) => {
     return reference.split('.').reduce((o, k) => o && o[k], obj)
@@ -181,7 +181,7 @@ export const createH2H = (matches) => {
 
 export const countTournamentsByPlayer = (tournaments) => {
   // Crear un objeto para almacenar las estadísticas
-  const stats = {};
+  const stats: Record<string, PlayerStats> = {};
 
   // Iterar sobre el array de torneos
   tournaments.forEach(tournament => {

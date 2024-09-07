@@ -9,6 +9,7 @@ export default async function handler(req, res) {
             }
 
         });
+        console.log("categories",categories)
         res.status(200).json(categories);
     } catch (e) {
         console.log(e);

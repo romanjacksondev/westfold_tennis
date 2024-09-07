@@ -10,6 +10,8 @@ const PartidosTemplate = ({ matchesList }) => {
         TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l`,
     };
 
+console.log("matchesList", matchesList)
+
     const gamesPerSet = matchesList.reduce((result, match) => {
         if (match.sets) {
             match.sets.forEach((set) => {
@@ -36,7 +38,7 @@ const PartidosTemplate = ({ matchesList }) => {
     if (matchesList.length == 0 || !matchesList[0].tournament) {
         return (
             <>
-                No se encontraron partidos
+                LOADING
             </>
         )
     }
