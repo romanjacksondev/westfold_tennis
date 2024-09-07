@@ -7,7 +7,11 @@ const player = req.body;
 try {
     const response = await prisma.player.create({
       data:{
-        name: player.name
+        name: player.name,
+        nickname: player.nickname, 
+        lastname: player.lastname, 
+        mail: player.mail, 
+        phone: player.phone
       }
     });
 

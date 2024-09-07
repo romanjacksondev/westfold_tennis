@@ -2,8 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @import 'fonts.css';
-@import 'datepicker.css'; */
+/* @import 'fonts.css'; */
+@import '~react-datepicker/dist/react-datepicker.css';
 
 body,
 html,

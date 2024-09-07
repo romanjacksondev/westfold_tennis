@@ -51,8 +51,8 @@ Ale 3 - 2 roman
 Fer 3 - 0 rodo
 ----------------
 Fer 3-0 9 1
-Ale 2-1 7 4
-Roman 1-2 4 8
+Ale 2-1 7 5
+Roman 1-2 5 8
 Rodo 0-3 2 9
 ***********************
 Rotonda III
@@ -137,7 +137,7 @@ Rodo 3 - 4 Fer
 Fer 2-1 11-8
 Ale 2-1 9-8  
 Rodo 1-2 9-8
-Roman 1-2 9-11
+Roman 1-2 6-11
 ***********************
 Hidden Court I
 13/07/24
@@ -159,13 +159,13 @@ Rodo 4 - 3 roman
 Fer 2 - 4 Ale
 Ale 3 - 4 roman
 Rodo 4 - 1 Fer
-Fer 2 - 4 Roman
+Fer 4 - 2 Roman
 Rodo 2 - 4 ale
 ----------------
 Ale 2-1  11-8
 Rodo 2-1 10-8
-Fer 1-2  7-10
 Roman 1-2 9-11
+Fer 1-2  7-10
 ***********************
 Hindu Club
 13/08/24
@@ -180,10 +180,17 @@ Roman 3-0 12-8
 Fer 2-1  10-8
 Ale 1-2  9-10
 Rodo 0-3 7-12
-
-
-|       | rodo  | ale | fer | roman |
-| rodo  |   X   | 6-3 | 4-5 |  5-4  |
-| ale   |  3-6  |  X  | 0-9 |  5-4  |
-| fer   |  5-4  | 9-0 |  X  |  7-2  |
-| roman |  4-5  | 4-5 | 2-7 |   X   |
+***********************
+Hidden Court II - Cemento
+06/09/24
+Ale 4 - 2 Rodo
+Fer 4 - 1 Ale
+Rodo 4 - 0 Roman
+Fer 4(7) - (0)3 Roman
+Ale 4 - 1 Roman
+Fer 4(7) - (4)3 Rodo
+----------------
+Fer 3-0 12-7
+Ale 2-1  9-7
+Rodo 1-2  9-8
+Roman 0-3 4-12

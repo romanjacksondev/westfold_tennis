@@ -1,10 +1,10 @@
 import * as types from "../actionTypes";
 
-export const tournamentTypesReducer = (state, action) => {
+export const surfaceReducer = (state, action) => {
   const reducers = {
-    [types.SET_TOURNAMENT_TYPES_DATA]: () => ({
+    [types.SET_SURFACES_DATA]: () => ({
       ...state,
-      tournamentTypes: action.payload,
+      surfaces: action.payload,
     })
   };
   return reducers[action.type] ? reducers[action.type]() : state;

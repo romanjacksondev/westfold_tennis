@@ -38,6 +38,56 @@ module.exports = {
       placeholder: '#808B95',
     },
   extend: {
+    fontSize: {
+      'hero-1':[
+        '5.125rem',
+        {
+          lineHeigth: '5.075rem',
+          fontWeith: '700',
+          letterSpacing: '-0.04em'
+        }
+      ],
+      'heading-h1':[
+        '3.75rem',
+        {
+          lineHeigth: '4.75rem',
+          fontWeith: '700',
+          letterSpacing: '-0.01em'
+        }
+      ],
+      'heading-h2':[
+        '3.125rem',
+        {
+          lineHeigth: '3.75rem',
+          fontWeith: '700',
+          letterSpacing: '-0.02em'
+        }
+      ],
+      'heading-h3':[
+        '2.75rem',
+        {
+          lineHeigth: '3.5rem',
+          fontWeith: '700',
+          letterSpacing: '-0.02em'
+        }
+      ],
+      'heading-h4':[
+        '2.125rem',
+        {
+          lineHeigth: '2.5rem',
+          fontWeith: '700',
+          letterSpacing: '-0.02em'
+        }
+      ],  
+      headline:[
+        '3rem',
+        {
+          lineHeigth: '3.5rem',
+          fontWeith: '700',
+          letterSpacing: '-0.02em'
+        }
+      ]
+    },
     screens: {
       'mobile-xs': { raw: '(min-width: 280px)' },
       'mobile-sm': { raw: '(min-width: 320px)' },

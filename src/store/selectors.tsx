@@ -13,7 +13,8 @@ const useSelectors = () => {
     players: state.players,
     venues: state.venues,
     matches: state.matches,
-    tournamentTypes: state.tournamentTypes
+    tournamentCategories: state.tournamentCategories,
+    surfaces: state.surfaces
   }
 }
 

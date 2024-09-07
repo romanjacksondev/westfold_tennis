@@ -5,7 +5,6 @@ import AddVenueForm from "./AddVenueForm";
 export default function AddVenue() {
 
     const [openModal, setOpenModal] = useState(false)
-
     const handleOnClick = () => {
         setOpenModal(true)
     }
@@ -13,7 +12,7 @@ export default function AddVenue() {
     return <>
         {openModal && (<AddVenueForm openModal={openModal} setOpenModal={setOpenModal}></AddVenueForm>)}
         <Button onClick={handleOnClick} className="w-40" width="fixed" variant="text">
-            Crear Sede
+            Agregar Sede
         </Button>
     </>
 }

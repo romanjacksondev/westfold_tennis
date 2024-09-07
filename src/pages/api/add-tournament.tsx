@@ -3,17 +3,30 @@ import prisma from "../../lib/prisma";
 
 export default async function handler(req, res) {
 
-
-// console.log("en el api tournament: " + JSON.stringify(req.body));
 const tournament: TournamentCreateInput = req.body;
+
+// console.log(tournament)
+
 try {
     const response = await prisma.tournament.create({
       data:{
         name: tournament.name,
-        venueId: tournament.venueId,
-        winnerId: tournament.winnerId,
         date: tournament.date,
-        tournamentTypeId: tournament.tournamentTypeId
+        champion: {
+          connect: { id: tournament.championId }  // Conectar a un campeón existente
+        },
+        venue: {
+          connect: { id: tournament.venueId }  // Conectar a un venue existente
+        },
+        tournamentCategory: {
+          connect: { id: tournament.tournamentCategoryId }  // Conectar a una categoría existente
+        },
+        players: {
+          connect: tournament.players
+        },
+        surface: {
+          connect: { id: tournament.surfaceId }  // Conectar a un venue existente
+        },
       }
     });
 

@@ -1,4 +1,4 @@
-import { TournamentType, Tournament, Stat } from 'interfaces';
+import { TournamentCategory, Tournament, Stat, PlayerStats } from 'interfaces';
 
 export const getNestedProperty = (obj: any, reference: string) => {
     return reference.split('.').reduce((o, k) => o && o[k], obj)
@@ -40,7 +40,7 @@ export const calculatePlayerStats = (matches): Stat[] => {
         playerStats[matchResult].matchesWon += 1;
         playerStats[losingPlayer].matchesLost += 1;
 
-        sets && sets.forEach(set => {
+        sets.forEach(set => {
             const { games } = set;
 
             games.forEach(game => {
@@ -102,9 +102,9 @@ export const calculatePlayerStats = (matches): Stat[] => {
 };
 
 // Función para obtener los puntos para una posición
-export const getPointsForPosition = (tournamentType: TournamentType, position: number): number => {
+export const getPointsForPosition = (tournamentCategory: TournamentCategory, position: number): number => {
 
-    const pointEntry = tournamentType.tournamentTypePoints.find(
+    const pointEntry = tournamentCategory.tournamentCategoryPoints.find(
         (entry) => position >= entry.initial_position && position <= entry.final_position
     );
     return pointEntry ? pointEntry.points : 0;
@@ -114,12 +114,12 @@ export const getPointsForPosition = (tournamentType: TournamentType, position: n
 export const calculatePlayerPoints = (tournaments: Tournament[]): Record<string, number> => {
     const playerPoints: Record<string, number> = {};
     for (let indexFor = 0; indexFor < tournaments.length; indexFor++) {
-        // console.log(tournaments[indexFor].name)
+        // console.log("nombre torneo: ",tournaments[indexFor].name)
 
         const positions = calculatePlayerStats(tournaments[indexFor].matches)
-        // console.log(positions)
+        // console.log("positions: ",positions)
         positions.forEach((position, index) => {
-            const points = getPointsForPosition(tournaments[indexFor].tournamentType, index + 1);
+            const points = getPointsForPosition(tournaments[indexFor].tournamentCategory, index + 1);
             // console.log("index+1 "  + index+1)    
             // console.log("points " + points + " para " + position.name)
             if (!playerPoints[position.name]) {
@@ -177,4 +177,44 @@ export const createH2H = (matches) => {
     });
 
     return results;
+}
+
+export const countTournamentsByPlayer = (tournaments) => {
+  // Crear un objeto para almacenar las estadísticas
+  const stats: Record<string, PlayerStats> = {};
+
+  // Iterar sobre el array de torneos
+  tournaments.forEach(tournament => {
+    const winner = tournament.champion.name;
+    const points = tournament.tournamentCategory.name;
+
+    // Si el jugador no está en el objeto stats, inicializar su entrada
+    if (!stats[winner]) {
+      stats[winner] = {
+        total: 0,
+        points: {}
+      };
+    }
+
+    // Incrementar el total de torneos ganados
+    stats[winner].total += 1;
+
+    // Incrementar la cantidad de puntos en la categoría correspondiente
+    if (!stats[winner].points[points]) {
+      stats[winner].points[points] = 0;
+    }
+    stats[winner].points[points] += 1;
+  });
+
+  // Convertir el objeto stats a un array de objetos
+  const resultArray = Object.entries(stats).map(([name, { total, points }]) => ({
+    name,
+    total,
+    points
+  }));
+
+  // Ordenar el array por la cantidad de torneos ganados en orden descendente
+  resultArray.sort((a, b) => b.total - a.total);
+
+  return resultArray;
 }

@@ -27,14 +27,13 @@ const addPlayer = async (dispatch, data) => {
     },
     body: JSON.stringify(data)
   });
-  const content = await response.json();
+  const json = await response.json();
 
-
+  data.id = json.id
   dispatch({
     type: types.ADD_PLAYER,
     payload: data,
   })
 }
-
 
 export { getPlayers, setPlayersData, addPlayer }

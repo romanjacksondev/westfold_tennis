@@ -18,10 +18,10 @@ export default async function handler(req, res) {
                 }
             },
             include: {
-                tournamentType: {
+                tournamentCategory: {
                     select: {
                         name: true,
-                        tournamentTypePoints: {
+                        tournamentCategoryPoints: {
                             select: {
                                 initial_position: true,
                                 final_position: true,

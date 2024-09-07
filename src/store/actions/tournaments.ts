@@ -8,6 +8,8 @@ const getTournaments = async (dispatch) => {
     type: types.SET_TOURNAMENTS_DATA,
     payload: json || [],
   })
+
+  return json
 }
 
 const setTournamentData = (dispatch, data) => {
@@ -17,24 +19,26 @@ const setTournamentData = (dispatch, data) => {
   })
 }
 
-const addTournament = async (dispatch, data) => {
+const addTournament = async (dispatch, payload) => {
   const response = await fetch('/api/add-tournament', {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data)
+    body: JSON.stringify(payload)
   });
   const json = await response.json();
+  payload.id = json.id
 
   dispatch({
     type: types.ADD_TOURNAMENT_DATA,
-    payload: data,
+    payload: payload,
   })
 
   return json;
 }
+
 
 
 export { setTournamentData, getTournaments, addTournament }

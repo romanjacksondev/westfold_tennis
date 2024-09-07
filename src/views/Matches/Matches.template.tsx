@@ -1,8 +1,7 @@
-import { TextHeadingH1 } from "components/Text";
+import { TextHeadingH4 } from "components/Text";
 import { calculatePlayerStats } from "lib/helpers";
-import AddMatch from './components/AddMatch'
 import { Stat } from "interfaces";
-
+import PropTypes from 'prop-types';
 
 const PartidosTemplate = ({ matchesList }) => {
 
@@ -10,26 +9,27 @@ const PartidosTemplate = ({ matchesList }) => {
         ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l`,
         TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l`,
     };
-    // console.log("matchesList.length en template: " + matchesList.length)
+
+console.log("matchesList", matchesList)
 
     const gamesPerSet = matchesList.reduce((result, match) => {
+        if (match.sets) {
+            match.sets.forEach((set) => {
+                const gamesCount = {}
+                set.games.forEach((game) => {
+                    const winnerId = game.winnerId
+                    if (!gamesCount[winnerId]) {
+                        gamesCount[winnerId] = 0
+                    }
+                    gamesCount[winnerId]++
+                });
 
-        // console.log("inside  match content: " + JSON.stringify(match))
-
-        match.sets && match.sets.forEach((set) => {
-            const gamesCount = {}
-            set.games.forEach((game) => {
-                const winnerId = game.winnerId
-                if (!gamesCount[winnerId]) {
-                    gamesCount[winnerId] = 0
+                if (!result[set.id]) {
+                    result[set.id] = gamesCount
                 }
-                gamesCount[winnerId]++
             });
+        }
 
-            if (!result[set.id]) {
-                result[set.id] = gamesCount
-            }
-        });
         return result
     }, {});
 
@@ -38,20 +38,15 @@ const PartidosTemplate = ({ matchesList }) => {
     if (matchesList.length == 0 || !matchesList[0].tournament) {
         return (
             <>
-                <AddMatch></AddMatch>
-                No se encontraron partidos
+                LOADING
             </>
         )
     }
 
     return (
-
         <>
-            <TextHeadingH1>{matchesList[0].tournament.name}</TextHeadingH1>
-            <TextHeadingH1>Campeon:  {matchesList[0].tournament.winner.name}</TextHeadingH1>
-            <AddMatch></AddMatch>
-
-            <TextHeadingH1>Resumen del torneo</TextHeadingH1>
+            <TextHeadingH4>{matchesList[0].tournament.champion.name} campeon de {matchesList[0].tournament.name}</TextHeadingH4>
+            <TextHeadingH4>Resumen del torneo</TextHeadingH4>
             <table className="w-full table-auto">
                 <thead className="text-center bg-gray-300">
                     <tr>
@@ -74,7 +69,7 @@ const PartidosTemplate = ({ matchesList }) => {
                     ))}
                 </tbody>
             </table>
-            <TextHeadingH1>Partidos</TextHeadingH1>
+            <TextHeadingH4>Partidos</TextHeadingH4>
             <table className="w-full table-auto">
                 <thead className="text-center bg-gray-300">
                     <tr>
@@ -103,5 +98,18 @@ const PartidosTemplate = ({ matchesList }) => {
         </>
     )
 }
+
+PartidosTemplate.propTypes = {
+    matchesList: PropTypes.arrayOf(
+        PropTypes.shape({
+            tournament: PropTypes.shape({
+                name: PropTypes.string.isRequired,
+                champion: PropTypes.shape({
+                    name: PropTypes.string.isRequired,
+                })
+            }).isRequired
+        })
+    ).isRequired
+};
 
 export default PartidosTemplate

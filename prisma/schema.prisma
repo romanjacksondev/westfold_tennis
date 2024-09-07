@@ -9,54 +9,66 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
+model Tournament {
+  id                   String             @id @default(cuid())
+  name                 String
+  venueId              String
+  venue                Venue              @relation(fields: [venueId], references: [id])
+  championId           String
+  champion             Player             @relation("champion", fields: [championId], references: [id])
+  date                 DateTime           @default(now())
+  matches              Match[]
+  surfaceId            String
+  surface              Surface            @relation(fields: [surfaceId], references: [id])
+  tournamentCategory   TournamentCategory @relation(fields: [tournamentCategoryId], references: [id])
+  tournamentCategoryId String
+  players              Player[]           @relation("participations")
+}
+
+model Surface {
+  id          String       @id @default(cuid())
+  name        String
+  tournaments Tournament[]
+}
+
 model Venue {
   id          String       @id @default(cuid())
   name        String
   phone       String
   address     String
   tournaments Tournament[]
-  points      String
 }
 
 model Player {
   id             String       @id @default(cuid())
   name           String
+  nickname       String?
+  lastname       String?
+  mail           String?
+  phone          String?
   games          Game[]
   sets           Set[]
-  tournaments    Tournament[]
+  tournaments    Tournament[] @relation("participations")
   winnerMatches  Match[]      @relation("Winner")
   player1Matches Match[]      @relation("Player1")
   player2Matches Match[]      @relation("Player2")
+  wonTournaments Tournament[] @relation("champion") // Relación uno a muchos (torneos ganados)
 }
 
-model Tournament {
-  id               String         @id @default(cuid())
-  name             String
-  venueId          String
-  venue            Venue          @relation(fields: [venueId], references: [id])
-  winnerId         String
-  winner           Player         @relation(fields: [winnerId], references: [id])
-  date             DateTime       @default(now())
-  matches          Match[]
-  tournamentType   TournamentType @relation(fields: [tournamentTypeId], references: [id])
-  tournamentTypeId String
+model TournamentCategory {
+  id                       String                     @id @default(cuid())
+  name                     String
+  tournaments              Tournament[]
+  tournamentCategoryPoints TournamentCategoryPoints[]
 }
 
-model TournamentType {
-  id                   String                 @id @default(cuid())
-  name                 String
-  tournaments          Tournament[]
-  tournamentTypePoints TournamentTypePoints[]
-}
-
-model TournamentTypePoints {
-  id String @id @default(cuid())
-
-  initial_position Int
-  final_position   Int
-  points           Int
-  tournamentType   TournamentType @relation(fields: [tournamentTypeId], references: [id])
-  tournamentTypeId String
+model TournamentCategoryPoints {
+  id                   String             @id @default(cuid())
+  initial_position     Int
+  final_position       Int
+  points               Int
+  tournamentCategory   TournamentCategory @relation(fields: [tournamentCategoryId], references: [id])
+  tournamentCategoryId String
 }
 
 model Match {

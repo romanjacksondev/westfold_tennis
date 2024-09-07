@@ -8,8 +8,11 @@ export const tournamentReducer = (state, action) => {
     }),
     [types.ADD_TOURNAMENT_DATA]: () => ({
       ...state,
-      tournaments: state.tournaments.concat(action.payload),
+      tournaments: state.tournaments.concat(action.payload).sort((a, b) => b.date - a.date),
     }),
   };
   return reducers[action.type] ? reducers[action.type]() : state;
 };
+
+
+

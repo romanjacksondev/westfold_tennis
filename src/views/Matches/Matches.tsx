@@ -12,6 +12,7 @@ const PartidosView = () => {
 
   useEffect(() => {
     const getMatchesData = async () => {
+      console.log("id", router.query.id)
       await getMatches(router.query.id)
     }
     clearMatches()

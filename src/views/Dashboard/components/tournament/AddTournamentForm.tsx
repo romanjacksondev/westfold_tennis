@@ -1,4 +1,3 @@
-import { DatePicker } from "components/DatePicker";
 import ModalNewData from "components/ModalNewData";
 import { Select } from "components/Select";
 import { TextInput } from "components/TextInput";
@@ -6,23 +5,36 @@ import { TournamentCreateInput } from "interfaces";
 import { useForm } from 'react-hook-form'
 import { useActions } from "store/actions";
 import { useSelectors } from "store/selectors";
+import PropTypes from 'prop-types';
+import MultiSelect from "components/MultiSelect/MultiSelect";
 
 export default function AddTournamentForm({ openModal, setOpenModal }) {
 
     const { getValues, handleSubmit, register, control, formState: { errors } } = useForm({ mode: 'onSubmit' })
     const { addTournament } = useActions();
-    const { players, venues, tournamentTypes } = useSelectors()
-
+    const { players, venues, tournamentCategories, surfaces } = useSelectors()
     const onSubmit = async () => {
         const values = getValues()
+        const playerName = players.find(player => player.id == values.champion.id).name
+        const venuePoints = venues.find(venue => venue.id == values.venue.id).points
+        // console.log(values)
         const payload: TournamentCreateInput = {
             name: values.name,
             venueId: values.venue.id,
-            winnerId: values.winner.id,
-            date: new Date(),
-            tournamentTypeId: values.tournamentType.id
+            championId: values.champion.id,
+            date: new Date(values.date),
+            tournamentCategoryId: values.tournamentCategory.id,
+            surfaceId: values.surface.id,
+            champion: {
+                "name": playerName
+            },
+            venue: {
+                "points": venuePoints
+            },
+            tournamentCategory: values.tournamentCategory,
+            players: values.players
         }
-        // console.log(payload)
+
         addTournament(payload)
         setOpenModal(false)
     }
@@ -46,7 +58,7 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
                 >
                 </TextInput>
                 <Select
-                    name="winner"
+                    name="champion"
                     placeholder="Ej. Ale"
                     control={control}
                     isSearchable={false}
@@ -56,7 +68,7 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
                     rules={{ required: "Requerido" }}
                     errors={errors}
                 >
-                    Ganador
+                    Campeon
                 </Select>
                 <Select
                     name="venue"
@@ -72,28 +84,61 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
                     Sede
                 </Select>
                 <Select
-                    name="tournamentType"
+                    name="tournamentCategory"
                     placeholder="Ej. Master 1000"
                     control={control}
                     isSearchable={false}
                     options={
-                        tournamentTypes
+                        tournamentCategories
                     }
                     rules={{ required: "Requerido" }}
                     errors={errors}
                 >
                     Categoria del Torneo
                 </Select>
-                {/* TODO: No funciona el datepicket */}
-                {/* <DatePicker 
-                    name={"date"} 
-                    placeholder="Fecha del torneo" 
-                    handleChange={(d) => console.log(d)} 
-                    control={control} 
-                    rules={{ required: "Requerido" }}>
-                </DatePicker> */}
+                <Select
+                    name="surface"
+                    placeholder="Ej. Polvo de Ladrillo"
+                    control={control}
+                    isSearchable={false}
+                    options={
+                        surfaces
+                    }
+                    rules={{ required: "Requerido" }}
+                    errors={errors}
+                >
+                    Superficie
+                </Select>
+                <MultiSelect
+                    label={"Participantes"}
+                    options={
+                        players
+                    }
+                    placeholder={"Participantes"}
+                    name="players"
+                    control={control}
+                    rules={{ required: "Requerido" }}
+                    isDisabled={false}
+                    isLoading={false}
+                    optionLabel={"name"}
+                    optionValue={"id"}
+                    defaultValue={[]}
+                />
+                <TextInput
+                    name="date"
+                    register={register}
+                    placeholder={"Ej. 12/04/2024"}
+                    label={"Fecha del torneo"}
+                    rules={{ required: "Requerido" }}
+                    type="date"
+                >
+                </TextInput>
             </div>
         </ModalNewData>
     )
+}
 
-}    
+AddTournamentForm.propTypes = {
+    openModal: PropTypes.bool.isRequired,
+    setOpenModal: PropTypes.func.isRequired,
+};
