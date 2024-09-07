@@ -36,8 +36,8 @@ console.info(tournamentsList)
                     {tournamentsList.length > 0 && tournamentsList.map((tournament) => (
                         <tr key={tournament.id}>
                             <td className={Styles.TdStyle}>{tournament.name}</td>
-                            <td className={Styles.TdStyle}>{tournament.winner.name}</td>
-                            <td className={Styles.TdStyle}>{tournament.venue.points}</td>
+                            <td className={Styles.TdStyle}>{tournament.champion.name}</td>
+                            <td className={Styles.TdStyle}>{tournament.tournamentCategory.tournamentCategoryPoints[0].points}</td>
                             <td className={Styles.TdStyle}>
                                 {format(tournament.date, 'dd/MM/yyyy')}
                             </td>

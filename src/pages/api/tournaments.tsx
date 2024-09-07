@@ -12,7 +12,21 @@ export default async function handler(req, res) {
           select: { name: true },
         },
         venue: {
-          select: { name: true }}
+          select: { name: true }
+        },
+        tournamentCategory: {
+          include: {
+            tournamentCategoryPoints: {
+              where: {
+                initial_position: 1,
+                final_position: 1
+              },
+              select: {
+                points: true
+              },
+            }
+          }
+        }
       },
     });
 

@@ -185,7 +185,7 @@ export const countTournamentsByPlayer = (tournaments) => {
 
   // Iterar sobre el array de torneos
   tournaments.forEach(tournament => {
-    const winner = tournament.winner.name;
+    const winner = tournament.champion.name;
     const points = tournament.venue.points;
 
     // Si el jugador no está en el objeto stats, inicializar su entrada

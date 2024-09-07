@@ -43,7 +43,7 @@ const PartidosTemplate = ({ matchesList }) => {
 
     return (
         <>
-            <TextHeadingH4>{matchesList[0].tournament.winner.name} campeon de {matchesList[0].tournament.name}</TextHeadingH4>
+            <TextHeadingH4>{matchesList[0].tournament.champion.name} campeon de {matchesList[0].tournament.name}</TextHeadingH4>
             <TextHeadingH4>Resumen del torneo</TextHeadingH4>
             <table className="w-full table-auto">
                 <thead className="text-center bg-gray-300">
@@ -102,7 +102,7 @@ PartidosTemplate.propTypes = {
         PropTypes.shape({
             tournament: PropTypes.shape({
                 name: PropTypes.string.isRequired,
-                winner: PropTypes.shape({
+                champion: PropTypes.shape({
                     name: PropTypes.string.isRequired,
                 })
             }).isRequired

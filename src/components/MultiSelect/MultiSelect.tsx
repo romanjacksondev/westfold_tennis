@@ -59,9 +59,9 @@ MultiValueCustom.propTypes = {
     children: PropTypes.node.isRequired,  // children es cualquier nodo y es requerido
 }
 
-const CustomInput = (props) => {
+const CustomInput = (props) => (
     <components.Input {...props} style={{ opacity: 0 }} />
-}
+)
 
 
 const MultiSelect = ({
