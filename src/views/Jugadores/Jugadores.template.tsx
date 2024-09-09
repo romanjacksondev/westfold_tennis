@@ -1,4 +1,5 @@
 import { TextHeadingH4 } from 'components/Text';
+import Link from 'next/link';
 import PropTypes from 'prop-types';
 
 const JugadoresTemplate = ({ players }) => {
@@ -42,7 +43,7 @@ const JugadoresTemplate = ({ players }) => {
                                 {player.mail}
                             </td>                            
                             <td className={Styles.TdStyle}>
-                                INFO
+                            <Link href={`/jugadores/${player.id}`}>Estadisticas</Link>
                             </td>                                                                                    
                         </tr>
                     ))}
