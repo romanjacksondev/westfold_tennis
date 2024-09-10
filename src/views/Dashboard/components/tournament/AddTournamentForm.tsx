@@ -8,6 +8,7 @@ import { useSelectors } from "store/selectors";
 import PropTypes from 'prop-types';
 import MultiSelect from "components/MultiSelect/MultiSelect";
 
+import { toast } from 'react-toastify'
 export default function AddTournamentForm({ openModal, setOpenModal }) {
 
     const { getValues, handleSubmit, register, control, formState: { errors } } = useForm({ mode: 'onSubmit' })
@@ -35,7 +36,13 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
             players: values.players
         }
 
-        addTournament(payload)
+        const response = addTournament(payload)
+        if(response) {
+            toast.success("Torneo creado!")
+        } else {
+            toast.success("Torneo NO creado!")
+        }
+            
         setOpenModal(false)
     }
 
