@@ -10,7 +10,6 @@ import 'assets/styles/global.css'
 
 const App = ({ Component, pageProps: { session, ...pageProps } }) => {
 
-
   return (
     <AppProvider session={pageProps.session}>
       <ModalProvider>
