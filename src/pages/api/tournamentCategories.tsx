@@ -1,4 +1,4 @@
-import prisma from "../../lib/prisma";
+import prisma from "lib/prisma";
 
 export default async function handler(req, res) {
     try {
@@ -9,7 +9,7 @@ export default async function handler(req, res) {
             }
 
         });
-        console.log("categories",categories)
+        // console.log("categories",categories)
         res.status(200).json(categories);
     } catch (e) {
         console.log(e);

@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
 import Link from 'next/link';
-import { Headline } from 'components/Text';
+import { Headline, TextBodyXs } from 'components/Text';
 import PropTypes from 'prop-types';
 
 const TournamentsTemplate = ({ tournamentsList }) => {
@@ -10,17 +10,17 @@ const TournamentsTemplate = ({ tournamentsList }) => {
         TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l`,
     };
 
-    if(tournamentsList.length == 0) {
+    if (tournamentsList.length == 0) {
         return (
             "LOADING"
         )
     }
 
-console.info("tournamentsList", tournamentsList)
+    console.info("tournamentsList", tournamentsList)
 
     return (
         <>
-            <Headline >Historial de torneos</Headline> 
+            <Headline >Historial de torneos</Headline>
             <table className="w-full table-auto">
                 <thead className="text-center bg-gray-300">
                     <tr>
@@ -42,7 +42,9 @@ console.info("tournamentsList", tournamentsList)
                                 {format(tournament.date, 'dd/MM/yyyy')}
                             </td>
                             <td className={Styles.TdStyle}>
-                                <Link href={`/torneos/${tournament.id}`}>Ver Detalles</Link>
+                                <Link href={`/torneos/${tournament.id}`}>
+                                    <TextBodyXs className='font-bold'>Ver Detalles</TextBodyXs>
+                                </Link>
                             </td>
                         </tr>
                     ))}

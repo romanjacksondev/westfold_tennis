@@ -1,6 +1,7 @@
-import prisma from "../../lib/prisma";
+import prisma from "lib/prisma";
 
 export default async function handler(req, res) {
+
     try {
         const now = new Date();
         const twelveMonthsAgo = new Date();
@@ -30,16 +31,16 @@ export default async function handler(req, res) {
                         }
                     }
                 },
-                matches:{
+                matches: {
                     include: {
                         player1: {
                             select: {
-                                name:true
+                                name: true
                             }
                         },
                         player2: {
                             select: {
-                                name:true
+                                name: true
                             }
                         },
                         sets: {

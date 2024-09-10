@@ -1,66 +1,78 @@
-//Libs
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from 'next/image'
-
-// Hooks
-// import { useSession } from 'hooks/useSession'
-
-// Store
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useSelectors } from 'store/selectors'
-
-// Components
-// import { TextBodyLg } from 'components/Text'
 import Sidebar from 'components/Sidebar'
-import SantanderLogo from 'components/Logo'
-
-// Assets
+import WestfoldLogo from 'components/Logo'
 import Power from 'assets/images/power.svg'
 import User from 'assets/icons/user.svg'
+import { TextBodyLg } from 'components/Text'
+import { useActions } from 'store/actions';
 
 const NavBarTopTemplate = () => {
-  // const { logout } = useSession()
-  const { config } = useSelectors()
-  const [isOpen, setIsOpen] = useState(false)
+  const { data: session } = useSession()
+  const { user, config } = useSelectors()
+  const [isOpen, setIsOpen] = useState(config.showSidebar)
+  const { setUserData, clearUserData } = useActions();
+
+  useEffect(() => {
+    if (session) {
+      // console.log("session1: ", session)
+      setUserData(session.user);
+    } else {
+      // console.log("session2: ", session)
+      clearUserData();
+    }
+  }, [session]);
+
+  // console.log("user: ", user)
+  // console.log("user.session: ", user.session)
+
   return (
     <nav className="bg-white px-6 md:px-20 py-4 h-[72px] grid grid-cols-3 border-b-2 border-gray-300 z-20 relative">
       <div className="flex items-center justify-start">
-      {
+        {
           <Sidebar isOpen={isOpen} setIsOpen={setIsOpen} />
         }
       </div>
 
       <div className="items-start justify-center pt-1 hidden md:flex">
-        { <SantanderLogo /> }
-        
+        {<WestfoldLogo />}
+
       </div>
 
-      {/* <div className="flex items-center justify-end col-span-2 md:col-span-1">
+      <div className="flex items-center justify-end col-span-2 md:col-span-1">
         <div className="flex items-center justify-end">
-          {user && (
+          {user.session && (
             <div className="flex flex-col items-end">
               <div className="flex">
                 <div className=" flex max-w-[200px] overflow-hidden">
                   <Image src={User.src} height={22} width={22} alt="Usuario" />
                   <TextBodyLg className="ml-1 font-semibold truncate">
                     {user.name} {user.lastName}
-                  </TextBodyLg> 
-                  
+                  </TextBodyLg>
+                  <div className="w-10 flex justify-end">
+                    <button onClick={() => signOut()}>
+                      <Image
+                        src={Power.src}
+                        width={22}
+                        height={22}
+                        alt="Cerrar Sesión"
+                      />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           )}
-          <div className="w-10 flex justify-end">
-            <button onClick={logout}>
-              <Image
-                src={Power.src}
-                width={22}
-                height={22}
-                alt="Cerrar Sesión"
-              />
-            </button>
-          </div>
+          {!user.session && (
+            <div>
+              <button onClick={() => signIn()}>Ingresar</button>
+            </div>
+          )}
+
         </div>
-      </div> */}
+      </div>
     </nav>
   )
 }
