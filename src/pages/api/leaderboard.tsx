@@ -1,14 +1,6 @@
-import prisma from "../../lib/prisma";
-import { getSession } from "next-auth/react";
+import prisma from "lib/prisma";
 
 export default async function handler(req, res) {
-
-    const session = await getSession({ req });
-
-    if (!session) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-
 
     try {
         const now = new Date();
@@ -39,16 +31,16 @@ export default async function handler(req, res) {
                         }
                     }
                 },
-                matches:{
+                matches: {
                     include: {
                         player1: {
                             select: {
-                                name:true
+                                name: true
                             }
                         },
                         player2: {
                             select: {
-                                name:true
+                                name: true
                             }
                         },
                         sets: {

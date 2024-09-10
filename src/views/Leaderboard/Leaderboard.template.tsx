@@ -16,6 +16,14 @@ const LeaderboardTemplate = ({ leaderboard }) => {
     // Formatear las fechas
     const todayFormatted = format(today, 'dd/MM/yyyy');
     const twelveMonthsAgoFormatted = format(twelveMonthsAgo, 'dd/MM/yyyy');
+
+    if (leaderboard.length == 0) {
+        return (
+            "LOADING"
+        )
+    }
+
+
     return (
         <>
             <table className="w-full table-auto">

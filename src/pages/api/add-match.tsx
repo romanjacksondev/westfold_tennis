@@ -1,10 +1,16 @@
-import prisma from "../../lib/prisma";
+import prisma from "lib/prisma";
+import { getSession } from "next-auth/react";
 
 interface Set {
   winnerId: string
 }
 
 export default async function handler(req, res) {
+
+  const session = await getSession({ req });
+  if (!session) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
   const match = req.body;
   const gamesList: Set[] = getGamesList(match)

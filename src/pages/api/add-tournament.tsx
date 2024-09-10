@@ -1,31 +1,35 @@
 import { TournamentCreateInput } from "interfaces";
-import prisma from "../../lib/prisma";
+import prisma from "lib/prisma";
+import { getSession } from "next-auth/react";
 
 export default async function handler(req, res) {
 
-const tournament: TournamentCreateInput = req.body;
+  const session = await getSession({ req });
+  if (!session) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
-// console.log(tournament)
+  const tournament: TournamentCreateInput = req.body;
 
-try {
+  try {
     const response = await prisma.tournament.create({
-      data:{
+      data: {
         name: tournament.name,
         date: tournament.date,
         champion: {
-          connect: { id: tournament.championId }  // Conectar a un campeón existente
+          connect: { id: tournament.championId }
         },
         venue: {
-          connect: { id: tournament.venueId }  // Conectar a un venue existente
+          connect: { id: tournament.venueId }
         },
         tournamentCategory: {
-          connect: { id: tournament.tournamentCategoryId }  // Conectar a una categoría existente
+          connect: { id: tournament.tournamentCategoryId }
         },
         players: {
           connect: tournament.players
         },
         surface: {
-          connect: { id: tournament.surfaceId }  // Conectar a un venue existente
+          connect: { id: tournament.surfaceId }
         },
       }
     });
