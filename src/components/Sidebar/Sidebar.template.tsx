@@ -49,11 +49,11 @@ const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
       label: 'Estadisticas',
       icon: Stats,
       path: "/estadisticas",
-    // },    
-    // {
-    //   label: 'Dashboard',
-    //   icon: Dashboard,
-    //   path: "/dashboard",
+    },    
+    {
+      label: 'Dashboard',
+      icon: Dashboard,
+      path: "/dashboard",
     }
   ]
 

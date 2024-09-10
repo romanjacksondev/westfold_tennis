@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { ReactNode, useEffect, useState } from "react"
 import { useActions } from "store/actions"
 
-export const Bootstrap =  ({ children}: any) => {
+export const Bootstrap =  ({ children}: { children: ReactNode }) => {
 
     const [init, setInit] = useState(false)
     const { getVenues, getPlayers, getTournamentCategories, getTournaments, getSurfaces } = useActions()

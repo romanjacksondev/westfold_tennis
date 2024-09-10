@@ -1,4 +1,5 @@
-import { TextHeadingH4 } from 'components/Text';
+import { TextBodyXs, TextHeadingH4 } from 'components/Text';
+import Link from 'next/link';
 import PropTypes from 'prop-types';
 
 const JugadoresTemplate = ({ players }) => {
@@ -16,8 +17,8 @@ const JugadoresTemplate = ({ players }) => {
                     <tr>
                         <th className={Styles.ThStyle}> Nombre </th>
                         <th className={Styles.ThStyle}> Apodo </th>
-                        <th className={Styles.ThStyle}> Apellido </th>
-                        <th className={Styles.ThStyle}> Telefono </th>
+                        {/* <th className={Styles.ThStyle}> Apellido </th>
+                        <th className={Styles.ThStyle}> Telefono </th> */}
                         <th className={Styles.ThStyle}> Mail </th>
                         <th className={Styles.ThStyle}></th>
                     </tr>
@@ -35,14 +36,16 @@ const JugadoresTemplate = ({ players }) => {
                             <td className={Styles.TdStyle}>
                                 {player.lastname}
                             </td>
-                            <td className={Styles.TdStyle}>
+                            {/* <td className={Styles.TdStyle}>
                                 {player.phone}
                             </td>
                             <td className={Styles.TdStyle}>
                                 {player.mail}
-                            </td>                            
+                            </td>                             */}
                             <td className={Styles.TdStyle}>
-                                INFO
+                            <Link href={`/jugadores/${player.id}`}>
+                                <TextBodyXs className='font-bold'>Estadisticas</TextBodyXs>
+                            </Link>
                             </td>                                                                                    
                         </tr>
                     ))}

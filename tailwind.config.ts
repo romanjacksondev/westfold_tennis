@@ -86,7 +86,8 @@ module.exports = {
           fontWeith: '700',
           letterSpacing: '-0.02em'
         }
-      ]
+      ],
+      'text-body-xs':['0.075rem','1.125rem']
     },
     screens: {
       'mobile-xs': { raw: '(min-width: 280px)' },

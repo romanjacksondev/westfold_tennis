@@ -1,10 +1,10 @@
+import JugadoresView from 'views/Jugadores'
 import MainLayout from '../../layouts/Main'
-import Jugador from 'views/Jugadores'
 
 const Jugadores = () => (
   <MainLayout
-    component={Jugador}
-    pageTitle={`Jugadores`}
+    component={JugadoresView}
+    pageTitle={`Partidos`}
   />
 )
 

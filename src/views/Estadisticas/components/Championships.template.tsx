@@ -33,7 +33,7 @@ const ChampionshipsTemplate = ({ championships }) => {
     ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l text-center`,
     TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l text-center`,
   };
-  console.log("championships: ", championships)
+  // console.log("championships: ", championships)
   if (championships.length == 0) {
     return (
       "LOADING"

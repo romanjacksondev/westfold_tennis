@@ -1,8 +1,13 @@
-import prisma from "../../lib/prisma";
+import prisma from "lib/prisma";
+import { getSession } from "next-auth/react";
 
 export default async function handler(req, res) {
 
-// console.log("en el api tournament: " + JSON.stringify(req.body));
+  const session = await getSession({ req });
+  if (!session) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  
 const player = req.body;
 try {
     const response = await prisma.player.create({
