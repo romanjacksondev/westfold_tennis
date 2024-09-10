@@ -38,7 +38,7 @@ export default async function handler(req, res) {
             }
         });
 
-console.log("matches", matches)
+// console.log("matches", matches)
 
         res.status(200).json(matches);
     } catch (e) {

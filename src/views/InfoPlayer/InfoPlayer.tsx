@@ -12,9 +12,9 @@ const InfoPlayerView = () => {
          const prepareChampionships = async () => {
             //  const data = await getTournaments()
              const filtro = tournaments.filter( tournament => tournament.championId == router.query.id)
-             console.log(router.query.id)
+            //  console.log(router.query.id)
              const result = countTournamentsByPlayer(filtro)
-            console.log(result)
+            // console.log(result)
              setChampionships(result)
          }
          prepareChampionships()

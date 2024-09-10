@@ -31,6 +31,11 @@ const useActions = () => {
   //Surface data
   const getSurfaces = async () => actions.getSurfaces(dispatch)
 
+  //User data
+  const clearUserData = () => actions.clearUserData(dispatch)
+  const setUserData = (payload) => actions.setUserData(dispatch, payload)
+
+
   return {
     setTournamentData,
     getTournaments,
@@ -44,7 +49,9 @@ const useActions = () => {
     clearMatches,
     getLeaderboard,
     getTournamentCategories,
-    getSurfaces
+    getSurfaces,
+    clearUserData,
+    setUserData
   }
 }
 
