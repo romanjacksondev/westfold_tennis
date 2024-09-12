@@ -1,15 +1,39 @@
 import { useSelectors } from "store/selectors";
-import JugadoresTemplate from "./Jugadores.template";
+import JugadoresTemplate, { TennisPlayerProps } from "./Jugadores.template";
+import { useActions } from "store/actions";
+import { useEffect, useState } from "react";
+import { calculatePlayerPoints } from "lib/helpers";
 
 const JugadoresView = () => {
+  const { players } = useSelectors();
+  const { getLeaderboard } = useActions();
+  const [leaderboard, setLeaderboard] = useState([]);
 
-  const { players } = useSelectors()
+  useEffect(() => {
+    const getLeaderboardData = async () => {
+      const data = await getLeaderboard();
+      // console.log("data: ", data)
+      const playerPoints = calculatePlayerPoints(data);
 
-return (
-  <JugadoresTemplate players={players}></JugadoresTemplate>
-)
+      // console.log(playerPoints)
+      const entries = Object.entries(playerPoints);
+      entries.sort((a, b) => b[1] - a[1]);
+      const sortedArray = entries.map(([key, value]) => ({ key, value }));
+      setLeaderboard(sortedArray);
+    };
+    getLeaderboardData();
+  }, []);
 
+  const orderedPlayers = leaderboard.map((player) => {
+    const playerData = players.find((pl) => pl.name === player.key);
+    return { points: player.value, ...playerData };
+  });
 
+  if (!orderedPlayers) {
+    return <p>Loading</p>;
+  }
+
+  return <JugadoresTemplate players={orderedPlayers as TennisPlayerProps[]} />;
 };
 
 export default JugadoresView;

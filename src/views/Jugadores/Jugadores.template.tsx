@@ -1,64 +1,41 @@
-import { TextBodyXs, TextHeadingH4 } from 'components/Text';
-import Link from 'next/link';
-import PropTypes from 'prop-types';
+import PlayerCard from "components/PlayerCard";
+import { TextBodyXs, TextHeadingH4 } from "components/Text";
+import { calculatePlayerPoints } from "lib/helpers";
+import Image from "next/image";
+import Link from "next/link";
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
+import { useActions } from "store/actions";
 
-const JugadoresTemplate = ({ players }) => {
-
-    const Styles = {
-        ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l`,
-        TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l`,
-    };
-
-    return (
-        <>
-            <TextHeadingH4>Jugadores</TextHeadingH4>
-            <table className="w-full table-auto">
-                <thead className="text-center bg-gray-300">
-                    <tr>
-                        <th className={Styles.ThStyle}> Nombre </th>
-                        <th className={Styles.ThStyle}> Apodo </th>
-                        {/* <th className={Styles.ThStyle}> Apellido </th>
-                        <th className={Styles.ThStyle}> Telefono </th> */}
-                        <th className={Styles.ThStyle}> Mail </th>
-                        <th className={Styles.ThStyle}></th>
-                    </tr>
-                </thead>
-
-                <tbody className="text-center">
-                    {players.map((player) => (
-                        <tr key={player.id}>
-                            <td className={Styles.TdStyle}>
-                                {player.name}
-                            </td>
-                            <td className={Styles.TdStyle}>
-                                {player.nickname}
-                            </td>
-                            <td className={Styles.TdStyle}>
-                                {player.lastname}
-                            </td>
-                            {/* <td className={Styles.TdStyle}>
-                                {player.phone}
-                            </td>
-                            <td className={Styles.TdStyle}>
-                                {player.mail}
-                            </td>                             */}
-                            <td className={Styles.TdStyle}>
-                            <Link href={`/jugadores/${player.id}`}>
-                                <TextBodyXs className='font-bold'>Estadisticas</TextBodyXs>
-                            </Link>
-                            </td>                                                                                    
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </>
-    );
-}
-
-JugadoresTemplate.propTypes = {
-    players: PropTypes.arrayOf(
-        PropTypes.shape({})
-    ).isRequired
+export type TennisPlayerProps = {
+  id: string;
+  name: string;
+  lastname: string;
+  nickname: string;
+  country?: string;
+  ranking?: number;
+  points: number;
+  winLossRatio?: string;
+  grandSlams?: number;
+  imageUrl: string;
 };
 
-export default JugadoresTemplate
+const JugadoresTemplate = ({ players }: { players: TennisPlayerProps[] }) => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shadow-lg rounded-lg bg-rolandGarrosOrange p-10">
+      {players.map((player, i) => (
+        <PlayerCard
+          id={player.id}
+          ranking={i + 1}
+          points={player.points}
+          name={player.name}
+          lastname={player.lastname}
+          imageUrl={`/img/avatar/${player.nickname.replace(" ", "").toLowerCase()}.jpeg`}
+          nickname={player.nickname}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default JugadoresTemplate;
