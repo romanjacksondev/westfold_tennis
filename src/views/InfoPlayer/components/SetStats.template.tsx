@@ -1,4 +1,5 @@
 import { TextHeadingH4 } from 'components/Text';
+import { formatNumber } from 'lib/helpers';
 import PropTypes from 'prop-types';
 
 const Styles = {
@@ -24,7 +25,7 @@ const SetTemplate = ({ stats }) => {
                         <td className={Styles.TdStyle}>{stats.setsPlayed}</td>
                         <td className={Styles.TdStyle}>{stats.setsWon}</td>
                         <td className={Styles.TdStyle}>{stats.setsLost}</td>
-                        <td className={Styles.TdStyle}>{(stats.setsWon / stats.setsPlayed) * 100}</td>
+                        <td className={Styles.TdStyle}>{formatNumber(stats.setsWon / stats.setsLost, 2)}</td>
                     </tr>
                 </tbody>
             </table>
