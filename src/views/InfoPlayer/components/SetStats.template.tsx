@@ -25,7 +25,7 @@ const SetTemplate = ({ stats }) => {
                         <td className={Styles.TdStyle}>{stats.setsPlayed}</td>
                         <td className={Styles.TdStyle}>{stats.setsWon}</td>
                         <td className={Styles.TdStyle}>{stats.setsLost}</td>
-                        <td className={Styles.TdStyle}>{formatNumber(stats.setsWon / stats.setsLost, 2)}</td>
+                        <td className={Styles.TdStyle}>{formatNumber(stats.setsWon / stats.setsPlayed, 2)}</td>
                     </tr>
                 </tbody>
             </table>
