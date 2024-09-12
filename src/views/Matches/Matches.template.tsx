@@ -9,7 +9,6 @@ const PartidosTemplate = ({ matchesList }) => {
         ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l`,
         TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l`,
     };
-    // console.log("matchesList", matchesList)
 
     const gamesPerSet = matchesList.reduce((result, match) => {
         if (match.sets) {

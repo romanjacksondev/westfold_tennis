@@ -4,6 +4,19 @@ export const getNestedProperty = (obj: any, reference: string) => {
     return reference.split('.').reduce((o, k) => o && o[k], obj)
 }
 
+export const formatNumber = (x, decimals = null) => {
+    let parts = decimals ? toFixed(x, decimals) : x
+    parts = parts.toString().split('.')
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    return parts.join('.')
+}
+
+
+export const toFixed = (value, precision) => {
+    const power = Math.pow(10, precision || 0)
+    return String(Math.round(value * power) / power)
+}
+
 export const calculatePlayerStats = (matches): Stat[] => {
     const playerStats = {};
     matches.forEach(match => {
@@ -136,7 +149,6 @@ export const calculatePlayerPoints = (tournaments: Tournament[]): Record<string,
 export const createH2H = (matches) => {
     // Inicializamos un objeto para guardar los resultados
     const results = {};
-    // debugger
     // Iteramos sobre cada partido en los datos
     matches.forEach(match => {
         // Obtenemos los nombres de los jugadores y el ganador
@@ -180,41 +192,41 @@ export const createH2H = (matches) => {
 }
 
 export const countTournamentsByPlayer = (tournaments) => {
-  // Crear un objeto para almacenar las estadísticas
-  const stats: Record<string, PlayerStats> = {};
+    // Crear un objeto para almacenar las estadísticas
+    const stats: Record<string, PlayerStats> = {};
 
-  // Iterar sobre el array de torneos
-  tournaments.forEach(tournament => {
-    const winner = tournament.champion.name;
-    const points = tournament.tournamentCategory.name;
+    // Iterar sobre el array de torneos
+    tournaments.forEach(tournament => {
+        const winner = tournament.champion.name;
+        const points = tournament.tournamentCategory.name;
 
-    // Si el jugador no está en el objeto stats, inicializar su entrada
-    if (!stats[winner]) {
-      stats[winner] = {
-        total: 0,
-        points: {}
-      };
-    }
+        // Si el jugador no está en el objeto stats, inicializar su entrada
+        if (!stats[winner]) {
+            stats[winner] = {
+                total: 0,
+                points: {}
+            };
+        }
 
-    // Incrementar el total de torneos ganados
-    stats[winner].total += 1;
+        // Incrementar el total de torneos ganados
+        stats[winner].total += 1;
 
-    // Incrementar la cantidad de puntos en la categoría correspondiente
-    if (!stats[winner].points[points]) {
-      stats[winner].points[points] = 0;
-    }
-    stats[winner].points[points] += 1;
-  });
+        // Incrementar la cantidad de puntos en la categoría correspondiente
+        if (!stats[winner].points[points]) {
+            stats[winner].points[points] = 0;
+        }
+        stats[winner].points[points] += 1;
+    });
 
-  // Convertir el objeto stats a un array de objetos
-  const resultArray = Object.entries(stats).map(([name, { total, points }]) => ({
-    name,
-    total,
-    points
-  }));
+    // Convertir el objeto stats a un array de objetos
+    const resultArray = Object.entries(stats).map(([name, { total, points }]) => ({
+        name,
+        total,
+        points
+    }));
 
-  // Ordenar el array por la cantidad de torneos ganados en orden descendente
-  resultArray.sort((a, b) => b.total - a.total);
+    // Ordenar el array por la cantidad de torneos ganados en orden descendente
+    resultArray.sort((a, b) => b.total - a.total);
 
-  return resultArray;
+    return resultArray;
 }
