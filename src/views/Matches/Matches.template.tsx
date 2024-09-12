@@ -32,7 +32,6 @@ const PartidosTemplate = ({ matchesList }) => {
     }, {});
 
     const stats: Stat[] = calculatePlayerStats(matchesList);
-    // console.log(stats)
     if (matchesList.length == 0 || !matchesList[0].tournament) {
         return (
             <>
