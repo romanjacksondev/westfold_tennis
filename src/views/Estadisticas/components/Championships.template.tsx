@@ -42,7 +42,7 @@ const ChampionshipsTemplate = ({ championships }) => {
 
   return (
     <>
-      <TextHeadingH4>Total torneos ganados</TextHeadingH4>
+      <TextHeadingH4>Torneos ganados</TextHeadingH4>
       <table>
         <thead>
           <tr>
