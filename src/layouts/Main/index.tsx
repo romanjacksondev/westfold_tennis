@@ -1,14 +1,14 @@
-import Head from 'next/head'
-import { NavBarTop } from 'components/NavBarTop'
-import { LayoutProps } from './types'
+import Head from "next/head";
+import { NavBarTop } from "components/NavBarTop";
+import { LayoutProps } from "./types";
 
 const MainLayout = ({
   component: Component,
   pageTitle,
   background,
-  backgroundPosition = 'bottom',
+  backgroundPosition = "bottom",
 }: LayoutProps) => {
-  const title = pageTitle || "DEFAULT_TITLE"
+  const title = pageTitle || "DEFAULT_TITLE";
 
   return (
     <div className="bg-white h-full z-10">
@@ -29,7 +29,7 @@ const MainLayout = ({
         />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default MainLayout
+export default MainLayout;

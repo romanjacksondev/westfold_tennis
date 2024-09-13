@@ -5,7 +5,7 @@ export const getNestedProperty = (obj: any, reference: string) => {
 }
 
 export const formatNumber = (x, decimals = null) => {
-    let parts = decimals ? toFixed(x, decimals) : x
+    let parts = decimals ? toFixed(x * 100, decimals) : x
     parts = parts.toString().split('.')
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     return parts.join('.')
