@@ -22,7 +22,7 @@ export type TennisPlayerProps = {
 
 const JugadoresTemplate = ({ players }: { players: TennisPlayerProps[] }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shadow-lg rounded-lg bg-rolandGarrosOrange p-10">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shadow-lg rounded-lg bg-rolandGarrosOrange p-2 lg:p-10">
       {players.map((player, i) => (
         <PlayerCard
           id={player.id}
