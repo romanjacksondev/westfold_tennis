@@ -14,7 +14,7 @@ export type TennisPlayerProps = {
   nickname: string;
   country?: string;
   ranking?: number;
-  points: number;
+  points?: number;
   winLossRatio?: string;
   grandSlams?: number;
   imageUrl: string;
@@ -26,8 +26,6 @@ const JugadoresTemplate = ({ players }: { players: TennisPlayerProps[] }) => {
       {players.map((player, i) => (
         <PlayerCard
           id={player.id}
-          ranking={i + 1}
-          points={player.points}
           name={player.name}
           lastname={player.lastname}
           imageUrl={`/img/avatar/${player.nickname.replace(" ", "").toLowerCase()}.jpeg`}
