@@ -15,11 +15,10 @@ export default function PlayerCard({
   nickname,
   ranking,
   points,
-  grandSlams,
 }: TennisPlayerProps) {
   return (
     <Card className="w-full max-w-md">
-      <CardHeader className="flex flex-row items-center space-x-4 pb-2">
+      <CardHeader className="flex flex-row flex-wrap justify-center items-center space-x-4 pb-2">
         <Avatar className="h-20 w-20">
           <AvatarImage alt={name} src={imageUrl} />
           <AvatarFallback>
@@ -29,44 +28,39 @@ export default function PlayerCard({
               .join("")}
           </AvatarFallback>
         </Avatar>
-        <div className="flex-1">
-          <CardTitle className="text-2xl">{`${name} "${nickname}" ${lastname}`}</CardTitle>
+        <div className="flex-1 flex-wrap">
+          <CardTitle className="text-2xl text-center">{`${name} "${nickname}" ${lastname}`}</CardTitle>
           <p className="text-sm text-muted-foreground">{country}</p>
           {ranking && (
-            <Badge variant="secondary" className="mt-1">
+            <Badge variant="secondary" className="mt-1 flex justify-center">
               Rank #{ranking}
             </Badge>
           )}
         </div>
       </CardHeader>
+
       <CardContent>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 mt-6">
           {points && (
             <div className="flex flex-col">
-              <span className="text-sm font-medium text-muted-foreground text-rolandGarrosRed">
+              <span className="text-sm font-medium text-center md:text-start text-muted-foreground text-rolandGarrosRed">
                 Points
               </span>
-              <span className="text-lg font-semibold">{points}</span>
-            </div>
-          )}
-          {grandSlams && (
-            <div className="flex flex-col">
-              <span className="text-sm font-medium text-muted-foreground text-rolandGarrosRed">
-                Grand Slams
+              <span className="text-lg font-semibold text-center md:text-start">
+                {points}
               </span>
-              <span className="text-lg font-semibold">{grandSlams}</span>
             </div>
           )}
+          <Link href={`/jugadores/${id}`}>
+            <Button
+              className="w-full text-rolandGarrosRed h-full"
+              variant="outline"
+            >
+              <BarChart2 className="mr-2 h-4 w-4" />
+              See Statistics
+            </Button>
+          </Link>
         </div>
-        <Link href={`/jugadores/${id}`}>
-          <Button
-            className="w-full text-rolandGarrosRed mt-6"
-            variant="outline"
-          >
-            <BarChart2 className="mr-2 h-4 w-4" />
-            See Statistics
-          </Button>
-        </Link>
       </CardContent>
     </Card>
   );
