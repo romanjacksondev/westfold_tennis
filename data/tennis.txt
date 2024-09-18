@@ -194,3 +194,12 @@ Fer 3-0 12-7
 Ale 2-1  9-7
 Rodo 1-2  9-8
 Roman 0-3 4-12
+***********************
+Hidden Court III
+14/09/24
+Roman 1 - 4 Rodo
+Fer 4 - 2 Ale
+Roman 2 - Fer 4
+Rodo 4 - 0 Ale
+Ale 4(7) - (2)3 Roman 
+Fer 4 - 2 Rodo
