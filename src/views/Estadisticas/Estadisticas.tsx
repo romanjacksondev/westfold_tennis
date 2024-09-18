@@ -13,14 +13,12 @@ const EstadisticasView = () => {
         const prepareH2H = async () => {
             const data = await getMatches("")
             const result = createH2H(data)
-            // console.log(result)
             setH2h(result)
         }
 
         const prepareChampionships = async () => {
             const data = await getTournaments()
             const result = countTournamentsByPlayer(data)
-            // console.log(result)
             setChampionships(result)
         }
 

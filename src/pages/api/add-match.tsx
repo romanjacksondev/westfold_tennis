@@ -1,5 +1,6 @@
 import prisma from "lib/prisma";
-import { getSession } from "next-auth/react";
+import { getServerSession } from "next-auth/next"
+import NextAuth from "./auth/[...nextauth]"
 
 interface Set {
   winnerId: string
@@ -7,7 +8,7 @@ interface Set {
 
 export default async function handler(req, res) {
 
-  const session = await getSession({ req });
+  const session = await getServerSession(req, res, NextAuth)
   if (!session) {
     return res.status(401).json({ message: "Unauthorized" });
   }

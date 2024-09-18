@@ -17,16 +17,11 @@ const NavBarTopTemplate = () => {
 
   useEffect(() => {
     if (session) {
-      // console.log("session1: ", session)
       setUserData(session.user);
     } else {
-      // console.log("session2: ", session)
       clearUserData();
     }
   }, [session]);
-
-  // console.log("user: ", user)
-  // console.log("user.session: ", user.session)
 
   return (
     <nav className="bg-white px-6 md:px-20 py-4 h-[72px] grid grid-cols-3 border-b-2 border-gray-300 z-20 relative">
