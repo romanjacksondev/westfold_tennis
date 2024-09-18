@@ -1,15 +1,10 @@
 import { useSelectors } from "store/selectors";
-import JugadoresTemplate from "./Jugadores.template";
+import JugadoresTemplate, { TennisPlayerProps } from "./Jugadores.template";
 
 const JugadoresView = () => {
+  const { players } = useSelectors();
 
-  const { players } = useSelectors()
-
-return (
-  <JugadoresTemplate players={players}></JugadoresTemplate>
-)
-
-
+  return <JugadoresTemplate players={players as TennisPlayerProps[]} />;
 };
 
 export default JugadoresView;

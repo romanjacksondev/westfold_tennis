@@ -1,31 +1,38 @@
-import { useState, useEffect } from 'react';
-import { useActions } from 'store/actions';
-import LeaderboardTemplate from './Leaderboard.template';
-import { calculatePlayerPoints } from "../../lib/helpers"
+import { useState, useEffect } from "react";
+import { useActions } from "store/actions";
+import LeaderboardTemplate from "./Leaderboard.template";
+import { calculatePlayerPoints } from "../../lib/helpers";
+import { useSelectors } from "store/selectors";
+import { TennisPlayerProps } from "views/Jugadores/Jugadores.template";
 
 const LeaderboardView = () => {
+  const { players } = useSelectors();
+  const { getLeaderboard } = useActions();
+  const [leaderboard, setLeaderboard] = useState([]);
 
-    const { getLeaderboard } = useActions()
-    const [leaderboard, setLeaderboard] = useState([])
+  useEffect(() => {
+    const getLeaderboardData = async () => {
+      const data = await getLeaderboard();
+      // console.log("data: ", data)
+      const playerPoints = calculatePlayerPoints(data);
 
-    useEffect(() => {
-        const getLeaderboardData = async () => {
-            const data = await getLeaderboard()
-            // console.log("data: ", data)
-            const playerPoints = calculatePlayerPoints(data,);
+      // console.log(playerPoints)
+      const entries = Object.entries(playerPoints);
+      entries.sort((a, b) => b[1] - a[1]);
+      const sortedArray = entries.map(([key, value]) => ({ key, value }));
+      setLeaderboard(sortedArray);
+    };
+    getLeaderboardData();
+  }, []);
 
-            // console.log(playerPoints)
-            const entries = Object.entries(playerPoints);
-            entries.sort((a, b) => b[1] - a[1]);
-            const sortedArray = entries.map(([key, value]) => ({ key, value }));
-            setLeaderboard(sortedArray)
-        }
-        getLeaderboardData()
-    }, [])
+  const orderedPlayers = leaderboard.map((player) => {
+    const playerData = players.find((pl) => pl.name === player.key);
+    return { points: player.value, ...playerData };
+  });
 
-    return (
-        <LeaderboardTemplate leaderboard={leaderboard}></LeaderboardTemplate>
-    )
-}
+  return (
+    <LeaderboardTemplate leaderboard={orderedPlayers as TennisPlayerProps[]} />
+  );
+};
 
 export default LeaderboardView;
