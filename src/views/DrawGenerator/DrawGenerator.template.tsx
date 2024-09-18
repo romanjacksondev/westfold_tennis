@@ -1,6 +1,7 @@
 import { Button } from 'components/Button';
 import MultiSelect from 'components/MultiSelect/MultiSelect';
 import { TextHeadingH4 } from 'components/Text';
+import { generateDraw } from 'lib/helpers';
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -8,75 +9,74 @@ import { useForm } from 'react-hook-form';
 const DrawGeneratorTemplate = ({ players }) => {
 
   const { getValues, control } = useForm({ mode: 'onSubmit' })
-  const [ rounds, setRounds] = useState(0)
-  const [ matches, setMatches] = useState([])
+  const [matches, setMatches] = useState([])
 
   function shuffleArray(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]]; // Intercambiamos los elementos
+    const n = 5;
+    for (let m = 0; m < n; m++) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
     }
+    return array;
   }
 
   const onSubmit = async () => {
     const values = getValues()
-    console.log(values)
-
-    const matches = [];
-
-    // Generamos todos los partidos posibles (round-robin)
-    for (let i = 0; i < players.length; i++) {
-      for (let j = i + 1; j < players.length; j++) {
-        matches.push({
-          player1: players[i],
-          player2: players[j],
-        });
-      }
-    }
-  
-    // Mezclamos los partidos para que el orden sea aleatorio
-    console.log("matches ori: ", matches)
-    shuffleArray(matches);
-    setMatches(matches)
-    console.log("matches shuf: ", matches)
-    console.log("rounds: ",values.players.length-1)
-    setRounds(values.players.length-1)
-    // if (response) {
-    //   toast.success("Torneo creado!")
-    // } else {
-    //   toast.success("Torneo NO creado!")
-    // }
+    const draw = generateDraw(values.players.length, shuffleArray(values.players))
+    const resultado = shuffleArray(draw);
+    setMatches(resultado)
   }
 
   const MatchItem = ({ match }) => {
     return (
       <div className="match-item">
         <div className="players">
-          <span>{match.player1.name}</span> vs <span>{match.player2.name}</span>
+          {match[0].name} vs {match[1].name}
         </div>
       </div>
     );
   };
 
-  const Round = ({ round }) => {
-    console.log("in rounds")
+  MatchItem.propTypes = {
+    match: PropTypes.arrayOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+      }).isRequired
+    ).isRequired,
+  };
+
+  const Round = ({ round, index }) => {
     return (
       <div className="round">
-        <h3>{round}</h3>
+
         <div className="matches">
-          {matches.map((match, index) => (
-            <MatchItem key={index} match={match} />
+          <h3>Round {index + 1}</h3>
+          {round.map((r, i) => (
+            <>
+              <MatchItem key={i} match={r} />
+            </>
           ))}
         </div>
       </div>
     );
   };
 
-console.log("rounds out: ", rounds)
+  Round.propTypes = {
+    round: PropTypes.arrayOf(
+      PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string.isRequired,
+        }).isRequired
+      ).isRequired
+    ).isRequired,
+    index: PropTypes.number.isRequired,
+  };
 
   return (
     <>
-      <TextHeadingH4>Generador de Schedule</TextHeadingH4>
+      <TextHeadingH4>Generador de Enfrentamientos</TextHeadingH4>
       <div className="grid grid-cols-2 gap-4 w-full">
         <MultiSelect
           label={""}
@@ -100,10 +100,10 @@ console.log("rounds out: ", rounds)
 
 
       <div className="tournament-matches">
-      { rounds > 0 && new Array(Array(rounds).keys()).map((round, index) => (
-        <Round key={index} round={round} />
-      ))}
-    </div>
+        {matches.map((round, index) => (
+          <Round key={index} round={round} index={index} />
+        ))}
+      </div>
 
     </>
   )
@@ -111,7 +111,10 @@ console.log("rounds out: ", rounds)
 
 DrawGeneratorTemplate.propTypes = {
   players: PropTypes.arrayOf(
-    PropTypes.shape({})
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired
+    })
   ).isRequired
 };
 
