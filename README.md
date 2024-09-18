@@ -15,6 +15,6 @@ xOtlz6rZR7Tm
 
 
 const salt = bcrypt.genSaltSync(10);
-const hashedPassword = bcrypt.hashSync('password123', salt);
+const hashedPassword = bcrypt.hashSync('password1234', salt);
 
 console.log(hashedPassword);

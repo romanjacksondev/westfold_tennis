@@ -36,11 +36,12 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
             players: values.players
         }
 
-        const response = addTournament(payload)
-        if(response) {
+        const response = await addTournament(payload)
+        console.log("response: ", response)
+        if(response.status == 201) {
             toast.success("Torneo creado!")
         } else {
-            toast.success("Torneo NO creado!")
+            toast.error("Torneo NO creado!")
         }
             
         setOpenModal(false)
