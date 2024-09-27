@@ -1,3 +1,4 @@
+import LoadingComponent from "components/Loader";
 import PlayerCard from "components/PlayerCard";
 import { format, subMonths } from "date-fns";
 import { TennisPlayerProps } from "views/Jugadores/Jugadores.template";
@@ -21,8 +22,8 @@ const LeaderboardTemplate = ({
   const todayFormatted = format(today, "dd/MM/yyyy");
   const twelveMonthsAgoFormatted = format(twelveMonthsAgo, "dd/MM/yyyy");
 
-  if (leaderboard.length == 0) {
-    return "LOADING";
+  if (leaderboard.length === 0) {
+    return <LoadingComponent size="large" />;
   }
 
   return (
