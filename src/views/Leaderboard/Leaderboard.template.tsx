@@ -31,6 +31,7 @@ const LeaderboardTemplate = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shadow-lg rounded-lg bg-rolandGarrosOrange  p-2 lg:p-10 place-items-center">
         {leaderboard.map((player, i) => (
           <PlayerCard
+            key={player.id}
             id={player.id}
             ranking={i + 1}
             points={player.points}

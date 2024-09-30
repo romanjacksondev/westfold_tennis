@@ -1,7 +1,7 @@
 // Libraries
 import React from 'react'
 import { useRouter } from 'next/router'
-// import { useSession } from 'hooks/useSession'
+import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import clsx from 'clsx'
 
@@ -15,12 +15,14 @@ import { SidebarProps } from './Sidebar.types'
 import Close from 'assets/icons/close.svg'
 import Player from 'assets/icons/tennis-player.svg'
 import Hamburguer from 'assets/images/hamburguer.svg'
-import Tournament from 'assets/icons/tournament-bracket.svg'
+import Tournament from 'assets/icons/tennis-table.svg'
 import Venue from 'assets/icons/tennis-court.svg'
 import Ranking from 'assets/icons/tennis-leaderboard.svg'
 import Stats from 'assets/icons/tennis-stats.svg'
 import Dashboard from 'assets/icons/tennis-dashboard.svg'
-import { useSession } from 'next-auth/react'
+import Draw from 'assets/icons/tennis-bracket.svg'
+
+
 
 const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
   const router = useRouter()
@@ -50,6 +52,11 @@ const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
       label: 'Estadisticas',
       icon: Stats,
       path: "/estadisticas",
+    },
+    {
+      label: 'Draw Generator',
+      icon: Draw,
+      path: "/drawGenerator",
     }
   ]
 

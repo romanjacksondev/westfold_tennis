@@ -17,6 +17,7 @@ export default NextAuth({
         });
         if (user && bcrypt.compareSync(credentials.password, user.password)) {
           return user;
+
         }
         return null;
       }
@@ -33,10 +34,12 @@ export default NextAuth({
       return token;
     },
     async session({ session }) {
-    // async session({ session, token }) {
-      // session.user.id = token.id;
+    //async session({ session, token }) {
+      //session.user.id = token.id;
       return session;
     }
   },
   secret: process.env.NEXTAUTH_SECRET,
+  
+  debug: true
 });
