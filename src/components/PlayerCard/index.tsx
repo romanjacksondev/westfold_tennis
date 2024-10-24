@@ -44,7 +44,7 @@ export default function PlayerCard({
           {points && (
             <div className="flex flex-col">
               <span className="text-sm font-medium text-center md:text-start text-muted-foreground text-rolandGarrosRed">
-                Points
+                Puntos
               </span>
               <span className="text-lg font-semibold text-center md:text-start">
                 {points}
@@ -57,7 +57,7 @@ export default function PlayerCard({
               variant="outline"
             >
               <BarChart2 className="mr-2 h-4 w-4" />
-              See Statistics
+              Estadisticas
             </Button>
           </Link>
         </div>

@@ -13,7 +13,7 @@ const LeaderboardView = () => {
   useEffect(() => {
     const getLeaderboardData = async () => {
       const data = await getLeaderboard();
-      // console.log("data: ", data)
+       console.log("data: ", data)
       const playerPoints = calculatePlayerPoints(data);
 
       // console.log(playerPoints)
@@ -25,13 +25,13 @@ const LeaderboardView = () => {
     getLeaderboardData();
   }, []);
 
-  const orderedPlayers = leaderboard.map((player) => {
+  const orderedPlayers:TennisPlayerProps[] = leaderboard.map((player) => {
     const playerData = players.find((pl) => pl.name === player.key);
     return { points: player.value, ...playerData };
   });
 
   return (
-    <LeaderboardTemplate leaderboard={orderedPlayers as TennisPlayerProps[]} />
+    <LeaderboardTemplate leaderboard={orderedPlayers} />
   );
 };
 

@@ -1,4 +1,4 @@
-import { TournamentCategory, Tournament, Stat, PlayerStats } from 'interfaces';
+import { TournamentCategory, Tournament, Stat, PlayerStats, PointsBreakdown } from 'interfaces';
 
 export const getNestedProperty = (obj: any, reference: string) => {
     return reference.split('.').reduce((o, k) => o && o[k], obj)
@@ -125,7 +125,7 @@ export const getPointsForPosition = (tournamentCategory: TournamentCategory, pos
 
 // Función para calcular puntos totales por jugador
 export const calculatePlayerPoints = (tournaments: Tournament[]): Record<string, number> => {
-    const playerPoints: Record<string, number> = {};
+    const playerPoints: Record<string, PointsBreakdown> = {};
     for (let indexFor = 0; indexFor < tournaments.length; indexFor++) {
         // console.log("nombre torneo: ",tournaments[indexFor].name)
 
@@ -134,13 +134,20 @@ export const calculatePlayerPoints = (tournaments: Tournament[]): Record<string,
         positions.forEach((position, index) => {
             const points = getPointsForPosition(tournaments[indexFor].tournamentCategory, index + 1);
             // console.log("index+1 "  + index+1)    
-            // console.log("points " + points + " para " + position.name)
+            // console.log("points " + points + " para " + position.name + " en el torneo " + tournaments[indexFor].name)
+
             if (!playerPoints[position.name]) {
-                playerPoints[position.name] = 0;
+                const data: PointsBreakdown = {
+                    points: 0,
+                    breakdown: []
+                }
+                // playerPoints[position.name] = 0;
+                playerPoints[position.name] = data;
             }
-            playerPoints[position.name] += points;
+            playerPoints[position.name].points += points;
+            playerPoints[position.name].breakdown.push({points: points, tournament: tournaments[indexFor].name}) 
         });
-        // console.log(playerPoints)
+         console.log("breakdown: ", playerPoints)
     }
     return playerPoints;
 };

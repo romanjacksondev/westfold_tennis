@@ -8,10 +8,6 @@ const LeaderboardTemplate = ({
 }: {
   leaderboard: TennisPlayerProps[];
 }) => {
-  const Styles = {
-    ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l`,
-    TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l`,
-  };
 
   const today = new Date();
 
@@ -29,18 +25,20 @@ const LeaderboardTemplate = ({
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shadow-lg rounded-lg bg-rolandGarrosOrange  p-2 lg:p-10 place-items-center">
+
         {leaderboard.map((player, i) => (
           <PlayerCard
             key={player.id}
             id={player.id}
             ranking={i + 1}
-            points={player.points}
+            points={player.points.points}
             name={player.name}
             lastname={player.lastname}
             imageUrl={`/img/avatar/${player.nickname.replace(" ", "").toLowerCase()}.jpeg`}
             nickname={player.nickname}
           />
-        ))}
+        ))
+        }
       </div>
       <p className="text-black text-lg lg:text-2xl mt-6">
         * Desde {twelveMonthsAgoFormatted} hasta {todayFormatted}
