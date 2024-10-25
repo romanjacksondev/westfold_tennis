@@ -124,7 +124,7 @@ export const getPointsForPosition = (tournamentCategory: TournamentCategory, pos
 };
 
 // Función para calcular puntos totales por jugador
-export const calculatePlayerPoints = (tournaments: Tournament[]): Record<string, number> => {
+export const calculatePlayerPoints = (tournaments: Tournament[]): Record<string, PointsBreakdown> => {
     const playerPoints: Record<string, PointsBreakdown> = {};
     for (let indexFor = 0; indexFor < tournaments.length; indexFor++) {
         // console.log("nombre torneo: ",tournaments[indexFor].name)
