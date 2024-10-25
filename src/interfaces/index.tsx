@@ -64,5 +64,5 @@ export interface PlayerStats {
 
 export interface PointsBreakdown {
     points: number;
-    breakdown: [];
+    breakdown: { points: number; tournament: string }[];
 }
