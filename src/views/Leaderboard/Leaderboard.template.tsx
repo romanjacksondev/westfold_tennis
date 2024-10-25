@@ -17,7 +17,7 @@ const LeaderboardTemplate = ({ leaderboard }) => {
   if (leaderboard.length === 0) {
     return <LoadingComponent size="large" />;
   }
-  console.log("leadernoard: ", leaderboard)
+  // console.log("leaderboard: ", leaderboard)
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shadow-lg rounded-lg bg-rolandGarrosOrange  p-2 lg:p-10 place-items-center">

@@ -37,8 +37,8 @@ export default function AddTournamentForm({ openModal, setOpenModal }) {
         }
 
         const response = await addTournament(payload)
-        console.log("response: ", response)
-        if(response.status == 201) {
+        // console.log("response: ", response)
+        if(response.status == 200) {
             toast.success("Torneo creado!")
         } else {
             toast.error("Torneo NO creado!")
