@@ -21,7 +21,7 @@ import Ranking from 'assets/icons/tennis-leaderboard.svg'
 import Stats from 'assets/icons/tennis-stats.svg'
 import Dashboard from 'assets/icons/tennis-dashboard.svg'
 import Draw from 'assets/icons/tennis-bracket.svg'
-
+import Information from 'assets/icons/tennis-information.svg'
 
 
 const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
@@ -57,7 +57,12 @@ const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
       label: 'Draw Generator',
       icon: Draw,
       path: "/drawGenerator",
-    }
+    },
+    {
+      label: 'Informacion General',
+      icon: Information,
+      path: "/information",
+    }   
   ]
 
   const { data: session } = useSession()
