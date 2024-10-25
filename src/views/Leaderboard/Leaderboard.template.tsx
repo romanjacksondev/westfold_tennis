@@ -1,14 +1,9 @@
 import LoadingComponent from "components/Loader";
 import RankingCard from "components/RankingCard";
 import { format, subMonths } from "date-fns";
-import { TennisPlayerProps } from "views/Jugadores/Jugadores.template";
 import PropTypes from "prop-types";
 
-const LeaderboardTemplate = ({
-  leaderboard,
-}: {
-  leaderboard: TennisPlayerProps[];
-}) => {
+const LeaderboardTemplate = ({ leaderboard }) => {
 
   const today = new Date();
 
