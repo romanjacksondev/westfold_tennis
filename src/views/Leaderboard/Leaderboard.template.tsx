@@ -1,7 +1,8 @@
 import LoadingComponent from "components/Loader";
-import PlayerCard from "components/PlayerCard";
+import RankingCard from "components/RankingCard";
 import { format, subMonths } from "date-fns";
 import { TennisPlayerProps } from "views/Jugadores/Jugadores.template";
+import PropTypes from "prop-types";
 
 const LeaderboardTemplate = ({
   leaderboard,
@@ -21,13 +22,13 @@ const LeaderboardTemplate = ({
   if (leaderboard.length === 0) {
     return <LoadingComponent size="large" />;
   }
-
+  console.log("leadernoard: ", leaderboard)
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shadow-lg rounded-lg bg-rolandGarrosOrange  p-2 lg:p-10 place-items-center">
 
         {leaderboard.map((player, i) => (
-          <PlayerCard
+          <RankingCard
             key={player.id}
             id={player.id}
             ranking={i + 1}
@@ -36,6 +37,7 @@ const LeaderboardTemplate = ({
             lastname={player.lastname}
             imageUrl={`/img/avatar/${player.nickname.replace(" ", "").toLowerCase()}.jpeg`}
             nickname={player.nickname}
+            pointsBreakdown={player.points.breakdown}
           />
         ))
         }
@@ -46,4 +48,9 @@ const LeaderboardTemplate = ({
     </>
   );
 };
+
+LeaderboardTemplate.propTypes = {
+  leaderboard: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+};
+
 export default LeaderboardTemplate;

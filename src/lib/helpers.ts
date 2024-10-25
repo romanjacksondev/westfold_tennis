@@ -147,7 +147,7 @@ export const calculatePlayerPoints = (tournaments: Tournament[]): Record<string,
             playerPoints[position.name].points += points;
             playerPoints[position.name].breakdown.push({points: points, tournament: tournaments[indexFor].name}) 
         });
-         console.log("breakdown: ", playerPoints)
+        //  console.log("breakdown: ", playerPoints)
     }
     return playerPoints;
 };

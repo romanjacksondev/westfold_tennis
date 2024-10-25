@@ -13,12 +13,12 @@ const LeaderboardView = () => {
   useEffect(() => {
     const getLeaderboardData = async () => {
       const data = await getLeaderboard();
-       console.log("data: ", data)
+      //  console.log("data: ", data)
       const playerPoints = calculatePlayerPoints(data);
 
       // console.log(playerPoints)
       const entries = Object.entries(playerPoints);
-      entries.sort((a, b) => b[1] - a[1]);
+      entries.sort((a, b) => b[1].points - a[1].points);
       const sortedArray = entries.map(([key, value]) => ({ key, value }));
       setLeaderboard(sortedArray);
     };
