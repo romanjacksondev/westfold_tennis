@@ -1,17 +1,14 @@
 import LoadingComponent from "components/Loader";
-import PlayerCard from "components/PlayerCard";
+import RankingCard from "components/RankingCard";
 import { format, subMonths } from "date-fns";
 import { TennisPlayerProps } from "views/Jugadores/Jugadores.template";
+import PropTypes from "prop-types";
 
 const LeaderboardTemplate = ({
   leaderboard,
 }: {
   leaderboard: TennisPlayerProps[];
 }) => {
-  const Styles = {
-    ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l`,
-    TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l`,
-  };
 
   const today = new Date();
 
@@ -25,22 +22,25 @@ const LeaderboardTemplate = ({
   if (leaderboard.length === 0) {
     return <LoadingComponent size="large" />;
   }
-
+  console.log("leadernoard: ", leaderboard)
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shadow-lg rounded-lg bg-rolandGarrosOrange  p-2 lg:p-10 place-items-center">
+
         {leaderboard.map((player, i) => (
-          <PlayerCard
+          <RankingCard
             key={player.id}
             id={player.id}
             ranking={i + 1}
-            points={player.points}
+            points={player.points.points}
             name={player.name}
             lastname={player.lastname}
             imageUrl={`/img/avatar/${player.nickname.replace(" ", "").toLowerCase()}.jpeg`}
             nickname={player.nickname}
+            pointsBreakdown={player.points.breakdown}
           />
-        ))}
+        ))
+        }
       </div>
       <p className="text-black text-lg lg:text-2xl mt-6">
         * Desde {twelveMonthsAgoFormatted} hasta {todayFormatted}
@@ -48,4 +48,9 @@ const LeaderboardTemplate = ({
     </>
   );
 };
+
+LeaderboardTemplate.propTypes = {
+  leaderboard: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
+};
+
 export default LeaderboardTemplate;

@@ -61,3 +61,8 @@ export interface PlayerStats {
         [key: string]: number;
     };
 }
+
+export interface PointsBreakdown {
+    points: number;
+    breakdown: [];
+}

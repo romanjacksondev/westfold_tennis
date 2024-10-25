@@ -13,25 +13,25 @@ const LeaderboardView = () => {
   useEffect(() => {
     const getLeaderboardData = async () => {
       const data = await getLeaderboard();
-      // console.log("data: ", data)
+      //  console.log("data: ", data)
       const playerPoints = calculatePlayerPoints(data);
 
       // console.log(playerPoints)
       const entries = Object.entries(playerPoints);
-      entries.sort((a, b) => b[1] - a[1]);
+      entries.sort((a, b) => b[1].points - a[1].points);
       const sortedArray = entries.map(([key, value]) => ({ key, value }));
       setLeaderboard(sortedArray);
     };
     getLeaderboardData();
   }, []);
 
-  const orderedPlayers = leaderboard.map((player) => {
+  const orderedPlayers:TennisPlayerProps[] = leaderboard.map((player) => {
     const playerData = players.find((pl) => pl.name === player.key);
     return { points: player.value, ...playerData };
   });
 
   return (
-    <LeaderboardTemplate leaderboard={orderedPlayers as TennisPlayerProps[]} />
+    <LeaderboardTemplate leaderboard={orderedPlayers} />
   );
 };
 
