@@ -9,10 +9,13 @@ const LeaderboardView = () => {
   const { players } = useSelectors();
   const { getLeaderboard } = useActions();
   const [leaderboard, setLeaderboard] = useState([]);
+  //year: last 12 months
+  //calendar: from 01/01
+  const [rankingMode, setRankingMode] = useState('year');
 
   useEffect(() => {
     const getLeaderboardData = async () => {
-      const data = await getLeaderboard();
+      const data = await getLeaderboard(rankingMode);
       //  console.log("data: ", data)
       const playerPoints = calculatePlayerPoints(data);
 
@@ -22,8 +25,9 @@ const LeaderboardView = () => {
       const sortedArray = entries.map(([key, value]) => ({ key, value }));
       setLeaderboard(sortedArray);
     };
+    console.log("ranking")
     getLeaderboardData();
-  }, []);
+  }, [rankingMode]);
 
   const orderedPlayers:TennisPlayerProps[] = leaderboard.map((player) => {
     const playerData = players.find((pl) => pl.name === player.key);
@@ -31,7 +35,7 @@ const LeaderboardView = () => {
   });
 
   return (
-    <LeaderboardTemplate leaderboard={orderedPlayers} />
+    <LeaderboardTemplate leaderboard={orderedPlayers} rankingMode={rankingMode} setRankingMode={setRankingMode}/>
   );
 };
 

@@ -4,9 +4,15 @@ export default async function handler(req, res) {
 
     try {
         const now = new Date();
-        const twelveMonthsAgo = new Date();
-        twelveMonthsAgo.setMonth(now.getMonth() - 12);
+        const currentYear = now.getFullYear();
+        let initialDate = new Date();
 
+        if (req.query.rankingMode == 'calendar') {
+            initialDate = new Date(currentYear, 0, 1);
+        } else {
+            initialDate.setMonth(now.getMonth() - 12);
+        }
+        // console.log("initialDate: ", initialDate)
         const players = await prisma.tournament.findMany({
             orderBy: [
                 {
@@ -14,7 +20,7 @@ export default async function handler(req, res) {
                 }],
             where: {
                 date: {
-                    gte: twelveMonthsAgo, // Mayor o igual a hace 12 meses
+                    gte: initialDate, // Mayor o igual a hace 12 meses
                     lte: now // Menor o igual a la fecha actual
                 }
             },
@@ -52,6 +58,8 @@ export default async function handler(req, res) {
                 }
             }
         });
+
+        // console.log("leaderboard: ", players)
 
         res.status(200).json(players);
     } catch (e) {

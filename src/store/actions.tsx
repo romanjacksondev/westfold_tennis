@@ -23,7 +23,7 @@ const useActions = () => {
   const clearMatches = async () => actions.clearMatches(dispatch)
 
   //Leaderboard Data
-  const getLeaderboard = async () => actions.getLeaderboard()
+  const getLeaderboard = async (rankingMode) => actions.getLeaderboard(rankingMode)
 
   //Tournament Types
   const getTournamentCategories = async () => actions.getTournamentCategories(dispatch)

@@ -6,6 +6,7 @@ module.exports = {
     colors: {
       rolandGarrosRed: "#BB4915",
       rolandGarrosOrange: "#D06B28",
+      wimbledonGreen: "#02734A",
       primary: "#AAC0C7",
       secondary: "#8EB4C0",
       tertiary: "#F0F6FA",
