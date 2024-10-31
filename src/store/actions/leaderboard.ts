@@ -1,5 +1,5 @@
-const getLeaderboard = async () => {
-  const response = await fetch('/api/leaderboard')
+const getLeaderboard = async (rankingMode) => {
+  const response = await fetch(`/api/leaderboard?rankingMode=${rankingMode}`)
   const json = await response.json();
   return json
 }

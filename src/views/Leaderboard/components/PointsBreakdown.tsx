@@ -21,8 +21,8 @@ export default function PointsBreakdown({ name, pointsBreakdown, openModal, setO
                 <table className="w-full table-auto">
                     <thead className="text-center bg-gray-300">
                         <tr>
-                            <th className={Styles.ThStyle}> Puntos </th>
                             <th className={Styles.ThStyle}> Torneo </th>
+                            <th className={Styles.ThStyle}> Puntos </th>
                         </tr>
                     </thead>
 

@@ -1,11 +1,4 @@
 import PlayerCard from "components/PlayerCard";
-import { TextBodyXs, TextHeadingH4 } from "components/Text";
-import { calculatePlayerPoints } from "lib/helpers";
-import Image from "next/image";
-import Link from "next/link";
-import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
-import { useActions } from "store/actions";
 
 export type TennisPlayerProps = {
   id: string;
@@ -23,8 +16,9 @@ export type TennisPlayerProps = {
 const JugadoresTemplate = ({ players }: { players: TennisPlayerProps[] }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shadow-lg rounded-lg bg-rolandGarrosOrange p-2 lg:p-10">
-      {players.map((player, i) => (
+      {players.map((player) => (
         <PlayerCard
+          key={player.id}
           id={player.id}
           name={player.name}
           lastname={player.lastname}
