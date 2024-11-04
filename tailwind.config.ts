@@ -1,44 +1,12 @@
-/** @type {import('tailwindcss').Config} */
+/**
+ * @format
+ * @type {import('tailwindcss').Config}
+ */
+
 module.exports = {
   darkMode: ["class"],
   content: ["./src/**/**/*.{js,jsx,ts,tsx}"],
   theme: {
-    colors: {
-      rolandGarrosRed: "#BB4915",
-      rolandGarrosOrange: "#D06B28",
-      wimbledonGreen: "#02734A",
-      primary: "#AAC0C7",
-      secondary: "#8EB4C0",
-      tertiary: "#F0F6FA",
-      cta: "#EC0039",
-      success: "#4EC291",
-      error: "#F52046",
-      disabled: "#AAB4BD",
-      "disabled-gray": "#D0D0D0",
-      hover: "#D60033",
-      focus: "#6395AA",
-      black: "#131313",
-      white: "#FFFFFF",
-      gray: {
-        "100": "#F9F9F9",
-        "200": "#F3F3F3",
-        "300": "#E8E8E8",
-        "400": "#C8C8C8",
-        "500": "#929292",
-        "600": "#414141",
-      },
-      red: {
-        "300": "#EA1D25",
-        "400": "#EA1D25",
-        "500": "#EA1D25",
-      },
-      border: "#B7B7B7",
-      "input-border": "#B2D2DF",
-      input: "#3F8EAF",
-      link: "#3F8EAF",
-      subtitle: "#69717A",
-      placeholder: "#808B95",
-    },
     extend: {
       fontSize: {
         "hero-1": [
@@ -120,6 +88,40 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       colors: {
+        rolandGarrosRed: "#BB4915",
+        rolandGarrosOrange: "#D06B28",
+        wimbledonGreen: "#02734A",
+        primary: "#AAC0C7",
+        secondary: "#8EB4C0",
+        tertiary: "#F0F6FA",
+        cta: "#EC0039",
+        success: "#4EC291",
+        error: "#F52046",
+        disabled: "#AAB4BD",
+        "disabled-gray": "#D0D0D0",
+        hover: "#D60033",
+        focus: "#6395AA",
+        black: "#131313",
+        white: "#FFFFFF",
+        gray: {
+          "100": "#F9F9F9",
+          "200": "#F3F3F3",
+          "300": "#E8E8E8",
+          "400": "#C8C8C8",
+          "500": "#929292",
+          "600": "#414141",
+        },
+        red: {
+          "300": "#EA1D25",
+          "400": "#EA1D25",
+          "500": "#EA1D25",
+        },
+        border: "#B7B7B7",
+        "input-border": "#B2D2DF",
+        input: "#3F8EAF",
+        link: "#3F8EAF",
+        subtitle: "#69717A",
+        placeholder: "#808B95",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {
@@ -130,14 +132,7 @@ module.exports = {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",
         },
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
+
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -150,8 +145,6 @@ module.exports = {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         chart: {
           "1": "hsl(var(--chart-1))",
