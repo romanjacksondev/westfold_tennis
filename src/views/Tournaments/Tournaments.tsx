@@ -1,12 +1,12 @@
-import { useSelectors } from 'store/selectors'
-import TournamentsTemplate from './Tournaments.template';
+/** @format */
+
+import { useSelectors } from "store/selectors";
+import TournamentsTemplate from "./Tournaments.template";
 
 const TournamentsView = () => {
-  const { tournaments } = useSelectors()
+  const { tournaments } = useSelectors();
 
-  return (
-    <TournamentsTemplate tournamentsList={tournaments} />
-  );
+  return <TournamentsTemplate tournaments={tournaments} />;
 };
 
 export default TournamentsView;
