@@ -7,6 +7,48 @@ module.exports = {
   darkMode: ["class"],
   content: ["./src/**/**/*.{js,jsx,ts,tsx}"],
   theme: {
+    colors: {
+      rolandGarrosRed: "#BB4915",
+      rolandGarrosOrange: "#D06B28",
+      wimbledonGreen: "#02734A",
+
+      hardCourt: "#6ed0ec",
+      clay: "#c95917",
+      grass: "#02503b",
+      ice: "#ffffff",
+
+      primary: "#AAC0C7",
+      secondary: "#8EB4C0",
+      tertiary: "#F0F6FA",
+      cta: "#EC0039",
+      success: "#4EC291",
+      error: "#F52046",
+      disabled: "#AAB4BD",
+      "disabled-gray": "#D0D0D0",
+      hover: "#D60033",
+      focus: "#6395AA",
+      black: "#131313",
+      white: "#FFFFFF",
+      gray: {
+        "100": "#F9F9F9",
+        "200": "#F3F3F3",
+        "300": "#E8E8E8",
+        "400": "#C8C8C8",
+        "500": "#929292",
+        "600": "#414141",
+      },
+      red: {
+        "300": "#EA1D25",
+        "400": "#EA1D25",
+        "500": "#EA1D25",
+      },
+      border: "#B7B7B7",
+      "input-border": "#B2D2DF",
+      input: "#3F8EAF",
+      link: "#3F8EAF",
+      subtitle: "#69717A",
+      placeholder: "#808B95",
+    },
     extend: {
       fontSize: {
         "hero-1": [
