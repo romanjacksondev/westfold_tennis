@@ -3,63 +3,65 @@ import { createColumnHelper } from "@tanstack/react-table";
 import BaseTable from "components/BaseTable/BaseTable";
 import PropTypes from "prop-types";
 
-const SummaryTemplate = ({ summary }) => {
+const SummaryTemplate = ({ playerStats }) => {
   // console.log("summary: ", summary)
 
-  type Set = {
-    gamesJugador1: number
-    gamesJugador2: number
-  }
   type MatchSummary = {
-    player1Name: {
-      name: string
-    }
-    player2Name: {
-      name: string
-    }
-    sets: Set[]
+    id: string,
+    name: string,
+    matchesWon: number,
+    matchesLost: number,
+    gamesWon: number,
+    gamesLost: number
   }
 
   const columnHelper = createColumnHelper<MatchSummary>();
 
   const columns = [
     ...[
-      columnHelper.accessor("player1Name.name", {
-        id: "player1Id",
+      columnHelper.accessor("name", {
+        id: "name",
         minSize: 180,
         cell: (row) => <i>{row.getValue()}</i>,
         header: () => <span>Nombre</span>,
       }),
-      columnHelper.accessor("sets", {
-        id: "sets",
-        minSize: 180,
-        cell: (row) => <i>{
-          <ul>
-            {row.getValue().map((game, i) =>
-              <li key={i}>
-                {game.gamesJugador1} - {game.gamesJugador2}
-              </li>
-            )}
-          </ul>
-        }</i>,
-        header: () => <span>Resultado</span>,
-      }),
-      columnHelper.accessor("player2Name.name", {
-        id: "player2Name",
+      columnHelper.accessor("matchesWon", {
+        id: "matchesWon",
         minSize: 180,
         cell: (row) => <i>{row.getValue()}</i>,
-        header: () => <span>Nombre</span>,
+        header: () => <span>Partidos Ganados</span>,
+      })
+      ,
+      columnHelper.accessor("matchesLost", {
+        id: "matchesLost",
+        minSize: 180,
+        cell: (row) => <i>{row.getValue()}</i>,
+        header: () => <span>Partidos Perdidos</span>,
+      })
+      ,
+      columnHelper.accessor("gamesWon", {
+        id: "gamesWon",
+        minSize: 180,
+        cell: (row) => <i>{row.getValue()}</i>,
+        header: () => <span>Games Ganados</span>,
+      })
+      ,
+      columnHelper.accessor("gamesLost", {
+        id: "gamesLost",
+        minSize: 180,
+        cell: (row) => <i>{row.getValue()}</i>,
+        header: () => <span>Games Perdidos</span>,
       })
     ],
   ];
 
   return (
-    <BaseTable data={summary} title="Resumen del torneo" columns={columns} />
+    <BaseTable data={playerStats} title="Resumen del torneo" columns={columns} />
   );
 };
 
 SummaryTemplate.propTypes = {
-  summary: PropTypes.arrayOf(
+  playerStats: PropTypes.arrayOf(
     PropTypes.shape({})
   ).isRequired,
 };

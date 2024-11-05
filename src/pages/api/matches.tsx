@@ -39,10 +39,14 @@ export default async function handler(req, res) {
             }
         });
 
+        const tournamentData = {
+            champion: matches[0].tournament.champion.name,
+            name: matches[0].tournament.name,
+        }
         const matchSummary = createMatchSummary(matches);
         const playerStats = calculatePlayerStats(matches)
         const data = {
-            matchSummary, playerStats
+            matchSummary, playerStats, tournamentData
         }
         res.status(200).json(data);
     } catch (e) {

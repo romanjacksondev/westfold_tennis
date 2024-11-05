@@ -1,6 +1,8 @@
 import PropTypes from "prop-types";
 import LoadingComponent from "components/Loader";
 import SummaryTemplate from "./components/Summary.template";
+import { TextHeadingH4 } from "components/Text";
+import MatchesListTemplate from "./components/MatchesList.template";
 
 const PartidosTemplate = ({ matchesData }) => {
 
@@ -12,13 +14,22 @@ const PartidosTemplate = ({ matchesData }) => {
 
   return (
     <>
-      <SummaryTemplate summary={matchesData.matchSummary} />
+      <TextHeadingH4>
+        {matchesData.tournamentData.champion} campeon de{" "}
+        {matchesData.tournamentData.name}
+      </TextHeadingH4>
+      <SummaryTemplate playerStats={matchesData.playerStats} />
+      <MatchesListTemplate summary={matchesData.matchSummary} />
     </>
   )
 };
 
 PartidosTemplate.propTypes = {
   matchesData: PropTypes.shape({
+    tournamentData: PropTypes.shape({
+      champion: PropTypes.string,
+      name: PropTypes.string
+    }),
     matchSummary: PropTypes.shape({
       player1Name: PropTypes.shape({
         name: PropTypes.string
