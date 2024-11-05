@@ -25,7 +25,7 @@ const LeaderboardView = () => {
       const sortedArray = entries.map(([key, value]) => ({ key, value }));
       setLeaderboard(sortedArray);
     };
-    console.log("ranking")
+    // console.log("ranking")
     getLeaderboardData();
   }, [rankingMode]);
 

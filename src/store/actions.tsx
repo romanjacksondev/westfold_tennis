@@ -38,6 +38,8 @@ const useActions = () => {
   //Player Stats
   const getPlayerStats = async (payload) => actions.getPlayerStats(payload)
 
+  //General Stats
+  const getGeneralStats = async () => actions.getGeneralStats()
 
   return {
     setTournamentData,
@@ -55,7 +57,8 @@ const useActions = () => {
     getSurfaces,
     clearUserData,
     setUserData,
-    getPlayerStats
+    getPlayerStats,
+    getGeneralStats
   }
 }
 

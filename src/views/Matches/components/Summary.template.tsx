@@ -28,7 +28,7 @@ const SummaryTemplate = ({ summary }) => {
         id: "player1Id",
         minSize: 180,
         cell: (row) => <i>{row.getValue()}</i>,
-        header: () => <span>Nombre 1</span>,
+        header: () => <span>Nombre</span>,
       }),
       columnHelper.accessor("sets", {
         id: "sets",
@@ -48,7 +48,7 @@ const SummaryTemplate = ({ summary }) => {
         id: "player2Name",
         minSize: 180,
         cell: (row) => <i>{row.getValue()}</i>,
-        header: () => <span>Nombre 2</span>,
+        header: () => <span>Nombre</span>,
       })
     ],
   ];

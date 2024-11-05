@@ -4,26 +4,43 @@ import SummaryTemplate from "./components/Summary.template";
 
 const PartidosTemplate = ({ matchesData }) => {
 
-  // if (Object.keys(matchesList).length == 0 || !matchesList[0].tournament) {
   if (!matchesData || Object.keys(matchesData).length == 0) {
     return <LoadingComponent size="large" />;
   }
 
-  console.log("summary1232: ", matchesData)
+  // console.log("summary1232: ", matchesData)
 
-  return <>
-    <SummaryTemplate summary={matchesData.matchSummary} />
-  </>
+  return (
+    <>
+      <SummaryTemplate summary={matchesData.matchSummary} />
+    </>
+  )
 };
 
 PartidosTemplate.propTypes = {
-  matchesData: PropTypes.arrayOf(
-    PropTypes.shape({
-      matchSummary: PropTypes.shape({
-        player1Id: PropTypes.string.isRequired,
-      }).isRequired,
+  matchesData: PropTypes.shape({
+    matchSummary: PropTypes.shape({
+      player1Name: PropTypes.shape({
+        name: PropTypes.string
+      }),
+      player2Name: PropTypes.shape({
+        name: PropTypes.string
+      }),
+      player1Id: PropTypes.string,
+      player2Id: PropTypes.string,
+      sets: PropTypes.array.isRequired
+
+    }),
+    playerStats: PropTypes.shape({
+      id: PropTypes.string,
+      name: PropTypes.number,
+      matchesWon: PropTypes.number,
+      matchesLost: PropTypes.number,
+      gamesWon: PropTypes.number,
+      gamesLost: PropTypes.number
     })
-  ).isRequired,
+
+  }).isRequired,
 };
 
 export default PartidosTemplate;

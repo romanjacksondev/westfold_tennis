@@ -145,7 +145,7 @@ export const calculatePlayerPoints = (tournaments: Tournament[]): Record<string,
                 playerPoints[position.name] = data;
             }
             playerPoints[position.name].points += points;
-            playerPoints[position.name].breakdown.push({points: points, tournament: tournaments[indexFor].name}) 
+            playerPoints[position.name].breakdown.push({ points: points, tournament: tournaments[indexFor].name })
         });
         //  console.log("breakdown: ", playerPoints)
     }
@@ -159,6 +159,7 @@ export const createH2H = (matches) => {
     // Iteramos sobre cada partido en los datos
     matches.forEach(match => {
         // Obtenemos los nombres de los jugadores y el ganador
+        
         const jugador1 = match.player1.name;
         const jugador2 = match.player2.name;
         const ganador = match.winner.name;
@@ -240,35 +241,67 @@ export const countTournamentsByPlayer = (tournaments) => {
 
 
 export const generateDraw = (n, ps) => {  // n = num players
-    
+
     const DUMMY = -1;
-    
+
     const rs = [];                  // rs = round array
     if (!ps) {
-      ps = [];
-      for (let k = 1; k <= n; k += 1) {
-        ps.push(k);
-      }
+        ps = [];
+        for (let k = 1; k <= n; k += 1) {
+            ps.push(k);
+        }
     } else {
-      ps = ps.slice();
+        ps = ps.slice();
     }
-  
+
     if (n % 2 === 1) {
-      ps.push(DUMMY); // so we can match algorithm for even numbers
-      n += 1;
+        ps.push(DUMMY); // so we can match algorithm for even numbers
+        n += 1;
     }
     for (let j = 0; j < n - 1; j += 1) {
-      rs[j] = []; // create inner match array for round j
-      for (let i = 0; i < n / 2; i += 1) {
-        const o = n - 1 - i;
-        if (ps[i] !== DUMMY && ps[o] !== DUMMY) {
-          // flip orders to ensure everyone gets roughly n/2 home matches
-          const isHome = i === 0 && j % 2 === 1;
-          // insert pair as a match - [ away, home ]
-          rs[j].push([isHome ? ps[o] : ps[i], isHome ? ps[i] : ps[o]]);
+        rs[j] = []; // create inner match array for round j
+        for (let i = 0; i < n / 2; i += 1) {
+            const o = n - 1 - i;
+            if (ps[i] !== DUMMY && ps[o] !== DUMMY) {
+                // flip orders to ensure everyone gets roughly n/2 home matches
+                const isHome = i === 0 && j % 2 === 1;
+                // insert pair as a match - [ away, home ]
+                rs[j].push([isHome ? ps[o] : ps[i], isHome ? ps[i] : ps[o]]);
+            }
         }
-      }
-      ps.splice(1, 0, ps.pop()); // permutate for next round
+        ps.splice(1, 0, ps.pop()); // permutate for next round
     }
     return rs;
-  };
+};
+
+export const createMatchSummary = (matchesList) => {
+    // console.log("matchesList: ", JSON.stringify(matchesList))
+    const data = []
+    matchesList.map(match => {
+        const matchData = {
+            player1Name: match.player1,
+            player2Name: match.player2,
+            player1Id: match.player1Id,
+            player2Id: match.player2Id,
+            sets: []
+        }
+        match.sets.map(set => {
+            const setData = {
+                gamesJugador1: 0,
+                gamesJugador2: 0
+            }
+            set.games.map(game => {
+                if (game.winnerId == matchData.player1Id) {
+                    setData.gamesJugador1++
+                } else {
+                    setData.gamesJugador2++
+                }
+            })
+            matchData.sets.push(setData)
+        })
+        data.push(matchData)
+    })
+    // console.log("data: ", JSON.stringify(data))
+    return data
+
+}
