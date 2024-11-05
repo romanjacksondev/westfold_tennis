@@ -7,6 +7,7 @@ import LoadingComponent from "components/Loader";
 import BaseTable from "components/BaseTable/BaseTable";
 import { createColumnHelper } from "@tanstack/react-table";
 import { Eye, Trophy } from "lucide-react";
+import PropTypes from "prop-types";
 
 const TournamentsTemplate = ({ tournaments }) => {
   if (tournaments.length == 0) {
@@ -65,6 +66,12 @@ const TournamentsTemplate = ({ tournaments }) => {
       columns={columns}
     />
   );
+};
+
+TournamentsTemplate.propTypes = {
+  tournaments: PropTypes.arrayOf(
+    PropTypes.shape({})
+  ).isRequired,
 };
 
 export default TournamentsTemplate;

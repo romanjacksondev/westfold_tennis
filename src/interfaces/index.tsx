@@ -66,3 +66,9 @@ export interface PointsBreakdown {
     points: number;
     breakdown: { points: number; tournament: string }[];
 }
+
+export interface Venue {
+    name: string;
+    phone: string;
+    address: string;
+}
