@@ -1,14 +1,36 @@
-import ModalNewData from "components/ModalNewData";
+import BaseTable from "components/BaseTable/BaseTable";
 import PropTypes from "prop-types";
+import { createColumnHelper } from "@tanstack/react-table";
+import ModalNewData from "components/ModalNewData";
 
 export default function PointsBreakdown({ name, pointsBreakdown, openModal, setOpenModal }) {
 
-    const Styles = {
-        ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l`,
-        TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l`,
-    };
+    type PointsBreakdown = {
+        tournament: string
+        points: string
+    }
+
+    const columnHelper = createColumnHelper<PointsBreakdown>();
+
+    const columns = [
+        ...[
+            columnHelper.accessor("tournament", {
+                id: "tournament",
+                minSize: 180,
+                cell: (row) => <i>{row.getValue()}</i>,
+                header: () => <span>Torneo</span>,
+            }),
+            columnHelper.accessor("points", {
+                id: "points",
+                minSize: 180,
+                cell: (row) => <i>{row.getValue()}</i>,
+                header: () => <span>Puntos</span>,
+            })
+        ],
+    ];
 
     return (
+
         <ModalNewData
             buttonText={'Cerrar'}
             isOpen={openModal}
@@ -17,27 +39,7 @@ export default function PointsBreakdown({ name, pointsBreakdown, openModal, setO
             size={'lg'}
             title={`Breakdown de puntos de ${name}`}
         >
-            <div className="grid grid-cols-2 gap-4 w-full">
-                <table className="w-full table-auto">
-                    <thead className="text-center bg-gray-300">
-                        <tr>
-                            <th className={Styles.ThStyle}> Torneo </th>
-                            <th className={Styles.ThStyle}> Puntos </th>
-                        </tr>
-                    </thead>
-
-                    <tbody className="text-center">
-
-                        {pointsBreakdown.length > 0 && pointsBreakdown.map((elem, i) => (
-                            <tr key={i}>
-                                <td className={Styles.TdStyle}>{elem.tournament}</td>
-                                <td className={Styles.TdStyle}>{elem.points}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-
-            </div>
+            <BaseTable data={pointsBreakdown} title="Resultados" columns={columns} />
         </ModalNewData>
     )
 }
