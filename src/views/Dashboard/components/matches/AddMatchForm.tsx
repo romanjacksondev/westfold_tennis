@@ -14,7 +14,28 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
     const { players, tournaments } = useSelectors()
     // Estado local para manejar la cantidad de sets
     const [setQuantity, setSetQuantity] = useState(1);
-
+    const setOptions = [
+        {
+            label: "1",
+            value: 1
+        },
+        {
+            label: "2",
+            value: 2
+        },
+        {
+            label: "3",
+            value: 3
+        },
+        {
+            label: "4",
+            value: 4
+        },
+        {
+            label: "5",
+            value: 5
+        }
+    ]
     // Verificar cambios en setQuantity con useWatch
     const watchSetQuantity = useWatch({
         control,
@@ -33,7 +54,7 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
 
         let player1Wins = 0;
         let player2Wins = 0;
-    
+
         sets.forEach(set => {
             if (set.gamesPlayer1 > set.gamesPlayer2) {
                 player1Wins += 1;  // Jugador 1 gana este set
@@ -89,29 +110,16 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
                     name="setsQuantity"
                     placeholder="Ej. Ale"
                     defaultValue={{
-                                label:"1",
-                                value:1
-                            }}
+                        label: "1",
+                        value: 1
+                    }}
                     control={control}
                     isSearchable={false}
                     optionLabel="label"
                     optionValue="value"
                     handleChange={handleSetQuantityChange}
                     options={
-                        [
-                            {
-                                label:"1",
-                                value:1
-                            },
-                            {
-                                label:"3",
-                                value:3
-                            },
-                            {
-                                label:"5",
-                                value:5
-                            }
-                        ]
+                        setOptions
                     }
                     // rules={{ required: "Requerido" }}
                     errors={errors}

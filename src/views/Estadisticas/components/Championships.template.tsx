@@ -1,10 +1,8 @@
 /** @format */
 
-// import { TextHeadingH4 } from "components/Text";
 import { createColumnHelper } from "@tanstack/react-table";
 import BaseTable from "components/BaseTable/BaseTable";
 import LoadingComponent from "components/Loader";
-import { TextHeadingH4 } from "components/Text";
 import PropTypes from "prop-types";
 
 const ChampionshipsTemplate = ({ championships }) => {
@@ -65,6 +63,10 @@ const ChampionshipsTemplate = ({ championships }) => {
   return (
     <BaseTable data={championships} title="Torneos ganados" columns={columns} />
   );
+};
+
+ChampionshipsTemplate.propTypes = {
+  championships: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
 };
 
 export default ChampionshipsTemplate;

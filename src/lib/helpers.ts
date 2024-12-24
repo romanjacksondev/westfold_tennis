@@ -11,7 +11,6 @@ export const formatNumber = (x, decimals = null) => {
     return parts.join('.')
 }
 
-
 export const toFixed = (value, precision) => {
     const power = Math.pow(10, precision || 0)
     return String(Math.round(value * power) / power)
@@ -152,14 +151,13 @@ export const calculatePlayerPoints = (tournaments: Tournament[]): Record<string,
     return playerPoints;
 };
 
-
 export const createH2H = (matches) => {
     // Inicializamos un objeto para guardar los resultados
     const results = {};
     // Iteramos sobre cada partido en los datos
     matches.forEach(match => {
         // Obtenemos los nombres de los jugadores y el ganador
-        
+
         const jugador1 = match.player1.name;
         const jugador2 = match.player2.name;
         const ganador = match.winner.name;
@@ -239,7 +237,6 @@ export const countTournamentsByPlayer = (tournaments) => {
     return resultArray;
 }
 
-
 export const generateDraw = (n, ps) => {  // n = num players
 
     const DUMMY = -1;
@@ -303,5 +300,25 @@ export const createMatchSummary = (matchesList) => {
     })
     // console.log("data: ", JSON.stringify(data))
     return data
+
+}
+
+
+export const parseMatches = (matchesList) => {
+    const data = []
+    matchesList.map(match => {
+
+        data.push({
+            tournamentName: match.tournament.name,
+            player1: match.player1.name,
+            result: "resultado",
+            player2: match.player2.name,
+        }
+        )
+    })
+
+    //Invierto el array para mostrar los partidos mas recientes primero
+    return data.reverse()
+
 
 }

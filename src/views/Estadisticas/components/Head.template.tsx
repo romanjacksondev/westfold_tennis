@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { TextHeadingH4 } from "components/Text";
 import { CircleDot } from "lucide-react";
 import PropTypes from "prop-types";
 

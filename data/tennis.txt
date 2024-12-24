@@ -232,7 +232,35 @@ Ale 4 - 1 Roman
 Fer 4 - 0 Ale
 Rodo 4(7) - (6)3 Roman
 ----------------
-Rodolfo 2-1 11-7
-Fernando 2-1 10-7
+Rodo 2-1 11-7
+Fer 2-1 10-7
 Roman 1-2 8-10
-Alejandro 1-2 4-9
+Ale 1-2 4-9
+***********************
+Lawn Tenis Ramos I
+01/11/2024
+Roman	1 - 4	Fer
+Rodo	4 - 1	Ale
+Roman	3 - 4	Ale
+Rodo	4 - 2	Fer
+Rodo	3 - 4	Roman
+Fer	    4 - 2	Ale
+----------------
+Rodo	2	1	11	7
+Fer	    2	1	10	7
+Roman	1	2	8	11
+Ale	    1	2	7	11
+***********************
+Grand Slam Solanas I
+01/11/2024
+Rodo	4 - 0	Ale
+Roman	4 - 3	Fer
+Ale	    4 - 3	Roman
+Fer	    4 - 0	Rodo
+Fer	    4 - 3	Ale
+Roman	4 - 0	Rodo
+----------------
+Roman	2	1	11	7
+Fer	    2	1	11	7
+Ale	    1	2	7	11
+Rodo	1	2	4	8

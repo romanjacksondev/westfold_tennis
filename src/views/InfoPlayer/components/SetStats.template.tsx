@@ -1,36 +1,48 @@
-import { TextHeadingH4 } from 'components/Text';
 import { formatNumber } from 'lib/helpers';
 import PropTypes from 'prop-types';
-
-const Styles = {
-    ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l text-center`,
-    TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l text-center`,
-};
+import BaseTable from "components/BaseTable/BaseTable";
+import { createColumnHelper } from "@tanstack/react-table";
 
 const SetTemplate = ({ stats }) => {
+
+    type MatchTemplate = {
+        setsPlayed: number
+        setsWon: number
+        setsLost: number
+    }
+
+    const columnHelper = createColumnHelper<MatchTemplate>();
+
+    const columns = [
+        columnHelper.accessor("setsPlayed", {
+            id: "setsPlayed",
+            minSize: 180,
+            cell: (row) => <i>{row.getValue()}</i>,
+            header: () => <span>Jugados</span>,
+        }),
+        columnHelper.accessor("setsWon", {
+            id: "setsWon",
+            minSize: 180,
+            cell: (row) => <i>{row.getValue()}</i>,
+            header: () => <span>Ganados</span>,
+        }),
+        columnHelper.accessor("setsLost", {
+            id: "setsLost",
+            minSize: 180,
+            cell: (row) => <i>{row.getValue()}</i>,
+            header: () => <span>Perdidos</span>,
+        }),
+        columnHelper.accessor(row => formatNumber(row.setsWon / row.setsPlayed, 2), {
+            id: '% victorias',
+        })
+    ];
+
+    const array = []
+    array.push(stats)
     return (
-        <>
-            <TextHeadingH4>Resumen Sets</TextHeadingH4>
-            <table>
-                <thead>
-                    <tr>
-                        <th className={Styles.ThStyle}>Jugados</th>
-                        <th className={Styles.ThStyle}>Ganados</th>
-                        <th className={Styles.ThStyle}>Perdidos</th>
-                        <th className={Styles.ThStyle}>% victorias</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td className={Styles.TdStyle}>{stats.setsPlayed}</td>
-                        <td className={Styles.TdStyle}>{stats.setsWon}</td>
-                        <td className={Styles.TdStyle}>{stats.setsLost}</td>
-                        <td className={Styles.TdStyle}>{formatNumber(stats.setsWon / stats.setsPlayed, 2)}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </>
+        <BaseTable data={array} title="Resumen Partidos" columns={columns} />
     )
+
 }
 
 SetTemplate.propTypes = {
