@@ -1,5 +1,5 @@
 import prisma from "lib/prisma";
-import { parseMatches } from "lib/helpers";
+import { createMatchSummary } from "lib/helpers";
 
 export default async function handler(req, res) {
 
@@ -29,7 +29,8 @@ export default async function handler(req, res) {
                         name: true,
                         champion: {
                             select: { name: true },
-                        }
+                        },
+                        date: true
                     }
                 },
                 player1: {
@@ -46,10 +47,15 @@ export default async function handler(req, res) {
                         games: true
                     }
                 }
-            }
+            },
+            orderBy: {
+                tournament: {
+                    date: 'desc', // Replace 'someField' with the field to order by
+                },
+            },
         });
 
-        const parsedMatches = parseMatches(matches)
+        const parsedMatches = createMatchSummary(matches)
         res.status(200).json(parsedMatches);
     } catch (e) {
         console.log(e);

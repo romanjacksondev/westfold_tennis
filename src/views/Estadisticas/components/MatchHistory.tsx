@@ -27,29 +27,57 @@ const MatchHistory = () => {
     const columnHelper = createColumnHelper<any>();
     const columns = [
         ...[
-          columnHelper.accessor("tournamentName", {
-            id: "tournamentName",
-            minSize: 180,
-            cell: (row) => <i>{row.getValue()}</i>,
-            header: () => <span>Torneo</span>,
-          }),
-          columnHelper.accessor("player1", {
-            id: "player1",
-            cell: (row) => <i>{row.getValue()}</i>,
-            header: () => <span>Nombre</span>,
-          }),
-          columnHelper.accessor("result", {
-            id: "result",
-            cell: (row) => <i>{row.getValue()}</i>,
-            header: () => <span>Resultado</span>,
-          }),
-          columnHelper.accessor("player2", {
-            id: "player2",
-            cell: (row) => <i>{row.getValue()}</i>,
-            header: () => <span>Nombre</span>,
-          }),
+            columnHelper.accessor("tournamentName", {
+                id: "tournamentName",
+                minSize: 180,
+                cell: (row) => <i>{row.getValue()}</i>,
+                header: () => <span>Torneo</span>,
+            }),
+            columnHelper.accessor("player1Name.name", {
+                id: "player1",
+                cell: (row) => {
+                    console.log(row.row.original)
+                    const winner = row.row.original.player1Id == row.row.original.winnerId
+                    return (<i
+                        style={{
+                            backgroundColor: winner ? 'green' : 'red'
+                        }}
+
+                    >{row.getValue()}</i>
+                    )
+                },
+                header: () => <span>Nombre</span>,
+            }),
+            columnHelper.accessor("sets", {
+                id: "sets",
+                minSize: 180,
+                cell: (row) => <i>{
+                    <ul>
+                        {row.getValue().map((game, i) =>
+                            <li key={i}>
+                                {game.gamesJugador1} - {game.gamesJugador2}
+                            </li>
+                        )}
+                    </ul>
+                }</i>,
+                header: () => <span>Resultado</span>,
+            }),
+            columnHelper.accessor("player2Name.name", {
+                id: "player2",
+                cell: (row) => {
+                    const winner = row.row.original.player2Id == row.row.original.winnerId
+                    return (<i
+                        style={{
+                            backgroundColor: winner ? 'green' : 'red'
+                        }}
+
+                    >{row.getValue()}</i>
+                    )
+                },
+                header: () => <span>Nombre</span>,
+            }),
         ],
-      ];
+    ];
 
     return (
         <>
@@ -90,10 +118,10 @@ const MatchHistory = () => {
                 </Button>
             </div>
 
-            {matches && 
-             <BaseTable data={matches} title="Historial de Partidos" columns={columns} />
+            {matches.length > 0 &&
+                <BaseTable data={matches} title="Historial de Partidos" columns={columns} />
             }
-            
+
         </>
     )
 }

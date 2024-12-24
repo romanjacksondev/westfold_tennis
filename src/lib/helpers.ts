@@ -276,6 +276,8 @@ export const createMatchSummary = (matchesList) => {
     const data = []
     matchesList.map(match => {
         const matchData = {
+            winnerId: match.winnerId,
+            tournamentName: match.tournament.name,
             player1Name: match.player1,
             player2Name: match.player2,
             player1Id: match.player1Id,
@@ -300,25 +302,5 @@ export const createMatchSummary = (matchesList) => {
     })
     // console.log("data: ", JSON.stringify(data))
     return data
-
-}
-
-
-export const parseMatches = (matchesList) => {
-    const data = []
-    matchesList.map(match => {
-
-        data.push({
-            tournamentName: match.tournament.name,
-            player1: match.player1.name,
-            result: "resultado",
-            player2: match.player2.name,
-        }
-        )
-    })
-
-    //Invierto el array para mostrar los partidos mas recientes primero
-    return data.reverse()
-
 
 }
