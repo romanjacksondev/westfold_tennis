@@ -41,7 +41,7 @@ const EstadisticasTemplate = ({ h2h, championships }) => {
           Torneos
         </Button>
         <Button onClick={() => handleOnClick('MatchHistory')} className="w-40" width="fixed" variant={showMatchHistory ? "filled" : "outline"}>
-          Torneos
+          Historial partidos
         </Button>
       </div>
 

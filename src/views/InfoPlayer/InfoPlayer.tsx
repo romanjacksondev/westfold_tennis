@@ -35,11 +35,10 @@ const InfoPlayerView = () => {
 
     return (
         <>
-            <InfoPlayerTemplate 
-                championships={championships} 
+            <InfoPlayerTemplate
+                championships={championships}
                 stats={stats}
             />
-            
         </>
     )
 }

@@ -17,6 +17,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { CircleDot } from "lucide-react";
+import PropTypes from "prop-types";
 
 export default function BaseTable({ title, data, columns }) {
   const table = useReactTable({
@@ -40,13 +41,13 @@ export default function BaseTable({ title, data, columns }) {
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} className="text-gray-300">
+                    <TableHead key={header.id} className="text-gray-300" colSpan={header.colSpan}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -75,3 +76,13 @@ export default function BaseTable({ title, data, columns }) {
     </Card>
   );
 }
+
+BaseTable.propTypes = {
+  title: PropTypes.string,
+  data: PropTypes.arrayOf(
+    PropTypes.shape({})
+  ).isRequired,
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({})
+  ).isRequired
+};
