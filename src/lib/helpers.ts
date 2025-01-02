@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { TournamentCategory, Tournament, Stat, PlayerStats, PointsBreakdown } from 'interfaces';
 
 export const getNestedProperty = (obj: any, reference: string) => {
@@ -272,7 +273,7 @@ export const generateDraw = (n, ps) => {  // n = num players
 };
 
 export const createMatchSummary = (matchesList) => {
-    // console.log("matchesList: ", JSON.stringify(matchesList))
+    //  console.log("matchesList: ", JSON.stringify(matchesList))
     const data = []
     matchesList.map(match => {
         const matchData = {
@@ -282,6 +283,7 @@ export const createMatchSummary = (matchesList) => {
             player2Name: match.player2,
             player1Id: match.player1Id,
             player2Id: match.player2Id,
+            date:  format(match.tournament.date, "dd/MM/yyyy"),
             sets: []
         }
         match.sets.map(set => {
