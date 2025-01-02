@@ -20,7 +20,7 @@ const MatchHistory = () => {
 
             const ids = { player1Id: values.player1.id, player2Id: values.player2.id }
             const data = await getMatchHistory(ids);
-            console.log(data)
+            // console.log(data)
             setMatches(data)
         }
     }
@@ -33,20 +33,16 @@ const MatchHistory = () => {
                 cell: (row) => <i>{row.getValue()}</i>,
                 header: () => <span>Torneo</span>,
             }),
-            columnHelper.accessor("player1Name.name", {
-                id: "player1",
+            columnHelper.accessor("winnerId", {
+                id: "winnerId",
+                // cell: (row) => <i>{row.getValue()}</i>,
                 cell: (row) => {
-                    console.log(row.row.original)
-                    const winner = row.row.original.player1Id == row.row.original.winnerId
+                    const winner = row.row.original.player1Id == row.row.original.winnerId ? row.row.original.player1Name.name : row.row.original.player2Name.name
                     return (<i
-                        style={{
-                            backgroundColor: winner ? 'green' : 'red'
-                        }}
-
-                    >{row.getValue()}</i>
+                    >{winner}</i>
                     )
                 },
-                header: () => <span>Nombre</span>,
+                header: () => <span>Ganador</span>,
             }),
             columnHelper.accessor("sets", {
                 id: "sets",
@@ -61,21 +57,7 @@ const MatchHistory = () => {
                     </ul>
                 }</i>,
                 header: () => <span>Resultado</span>,
-            }),
-            columnHelper.accessor("player2Name.name", {
-                id: "player2",
-                cell: (row) => {
-                    const winner = row.row.original.player2Id == row.row.original.winnerId
-                    return (<i
-                        style={{
-                            backgroundColor: winner ? 'green' : 'red'
-                        }}
-
-                    >{row.getValue()}</i>
-                    )
-                },
-                header: () => <span>Nombre</span>,
-            }),
+            })
         ],
     ];
 
