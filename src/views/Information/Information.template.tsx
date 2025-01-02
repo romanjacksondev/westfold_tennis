@@ -1,8 +1,18 @@
+import BaseTable from "components/BaseTable/BaseTable";
+import { createColumnHelper } from "@tanstack/react-table";
+
 const InformationTemplate = () => {
+
+    type TournamentInfo = {
+        categoria: string
+        campeon: number
+        finalista: number
+        semifinal: number
+        cuartosFinal: number
+      }
 
     const tournamentInfo = [
         {
-
             categoria: "Humolabs Grand Prix",
             campeon: 4000,
             finalista: 2600,
@@ -37,37 +47,45 @@ const InformationTemplate = () => {
             semifinal: 100,
             cuartosFinal: 50
         }]
+    const columnHelper = createColumnHelper<TournamentInfo>();
 
-    const Styles = {
-        ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l`,
-        TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l`
-    };
+    const columns = [
+        ...[
+            columnHelper.accessor("categoria", {
+                id: "categoria",
+                minSize: 180,
+                cell: (row) => <i>{row.getValue()}</i>,
+                header: () => <span>Categoria</span>,
+            }),
+            columnHelper.accessor("campeon", {
+                id: "campeon",
+                minSize: 180,
+                cell: (row) => <i>{row.getValue()}</i>,
+                header: () => <span>Campeon</span>,
+            }),
+            columnHelper.accessor("finalista", {
+                id: "finalista",
+                minSize: 180,
+                cell: (row) => <i>{row.getValue()}</i>,
+                header: () => <span>Finalista</span>,
+            }),
+            columnHelper.accessor("semifinal", {
+                id: "semifinal",
+                minSize: 180,
+                cell: (row) => <i>{row.getValue()}</i>,
+                header: () => <span>Semifinal</span>,
+            }),
+            columnHelper.accessor("cuartosFinal", {
+                id: "cuartosFinal",
+                minSize: 180,
+                cell: (row) => <i>{row.getValue()}</i>,
+                header: () => <span>Cuartos Final</span>,
+            })
 
+        ],
+    ];
     return (
-        <>
-            <table className="w-full table-auto">
-                <thead className="text-center bg-primary">
-                    <tr>
-                        <th className={Styles.ThStyle}> Categoria </th>
-                        <th className={Styles.ThStyle}> Campeon </th>
-                        <th className={Styles.ThStyle}> Finalista </th>
-                        <th className={Styles.ThStyle}> Semifinal </th>
-                        <th className={Styles.ThStyle}> Cuartos de final </th>
-                    </tr>
-                </thead>
-                <tbody className="text-center bg-primary">
-                    {tournamentInfo.map((elem) => (
-                        <tr key={elem.campeon}>
-                            <td className={Styles.TdStyle}>{elem.categoria}</td>
-                            <td className={Styles.TdStyle}>{elem.campeon}</td>
-                            <td className={Styles.TdStyle}>{elem.finalista}</td>
-                            <td className={Styles.TdStyle}>{elem.semifinal}</td>
-                            <td className={Styles.TdStyle}>{elem.cuartosFinal}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </>
+        <BaseTable data={tournamentInfo} title="Informacion General" columns={columns} />
     );
 }
 

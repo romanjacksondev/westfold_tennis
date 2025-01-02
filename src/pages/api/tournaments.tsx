@@ -11,6 +11,9 @@ export default async function handler(req, res) {
         champion: {
           select: { name: true },
         },
+        surface: {
+          select: { name: true }
+        },
         venue: {
           select: { name: true }
         },

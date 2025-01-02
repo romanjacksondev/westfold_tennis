@@ -1,41 +1,54 @@
+import BaseTable from 'components/BaseTable/BaseTable';
 import PropTypes from 'prop-types';
+import { createColumnHelper } from "@tanstack/react-table";
+import { Venue } from 'interfaces';
 
-const SedesTemplate = ({ venues }) => {
+const SedesTemplate = ({ venues }: { venues: Venue[] }) => {
 
-    const Styles = {
-        ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l`,
-        TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l`
-    };
+  const columnHelper = createColumnHelper<any>();
 
-    return (
-        <>
-            <table className="w-full table-auto">
-                <thead className="text-center bg-primary">
-                    <tr>
-                        <th className={Styles.ThStyle}> Nombre </th>
-                        <th className={Styles.ThStyle}> Teléfono </th>
-                        <th className={Styles.ThStyle}> Dirección </th>
-                    </tr>
-                </thead>
+  // console.log("venus: ", venues)
 
-                <tbody className="text-center bg-primary">
-                    {venues.map((venue) => (
-                        <tr key={venue.id}>
-                            <td className={Styles.TdStyle}>{venue.name}</td>
-                            <td className={Styles.TdStyle}>{venue.phone}</td>
-                            <td className={Styles.TdStyle}>{venue.address}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </>
-    );
+  const columns = [
+    columnHelper.accessor("name", {
+      id: "name",
+      minSize: 180,
+      cell: (row) => <i>{row.getValue()}</i>,
+      header: () => <span>Nombre</span>,
+    }),
+    columnHelper.accessor("phone", {
+      id: "phone",
+      cell: (info) => (
+        <div>
+          <i>{info.getValue()}</i>
+        </div>
+      ),
+      header: () => <span>Telefono</span>,
+    }),
+    columnHelper.accessor("address", {
+      id: "address",
+      cell: (info) => (
+        <div>
+          <i>{info.getValue()}</i>
+        </div>
+      ),
+      header: () => <span>Direccion</span>,
+    })
+  ];
+
+  return (
+    <BaseTable
+      title="Sedes"
+      data={venues}
+      columns={columns}
+    />
+  );
 }
 
 SedesTemplate.propTypes = {
-    venues: PropTypes.arrayOf( 
-        PropTypes.shape({})
-    ).isRequired
+  venues: PropTypes.arrayOf(
+    PropTypes.shape({})
+  ).isRequired
 };
 
 export default SedesTemplate

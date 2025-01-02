@@ -1,6 +1,8 @@
-// import { TextHeadingH4 } from "components/Text";
+/** @format */
+
+import { createColumnHelper } from "@tanstack/react-table";
+import BaseTable from "components/BaseTable/BaseTable";
 import LoadingComponent from "components/Loader";
-import { TextHeadingH4 } from "components/Text";
 import PropTypes from "prop-types";
 
 const ChampionshipsTemplate = ({ championships }) => {
@@ -26,45 +28,40 @@ const ChampionshipsTemplate = ({ championships }) => {
 
   const pointTypes = getAllPointTypes(championships);
 
-  const Styles = {
-    ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l text-center`,
-    TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l text-center`,
-  };
   // console.log("championships: ", championships)
   if (championships.length == 0) {
     return <LoadingComponent size="large" />;
   }
 
+  const columnHelper = createColumnHelper<Player>();
+
+  const columns = [
+    ...[
+      columnHelper.accessor("name", {
+        id: "name",
+        minSize: 180,
+        cell: (row) => <i>{row.getValue()}</i>,
+        header: () => <span>Nombre</span>,
+      }),
+      columnHelper.accessor("total", {
+        id: "total",
+        cell: (row) => <i>{row.getValue()}</i>,
+        header: () => <span>Total de Torneos Ganados</span>,
+      }),
+    ],
+  ];
+  pointTypes.forEach((type) => {
+    columns.push(
+      columnHelper.accessor("points", {
+        id: type,
+        cell: (context) => <i>{context.row.original.points[type]}</i>,
+        header: () => <span>{type}</span>,
+      }) as any
+    );
+  });
+
   return (
-    <>
-      <TextHeadingH4>Torneos ganados</TextHeadingH4>
-      <table>
-        <thead>
-          <tr>
-            <th className={Styles.ThStyle}>Nombre</th>
-            <th className={Styles.ThStyle}>Total de Torneos Ganados</th>
-            {pointTypes.map((point) => (
-              <th className={Styles.ThStyle} key={point}>
-                {point}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {championships.map((player, index) => (
-            <tr key={index}>
-              <td className={Styles.TdStyle}>{player.name}</td>
-              <td className={Styles.TdStyle}>{player.total}</td>
-              {pointTypes.map((point) => (
-                <td className={Styles.TdStyle} key={point}>
-                  {player.points[point] || 0}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </>
+    <BaseTable data={championships} title="Torneos ganados" columns={columns} />
   );
 };
 

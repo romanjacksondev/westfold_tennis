@@ -8,7 +8,7 @@ const PartidosView = () => {
   const router = useRouter()
   const { getMatches, clearMatches } = useActions();
   const { matches } = useSelectors()
-  const [matchesList, setMatchesList] = useState([])
+  const [matchesData, setMatchesData] = useState({})
 
   useEffect(() => {
     const getMatchesData = async () => {
@@ -21,15 +21,15 @@ const PartidosView = () => {
   }, [])
 
   useEffect(() => {
-    if (matches?.length) {
+    if (Object.keys(matches).length) {
       clearMatches()
-      setMatchesList(matches)
+      setMatchesData(matches)
     }
   }, [matches])
 
 
   return (
-    <MatchesTemplate matchesList={matchesList}></MatchesTemplate>
+    <MatchesTemplate matchesData={matchesData}></MatchesTemplate>
   );
 };
 

@@ -38,7 +38,12 @@ const useActions = () => {
   //Player Stats
   const getPlayerStats = async (payload) => actions.getPlayerStats(payload)
 
+  //General Stats
+  const getGeneralStats = async () => actions.getGeneralStats()
 
+    //Match history Stats
+    const getMatchHistory = async (payload) => actions.getMatchHistory(payload)
+  
   return {
     setTournamentData,
     getTournaments,
@@ -55,7 +60,9 @@ const useActions = () => {
     getSurfaces,
     clearUserData,
     setUserData,
-    getPlayerStats
+    getPlayerStats,
+    getGeneralStats,
+    getMatchHistory
   }
 }
 

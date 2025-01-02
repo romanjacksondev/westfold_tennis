@@ -1,13 +1,23 @@
-import { calculatePlayerStats, createMatchSummary } from "lib/helpers";
 import prisma from "lib/prisma";
+import { createMatchSummary } from "lib/helpers";
 
 export default async function handler(req, res) {
 
-    let whereCondition = {}
-    if (req.query.id) {
-        whereCondition = {
-            tournamentId: req.query.id
-        }
+    const whereCondition = {
+        OR: [
+            {
+                AND: [
+                    { player1Id: req.query.player1Id },
+                    { player2Id: req.query.player2Id }
+                ]
+            },
+            {
+                AND: [
+                    { player1Id: req.query.player2Id },
+                    { player2Id: req.query.player1Id }
+                ]
+            }
+        ]
     }
 
     try {
@@ -19,7 +29,8 @@ export default async function handler(req, res) {
                         name: true,
                         champion: {
                             select: { name: true },
-                        }
+                        },
+                        date: true
                     }
                 },
                 player1: {
@@ -36,22 +47,18 @@ export default async function handler(req, res) {
                         games: true
                     }
                 }
-            }
+            },
+            orderBy: {
+                tournament: {
+                    date: 'desc', // Replace 'someField' with the field to order by
+                },
+            },
         });
 
-        const tournamentData = {
-            champion: matches[0].tournament.champion.name,
-            name: matches[0].tournament.name,
-        }
-        const matchSummary = createMatchSummary(matches);
-        const playerStats = calculatePlayerStats(matches)
-        const data = {
-            matchSummary, playerStats, tournamentData
-        }
-        res.status(200).json(data);
+        const parsedMatches = createMatchSummary(matches)
+        res.status(200).json(parsedMatches);
     } catch (e) {
         console.log(e);
         res.status(500).json(e);
     }
 }
-

@@ -1,39 +1,28 @@
-import { useState, useEffect } from 'react';
-import EstadisticasTemplate from './Estadisticas.template';
-import { useActions } from 'store/actions';
-import { createH2H, countTournamentsByPlayer } from 'lib/helpers';
+/** @format */
+
+import { useState, useEffect } from "react";
+import EstadisticasTemplate from "./Estadisticas.template";
+import { useActions } from "store/actions";
 
 const EstadisticasView = () => {
+  const { getGeneralStats } = useActions();
+  const [h2h, setH2h] = useState({});
+  const [championships, setChampionships] = useState([]);
 
-    const { getMatches, getTournaments } = useActions()
-    const [h2h, setH2h] = useState({})
-    const [championships, setChampionships] = useState([])
+  useEffect(() => {
 
-    useEffect(() => {
-        const prepareH2H = async () => {
-            const data = await getMatches("")
-            const result = createH2H(data)
-            setH2h(result)
-        }
+     const getData = async () => {
+       const data = await getGeneralStats();
 
-        const prepareChampionships = async () => {
-            const data = await getTournaments()
-            const result = countTournamentsByPlayer(data)
-            setChampionships(result)
-        }
+// console.log("data:", data )
 
-        prepareH2H()
-        prepareChampionships()
+       setH2h(data.h2h);
+       setChampionships(data.tournamentsByPlayer);
+     };
+    getData()
+  }, []);
 
-    }, [])
-
-    return (
-        <>
-
-            <EstadisticasTemplate h2h={h2h} championships={championships}></EstadisticasTemplate>
-
-        </>
-    )
-}
+  return <EstadisticasTemplate h2h={h2h} championships={championships} />;
+};
 
 export default EstadisticasView;

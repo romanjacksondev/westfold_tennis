@@ -1,35 +1,47 @@
-import { TextHeadingH4 } from 'components/Text';
-import { formatNumber } from 'lib/helpers';
 import PropTypes from 'prop-types';
-
-const Styles = {
-    ThStyle: `py-4 px-3 bg-rolandGarrosRed border-b border-l text-center`,
-    TdStyle: `py-5 px-2 bg-rolandGarrosOrange border-b border-l text-center`,
-};
+import BaseTable from "components/BaseTable/BaseTable";
+import { createColumnHelper } from "@tanstack/react-table";
+import { formatNumber } from 'lib/helpers';
 
 const GameTemplate = ({ stats }) => {
+
+    type GameTemplate = {
+        gamesPlayed: number
+        gamesWon: number
+        gamesLost: number
+    }
+
+    const columnHelper = createColumnHelper<GameTemplate>();
+    // console.log("stats: ", stats)
+
+    const columns = [
+        columnHelper.accessor("gamesPlayed", {
+            id: "gamesPlayed",
+            minSize: 180,
+            cell: (row) => <i>{row.getValue()}</i>,
+            header: () => <span>Jugados</span>,
+        }),
+        columnHelper.accessor("gamesWon", {
+            id: "gamesWon",
+            minSize: 180,
+            cell: (row) => <i>{row.getValue()}</i>,
+            header: () => <span>Ganados</span>,
+        }),
+        columnHelper.accessor("gamesLost", {
+            id: "gamesLost",
+            minSize: 180,
+            cell: (row) => <i>{row.getValue()}</i>,
+            header: () => <span>Perdidos</span>,
+        }),
+        columnHelper.accessor(row => formatNumber(row.gamesWon / row.gamesPlayed, 2), {
+            id: '% victorias',
+        })
+    ];
+
+    const array = []
+    array.push(stats)
     return (
-        <>
-            <TextHeadingH4>Resumen Games</TextHeadingH4>
-            <table>
-                <thead>
-                    <tr>
-                        <th className={Styles.ThStyle}>Jugados</th>
-                        <th className={Styles.ThStyle}>Ganados</th>
-                        <th className={Styles.ThStyle}>Perdidos</th>
-                        <th className={Styles.ThStyle}>% victorias</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td className={Styles.TdStyle}>{stats.gamesPlayed}</td>
-                        <td className={Styles.TdStyle}>{stats.gamesWon}</td>
-                        <td className={Styles.TdStyle}>{stats.gamesLost}</td>
-                        <td className={Styles.TdStyle}>{formatNumber(stats.gamesWon / stats.gamesPlayed, 2)}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </>
+        <BaseTable data={array} title="Resumen Games" columns={columns} />
     )
 }
 
