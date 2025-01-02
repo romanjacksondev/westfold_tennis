@@ -59,7 +59,7 @@ export default async function handler(req, res) {
             }
         });
 
-        // console.log("leaderboard: ", players)
+        console.log("leaderboard: ", players)
 
         res.status(200).json(players);
     } catch (e) {

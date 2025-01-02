@@ -20,7 +20,7 @@ const MatchHistory = () => {
 
             const ids = { player1Id: values.player1.id, player2Id: values.player2.id }
             const data = await getMatchHistory(ids);
-            // console.log(data)
+             console.log(data)
             setMatches(data)
         }
     }
@@ -57,6 +57,13 @@ const MatchHistory = () => {
                     </ul>
                 }</i>,
                 header: () => <span>Resultado</span>,
+            })
+            ,
+            columnHelper.accessor("date", {
+                id: "date",
+                minSize: 180,
+                cell: (row) => <i>{row.getValue()}</i>,
+                header: () => <span>Fecha</span>,
             })
         ],
     ];

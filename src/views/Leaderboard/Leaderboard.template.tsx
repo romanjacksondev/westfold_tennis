@@ -4,7 +4,7 @@ import RankingCard from "components/RankingCard";
 import { format, subMonths } from "date-fns";
 import PropTypes from "prop-types";
 
-const LeaderboardTemplate = ({ leaderboard, rankingMode, setRankingMode }) => {
+const LeaderboardTemplate = ({ leaderboard, rankingMode, setRankingMode, hasTournaments }) => {
 
   const today = new Date();
 
@@ -20,9 +20,6 @@ const LeaderboardTemplate = ({ leaderboard, rankingMode, setRankingMode }) => {
     setRankingMode(value)
   }
 
-  if (leaderboard.length === 0) {
-    return <LoadingComponent size="large" />;
-  }
   // console.log("leaderboard: ", leaderboard)
   return (
     <>
@@ -34,28 +31,34 @@ const LeaderboardTemplate = ({ leaderboard, rankingMode, setRankingMode }) => {
           Carrera a Turin
         </Button>
       </div>
-      <div className={rankingMode == 'calendar' ? "bg-wimbledonGreen" : "bg-rolandGarrosOrange"}>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shadow-lg rounded-lg p-2 lg:p-10 place-items-center" >
-          {leaderboard.map((player, i) => (
-            <RankingCard
-              key={player.id}
-              id={player.id}
-              ranking={i + 1}
-              points={player.points.points}
-              name={player.name}
-              lastname={player.lastname}
-              imageUrl={`/img/avatar/${player.nickname.replace(" ", "").toLowerCase()}.jpeg`}
-              nickname={player.nickname}
-              pointsBreakdown={player.points.breakdown}
-            />
-          ))
-          }
-        </div>
-      </div>
-      <p className="text-black text-lg lg:text-2xl mt-6">
-        * Desde {rankingMode == 'year' ? twelveMonthsAgoFormatted : firstDayOfYear} hasta {todayFormatted}
-      </p>
 
+      {!hasTournaments ? (<LoadingComponent size="large" />) :
+        (
+          <>
+            <div className={rankingMode == 'calendar' ? "bg-wimbledonGreen" : "bg-rolandGarrosOrange"}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shadow-lg rounded-lg p-2 lg:p-10 place-items-center" >
+                {leaderboard.map((player, i) => (
+                  <RankingCard
+                    key={player.id}
+                    id={player.id}
+                    ranking={i + 1}
+                    points={player.points.points}
+                    name={player.name}
+                    lastname={player.lastname}
+                    imageUrl={`/img/avatar/${player.nickname.replace(" ", "").toLowerCase()}.jpeg`}
+                    nickname={player.nickname}
+                    pointsBreakdown={player.points.breakdown}
+                  />
+                ))
+                }
+              </div>
+            </div>
+            <p className="text-black text-lg lg:text-2xl mt-6">
+              * Desde {rankingMode == 'year' ? twelveMonthsAgoFormatted : firstDayOfYear} hasta {todayFormatted}
+            </p>
+          </>
+        )
+      }
     </>
   );
 };
@@ -63,7 +66,8 @@ const LeaderboardTemplate = ({ leaderboard, rankingMode, setRankingMode }) => {
 LeaderboardTemplate.propTypes = {
   leaderboard: PropTypes.arrayOf(PropTypes.shape({})).isRequired,
   rankingMode: PropTypes.string,
-  setRankingMode: PropTypes.func
+  setRankingMode: PropTypes.func,
+  hasTournaments: PropTypes.bool
 };
 
 export default LeaderboardTemplate;
