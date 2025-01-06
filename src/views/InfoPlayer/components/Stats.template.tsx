@@ -77,7 +77,7 @@ const StatsTemplate = ({ stats }) => {
           cell: (row) => <i>{row.getValue()}</i>,
           header: () => <span>Perdidos</span>,
         }),
-        columnHelper.accessor(row => formatNumber(row.setsWon / row.setsPlayed, 2), {
+        columnHelper.accessor(row => formatNumber(row.setsWon / row.setsPlayed, 2) + "%", {
           id: 'sets',
           header: "% victorias",
         })
@@ -104,7 +104,7 @@ const StatsTemplate = ({ stats }) => {
           cell: (row) => <i>{row.getValue()}</i>,
           header: () => <span>Perdidos</span>,
         }),
-        columnHelper.accessor(row => formatNumber(row.gamesWon / row.gamesPlayed, 2), {
+        columnHelper.accessor(row => formatNumber(row.gamesWon / row.gamesPlayed, 2) + "%", {
           id: 'games',
           header: "% victorias",
         })
@@ -118,7 +118,7 @@ const StatsTemplate = ({ stats }) => {
 
   return (
     <>
-      <BaseTable data={array} title="Resumen Games" columns={defaultColumns} />
+      <BaseTable data={array} title="Estadisticas" columns={defaultColumns} />
     </>
   );
 };
