@@ -19,7 +19,8 @@ export default async function handler(req, res) {
                         name: true,
                         champion: {
                             select: { name: true },
-                        }
+                        },
+                        date: true
                     }
                 },
                 player1: {
