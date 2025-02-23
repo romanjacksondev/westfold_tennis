@@ -1,83 +1,90 @@
+/** @format */
+
 // Libraries
-import React from 'react'
-import { useRouter } from 'next/router'
-import { useSession } from 'next-auth/react'
-import Image from 'next/image'
-import clsx from 'clsx'
+import React from "react";
+import { useRouter } from "next/router";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
+import clsx from "clsx";
 
 //Components
-import { TextBody } from 'components/Text'
+import { TextBody } from "components/Text";
 
 // Types
-import { SidebarProps } from './Sidebar.types'
+import { SidebarProps } from "./Sidebar.types";
 
 // Assets
-import Close from 'assets/icons/close.svg'
-import Player from 'assets/icons/tennis-player.svg'
-import Hamburguer from 'assets/images/hamburguer.svg'
-import Tournament from 'assets/icons/tennis-table.svg'
-import Venue from 'assets/icons/tennis-court.svg'
-import Ranking from 'assets/icons/tennis-leaderboard.svg'
-import Stats from 'assets/icons/tennis-stats.svg'
-import Dashboard from 'assets/icons/tennis-dashboard.svg'
-import Draw from 'assets/icons/tennis-bracket.svg'
-import Information from 'assets/icons/tennis-information.svg'
+import Close from "assets/icons/close.svg";
+import Player from "assets/icons/tennis-player.svg";
+import Hamburguer from "assets/images/hamburguer.svg";
+import Tournament from "assets/icons/tennis-table.svg";
+import Venue from "assets/icons/tennis-court.svg";
+import Ranking from "assets/icons/tennis-leaderboard.svg";
+import Stats from "assets/icons/tennis-stats.svg";
+import Dashboard from "assets/icons/tennis-dashboard.svg";
+import Draw from "assets/icons/tennis-bracket.svg";
+import Information from "assets/icons/tennis-information.svg";
+import { UmbrellaIcon } from "lucide-react";
 // import ATPRace from 'assets/icons/tennis-atp-race.svg'
 
 const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
-  const router = useRouter()
+  const router = useRouter();
   // const { logout } = useSession()
   const items = [
     {
-      label: 'Ranking',
+      label: "Ranking",
       icon: Ranking,
       path: "/leaderboard",
     },
     {
-      label: 'Torneos',
+      label: "Torneos",
       icon: Tournament,
       path: "/torneos",
     },
     {
-      label: 'Jugadores',
+      label: "Jugadores",
       icon: Player,
       path: "/jugadores",
     },
     {
-      label: 'Sedes',
+      label: "Sedes",
       icon: Venue,
       path: "/sedes",
     },
     {
-      label: 'Estadisticas',
+      label: "Estadisticas",
       icon: Stats,
       path: "/estadisticas",
     },
     {
-      label: 'Draw Generator',
+      label: "Draw Generator",
       icon: Draw,
       path: "/drawGenerator",
     },
     {
-      label: 'Informacion General',
+      label: "Informacion General",
       icon: Information,
       path: "/information",
-    }   
-  ]
+    },
+    {
+      label: "Excusas generator 2000",
+      icon: Information,
+      path: "/excusator",
+    },
+  ];
 
-  const { data: session } = useSession()
+  const { data: session } = useSession();
   if (session) {
     items.push({
-      label: 'Dashboard',
+      label: "Dashboard",
       icon: Dashboard,
       path: "/dashboard",
-    })
+    });
   }
 
-  
   const toggleMenu = () => {
-    setIsOpen(!isOpen)
-  }
+    setIsOpen(!isOpen);
+  };
 
   return (
     <>
@@ -95,8 +102,8 @@ const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
 
       <div
         className={clsx(
-          'fixed z-40 top-0 left-0 w-80 h-screen bg-white text-black py-5 px-8 transition-all duration-300 ease-in-out',
-          isOpen ? 'left-0' : 'left-[-320px]'
+          "fixed z-40 top-0 left-0 w-80 h-screen bg-white text-black py-5 px-8 transition-all duration-300 ease-in-out",
+          isOpen ? "left-0" : "left-[-320px]"
         )}
       >
         {/* Menu Options */}
@@ -129,7 +136,7 @@ const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
         </button> */}
       </div>
     </>
-  )
-}
+  );
+};
 
-export default SidebarTemplate
+export default SidebarTemplate;
