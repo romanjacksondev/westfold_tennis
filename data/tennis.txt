@@ -264,3 +264,31 @@ Roman	2	1	11	7
 Fer	    2	1	11	7
 Ale	    1	2	7	11
 Rodo	1	2	4	8
+***********************
+Kauri II
+16/01/2025
+Rodolfo	4(7) - (5)3 Alejandro
+Fernando 4 - 1 Roman
+Rodolfo	4(7) - (5)3 Roman
+Alejandro 4 - 0 Fernando
+Fernando 4(7) - (5)3 Rodolfo
+Roman 4(7) - (6)3 Alejandro
+----------------
+Rodo	2	1	11	10
+Fer 	2	1	8	8
+Ale 	1	2	10	8
+Roman	1	2	8	11
+***********************
+La Cautiva II
+20/02/2025
+Alejandro 3(5) - (7)4 Roman
+Fernando 4 - 1 Rodolfo
+Fernando 4 - 1 Alejandro
+Rodolfo	4(7) - (6)3 Roman
+Rodolfo	4 - 0 Alejandro
+Fernando 2 - 4 Roman
+----------------
+Fer	    2	1	10	6
+Roman	2	1	11	9
+Rodo	2	1	9	7
+Ale	    0	3	4	12
