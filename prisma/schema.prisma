@@ -53,6 +53,7 @@ model Player {
   player1Matches Match[]      @relation("Player1")
   player2Matches Match[]      @relation("Player2")
   wonTournaments Tournament[] @relation("champion") // Relación uno a muchos (torneos ganados)
+  Point          Point[]      @relation("Player")
 }
 
 model TournamentCategory {
@@ -94,11 +95,23 @@ model Set {
 }
 
 model Game {
+  id         String   @id @default(cuid())
+  winnerId   String
+  winner     Player   @relation(fields: [winnerId], references: [id])
+  setId      String
+  set        Set?     @relation(fields: [setId], references: [id])
+  hasTibreak Boolean? @default(false)
+
+  Point Point[]
+}
+
+model Point {
   id       String @id @default(cuid())
-  winnerId String
-  winner   Player @relation(fields: [winnerId], references: [id])
-  setId    String
-  set      Set?   @relation(fields: [setId], references: [id])
+  playerId String
+  player   Player @relation("Player", fields: [playerId], references: [id])
+  gameId   String
+  game     Game   @relation(fields: [gameId], references: [id])
+  points   Int
 }
 
 model User {
