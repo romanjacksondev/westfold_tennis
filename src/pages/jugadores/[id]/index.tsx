@@ -1,11 +1,8 @@
-import InfoPlayerView from 'views/InfoPlayer'
-import MainLayout from '../../../layouts/Main'
+import InfoPlayerView from "views/InfoPlayer";
+import MainLayout from "../../../app/layout";
 
 const Jugadores = () => (
-  <MainLayout
-    component={InfoPlayerView}
-    pageTitle={`Partidos`}
-  />
-)
+  <MainLayout component={InfoPlayerView} pageTitle={`Partidos`} />
+);
 
-export default Jugadores
+export default Jugadores;

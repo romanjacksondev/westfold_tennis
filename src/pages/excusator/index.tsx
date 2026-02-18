@@ -1,6 +1,6 @@
 /** @format */
 
-import MainLayout from "layouts/Main";
+import MainLayout from "app/Layout";
 import ExcusatorView from "views/ExcusatorView";
 
 const Excusator = () => (

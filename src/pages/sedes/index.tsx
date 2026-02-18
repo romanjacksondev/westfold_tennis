@@ -1,11 +1,6 @@
-import MainLayout from '../../layouts/Main'
-import Sede from 'views/Sedes'
+import Sede from "views/Sedes";
+import MainLayout from "../../app/layout";
 
-const Sedes = () => (
-  <MainLayout
-    component={Sede}
-    pageTitle={`Sedes`}
-  />
-)
+const Sedes = () => <MainLayout component={Sede} pageTitle={`Sedes`} />;
 
-export default Sedes
+export default Sedes;
