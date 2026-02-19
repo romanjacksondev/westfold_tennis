@@ -1,8 +1,6 @@
-import MatchesView from "views/Matches";
-import MainLayout from "../../../app/layout";
+import MatchesView from 'views/Matches';
+import MainLayout from '../../../layout';
 
-const Partidos = () => (
-  <MainLayout component={MatchesView} pageTitle={`Partidos`} />
-);
+const Partidos = () => <MainLayout component={MatchesView} pageTitle={`Partidos`} />;
 
 export default Partidos;

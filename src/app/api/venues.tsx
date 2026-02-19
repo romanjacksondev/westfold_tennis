@@ -1,12 +1,10 @@
-import prisma from "lib/prisma";
+import type { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req, res) {
-  try {
-    const venues = await prisma.venue.findMany({});
+type ResponseData = {
+  message: string;
+};
 
-    res.status(200).json(venues);
-  } catch (e) {
-    console.log(e);
-    res.status(500).json(e);
-  }
+export default function handler(req: NextApiRequest, res: NextApiResponse<ResponseData>) {
+  //  const venues = await prisma.venue.findMany({});
+  res.status(200).json({ message: 'Hello from Next.js!' });
 }

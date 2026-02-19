@@ -1,8 +1,6 @@
-import TournamentsView from "views/Tournaments";
-import MainLayout from "../../app/layout";
+import TournamentsView from 'views/Tournaments';
+import MainLayout from '../../layout';
 
-const Torneos = () => (
-  <MainLayout component={TournamentsView} pageTitle={`Torneos`} />
-);
+const Torneos = () => <MainLayout component={TournamentsView} pageTitle={`Torneos`} />;
 
 export default Torneos;

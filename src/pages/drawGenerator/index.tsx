@@ -1,7 +1,5 @@
-import DrawGenerator from "views/DrawGenerator";
-import MainLayout from "../../app/layout";
+import DrawGenerator from 'views/DrawGenerator';
+import MainLayout from '../../layout';
 
-const DrawGeneratorMain = () => (
-  <MainLayout component={DrawGenerator} pageTitle={`Ranking`} />
-);
+const DrawGeneratorMain = () => <MainLayout component={DrawGenerator} pageTitle={`Ranking`} />;
 export default DrawGeneratorMain;

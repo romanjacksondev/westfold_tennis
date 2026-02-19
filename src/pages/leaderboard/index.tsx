@@ -1,7 +1,5 @@
-import Leaderboard from "views/Leaderboard";
-import MainLayout from "../../app/layout";
+import Leaderboard from 'views/Leaderboard';
+import MainLayout from '../../layout';
 
-const LeaderBoard = () => (
-  <MainLayout component={Leaderboard} pageTitle={`Ranking`} />
-);
+const LeaderBoard = () => <MainLayout component={Leaderboard} pageTitle={`Ranking`} />;
 export default LeaderBoard;

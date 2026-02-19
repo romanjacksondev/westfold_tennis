@@ -1,8 +1,6 @@
-import DashboardView from "views/Dashboard";
-import MainLayout from "../../app/layout";
+import DashboardView from 'views/Dashboard';
+import MainLayout from '../../layout';
 
-const Dashboard = () => (
-  <MainLayout component={DashboardView} pageTitle={`Dashboard`} />
-);
+const Dashboard = () => <MainLayout component={DashboardView} pageTitle={`Dashboard`} />;
 
 export default Dashboard;

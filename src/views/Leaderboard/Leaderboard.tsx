@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useActions } from "store/actions";
-import LeaderboardTemplate from "./Leaderboard.template";
-import { calculatePlayerPoints } from "../../lib/helpers";
 import { useSelectors } from "store/selectors";
 import { TennisPlayerProps } from "views/Jugadores/Jugadores.template";
+import { calculatePlayerPoints } from "../../utils/utils";
+import LeaderboardTemplate from "./Leaderboard.template";
 
 const LeaderboardView = () => {
   const { players } = useSelectors();
@@ -12,14 +12,14 @@ const LeaderboardView = () => {
   const [hasTournaments, setHasTournaments] = useState(false);
   //year: last 12 months
   //calendar: from 01/01
-  const [rankingMode, setRankingMode] = useState('year');
+  const [rankingMode, setRankingMode] = useState("year");
 
   useEffect(() => {
     const getLeaderboardData = async () => {
       const data = await getLeaderboard(rankingMode);
       //  console.log("data: ", data)
 
-      if(data.length > 0 ) {
+      if (data.length > 0) {
         const playerPoints = calculatePlayerPoints(data);
 
         // console.log(playerPoints)
@@ -29,23 +29,25 @@ const LeaderboardView = () => {
         setLeaderboard(sortedArray);
       } else {
         setLeaderboard([]);
-        
       }
       setHasTournaments(true);
-
-
     };
     // console.log("ranking")
     getLeaderboardData();
   }, [rankingMode]);
 
-  const orderedPlayers:TennisPlayerProps[] = leaderboard.map((player) => {
+  const orderedPlayers: TennisPlayerProps[] = leaderboard.map((player) => {
     const playerData = players.find((pl) => pl.name === player.key);
     return { points: player.value, ...playerData };
   });
 
   return (
-    <LeaderboardTemplate leaderboard={orderedPlayers} rankingMode={rankingMode} setRankingMode={setRankingMode} hasTournaments={hasTournaments}/>
+    <LeaderboardTemplate
+      leaderboard={orderedPlayers}
+      rankingMode={rankingMode}
+      setRankingMode={setRankingMode}
+      hasTournaments={hasTournaments}
+    />
   );
 };
 

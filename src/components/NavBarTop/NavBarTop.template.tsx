@@ -1,10 +1,10 @@
-"use client";
-import { signIn, signOut, useSession } from "next-auth/react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import User from "../../assets/icons/user.svg"; //assets/icons/user.svg";
-import Power from "../../assets/images/power.svg";
-import { TextBodyLg } from "../Text";
+'use client';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import Power from '../../assets/images/power.svg';
+// import User from '../../assets/images/user.svg';
+import { TextBodyLg } from '../Text';
 
 const NavBarTopTemplate = () => {
   const { data: session } = useSession();
@@ -28,7 +28,7 @@ const NavBarTopTemplate = () => {
       </div>
 
       <div className="items-start justify-center pt-1 hidden md:flex">
-        {/* {<WestfoldLogo />} */ "ALLALAA"}
+        {/* {<WestfoldLogo />} */ 'ALLALAA'}
       </div>
 
       <div className="flex items-center justify-end col-span-2 md:col-span-1">
@@ -37,18 +37,11 @@ const NavBarTopTemplate = () => {
             <div className="flex flex-col items-end">
               <div className="flex">
                 <div className=" flex max-w-[200px] overflow-hidden">
-                  <Image src={User.src} height={22} width={22} alt="Usuario" />
-                  <TextBodyLg className="ml-1 font-semibold truncate">
-                    {user?.name}
-                  </TextBodyLg>
+                  {/* <Image src={User.src} height={22} width={22} alt="Usuario" /> */}
+                  <TextBodyLg className="ml-1 font-semibold truncate">{user?.name}</TextBodyLg>
                   <div className="w-10 flex justify-end">
                     <button onClick={() => signOut()}>
-                      <Image
-                        src={Power.src}
-                        width={22}
-                        height={22}
-                        alt="Cerrar Sesión"
-                      />
+                      <Image src={Power.src} width={22} height={22} alt="Cerrar Sesión" />
                     </button>
                   </div>
                 </div>
