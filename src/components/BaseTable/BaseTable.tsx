@@ -1,10 +1,16 @@
 'use client';
 
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 'flowbite-react';
 
-export default function BaseTable({ title, data, columns }) {
-  const table = useReactTable({
+type BaseTableProps<T extends object> = {
+  title?: string;
+  data: T[];
+  columns: ColumnDef<T, any>[];
+};
+
+export default function BaseTable<T extends object>({ title, data, columns }: BaseTableProps<T>) {
+  const table = useReactTable<T>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),

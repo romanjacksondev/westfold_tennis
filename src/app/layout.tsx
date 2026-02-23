@@ -1,8 +1,8 @@
-"use client";
-import { NavBarTop } from "@/components/NavBarTop";
-import { SessionProvider } from "next-auth/react";
-import Head from "next/head";
-import "./globals.css";
+'use client';
+import { NavBar } from '@/components/NavBar';
+import { SessionProvider } from 'next-auth/react';
+import Head from 'next/head';
+import './globals.css';
 
 export default function RootLayout({
   children,
@@ -15,9 +15,9 @@ export default function RootLayout({
         <SessionProvider>
           <div className="bg-white h-full z-10">
             <Head>
-              <title>{"title"}</title>
+              <title>{'title'}</title>
             </Head>
-            <NavBarTop />
+            <NavBar />
             <section className="p-6 sm:px-20 relative sm:pt-6 sm:pb-16 z-10 flex-grow flex flex-col min-h-[calc(100%-72px)]">
               {/* <Component title={title} /> */}
               {children}

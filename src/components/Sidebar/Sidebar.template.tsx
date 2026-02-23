@@ -1,84 +1,76 @@
 /** @format */
 
 // Libraries
-import React from "react";
-import { useRouter } from "next/router";
-import { useSession } from "next-auth/react";
-import Image from "next/image";
-import clsx from "clsx";
 
-//Components
-import { TextBody } from "components/Text";
+import { useSession } from 'next-auth/react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 // Types
-import { SidebarProps } from "./Sidebar.types";
+import { SidebarProps } from './Sidebar.types';
 
 // Assets
-import Close from "assets/icons/close.svg";
-import Player from "assets/icons/tennis-player.svg";
-import Hamburguer from "assets/images/hamburguer.svg";
-import Tournament from "assets/icons/tennis-table.svg";
-import Venue from "assets/icons/tennis-court.svg";
-import Ranking from "assets/icons/tennis-leaderboard.svg";
-import Stats from "assets/icons/tennis-stats.svg";
-import Dashboard from "assets/icons/tennis-dashboard.svg";
-import Draw from "assets/icons/tennis-bracket.svg";
-import Information from "assets/icons/tennis-information.svg";
-import { UmbrellaIcon } from "lucide-react";
-// import ATPRace from 'assets/icons/tennis-atp-race.svg'
+import Close from '../../../public/icons/close.svg';
+import Draw from '../../../public/icons/tennis-bracket.svg';
+import Venue from '../../../public/icons/tennis-court.svg';
+import Dashboard from '../../../public/icons/tennis-dashboard.svg';
+import Information from '../../../public/icons/tennis-information.svg';
+import Ranking from '../../../public/icons/tennis-leaderboard.svg';
+import Player from '../../../public/icons/tennis-player.svg';
+import Stats from '../../../public/icons/tennis-stats.svg';
+import Tournament from '../../../public/icons/tennis-table.svg';
+import Hamburguer from '../../assets/images/hamburguer.svg';
 
 const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
-  const router = useRouter();
-  // const { logout } = useSession()
   const items = [
     {
-      label: "Ranking",
+      label: 'Ranking',
       icon: Ranking,
-      path: "/leaderboard",
+      path: '/leaderboard',
     },
     {
-      label: "Torneos",
+      label: 'Torneos',
       icon: Tournament,
-      path: "/torneos",
+      path: '/torneos',
     },
     {
-      label: "Jugadores",
+      label: 'Jugadores',
       icon: Player,
-      path: "/jugadores",
+      path: '/jugadores',
     },
     {
-      label: "Sedes",
+      label: 'Sedes',
       icon: Venue,
-      path: "/sedes",
+      path: '/sedes',
     },
     {
-      label: "Estadisticas",
+      label: 'Estadisticas',
       icon: Stats,
-      path: "/estadisticas",
+      path: '/estadisticas',
     },
     {
-      label: "Draw Generator",
+      label: 'Draw Generator',
       icon: Draw,
-      path: "/drawGenerator",
+      path: '/drawGenerator',
     },
     {
-      label: "Informacion General",
+      label: 'Informacion General',
       icon: Information,
-      path: "/information",
+      path: '/information',
     },
     {
-      label: "Excusas generator 2000",
+      label: 'Excusas generator 2000',
       icon: Information,
-      path: "/excusator",
+      path: '/excusator',
     },
   ];
 
   const { data: session } = useSession();
   if (session) {
     items.push({
-      label: "Dashboard",
+      label: 'Dashboard',
       icon: Dashboard,
-      path: "/dashboard",
+      path: '/dashboard',
     });
   }
 
@@ -90,7 +82,7 @@ const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
     <>
       <button onClick={toggleMenu} className="flex">
         <Image src={Hamburguer} height={24} width={24} alt="Menu" />
-        <TextBody className="hidden xl:block ml-2 font-bold">Menu</TextBody>
+        Menu
       </button>
 
       {isOpen && (
@@ -100,30 +92,20 @@ const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
         />
       )}
 
-      <div
-        className={clsx(
-          "fixed z-40 top-0 left-0 w-80 h-screen bg-white text-black py-5 px-8 transition-all duration-300 ease-in-out",
-          isOpen ? "left-0" : "left-[-320px]"
-        )}
-      >
+      <div className={isOpen ? 'left-0' : 'left-[-320px]'}>
         {/* Menu Options */}
-        <button
-          onClick={toggleMenu}
-          className="mb-10 flex items-center text-sm gap-2 p-1"
-        >
+        <button onClick={toggleMenu} className="mb-10 flex items-center text-sm gap-2 p-1">
           <Image src={Close} height={24} width={24} alt="Close" />
-          <TextBody>Cerrar</TextBody>
+          Cerrar
         </button>
 
         <ul>
           {items.map((item, index) => (
-            <li
-              className="flex items-center p-1 gap-2 mt-3 font-bold cursor-pointer"
-              key={`list-${index}`}
-              onClick={() => router.push(item.path)}
-            >
-              <Image src={item.icon} height={24} width={24} alt={item.label} />
-              <TextBody>{item.label}</TextBody>
+            <li className="flex items-center p-1 gap-2 mt-3 font-bold" key={`list-${index}`}>
+              <Link href={item.path} className="flex items-center gap-2 w-full">
+                <Image src={item.icon} height={24} width={24} alt={item.label} />
+                {item.label}
+              </Link>
             </li>
           ))}
         </ul>
