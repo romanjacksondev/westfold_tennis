@@ -34,7 +34,11 @@ const SedesTemplate = ({ venues }: { venues: Venue[] }) => {
     }),
   ];
 
-  return <BaseTable title="Sedes" data={venues} columns={columns} />;
+  return (
+    <>
+      <BaseTable title="Sedes" data={venues} columns={columns} />
+    </>
+  );
 };
 
 export default SedesTemplate;

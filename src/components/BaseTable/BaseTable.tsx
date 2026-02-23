@@ -1,6 +1,7 @@
 'use client';
 
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { Table, TableBody, TableCell, TableHead, TableHeadCell, TableRow } from 'flowbite-react';
 
 export default function BaseTable({ title, data, columns }) {
   const table = useReactTable({
@@ -10,41 +11,36 @@ export default function BaseTable({ title, data, columns }) {
   });
 
   return (
-    // <Card className="w-full">
-    //   <CardHeader className=" text-white bg-rolandGarrosRed border-b-2 border-solid border-black">
-    //     <CardTitle className="text-2xl sm:text-4xl font-bold flex items-center">
-    //       <CircleDot className="w-8 h-8 mr-2" />
-    //       {title}
-    //     </CardTitle>
-    //   </CardHeader>
-    //   <CardContent className="p-0">
-    // <div className="relative overflow-x-auto">
-    <table className="text-xl">
-      <thead className="font-bold bg-rolandGarrosRed">
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id} className="text-gray-300" colSpan={header.colSpan}>
-                {header.isPlaceholder
-                  ? null
-                  : flexRender(header.column.columnDef.header, header.getContext())}
-              </th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody>
-        {table.getRowModel().rows.map((row, i) => (
-          <tr key={row.id} className={`${i % 2 ? 'bg-orange-300' : 'bg-orange-500'}`}>
-            {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-    // </div>
-    //   </CardContent>
-    // </Card>
+    <div className="overflow-x-auto">
+      <Table>
+        <TableHead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHeadCell
+                  key={header.id}
+                  scope="col"
+                  className="px-6 py-3 font-medium"
+                  colSpan={header.colSpan}
+                >
+                  {flexRender(header.column.columnDef.header, header.getContext())}
+                </TableHeadCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableHead>
+        <TableBody>
+          {table.getRowModel().rows.map((row, i) => (
+            <TableRow className="bg-white dark:border-gray-700 dark:bg-gray-800" key={row.id}>
+              {row.getVisibleCells().map((cell) => (
+                <TableCell key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
