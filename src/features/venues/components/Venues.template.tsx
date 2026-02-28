@@ -2,7 +2,7 @@ import BaseTable from '@/components/BaseTable/BaseTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Venue } from '../types/Venues';
 
-const SedesTemplate = ({ venues }: { venues: Venue[] }) => {
+const VenuesTemplate = ({ venues }: { venues: Venue[] }) => {
   const columnHelper = createColumnHelper<Venue>();
 
   // console.log("venues: ", venues)
@@ -41,4 +41,4 @@ const SedesTemplate = ({ venues }: { venues: Venue[] }) => {
   );
 };
 
-export default SedesTemplate;
+export default VenuesTemplate;

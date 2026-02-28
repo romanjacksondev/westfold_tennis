@@ -1,16 +1,8 @@
-/** @format */
-
-// Libraries
-
 import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-// Types
-import { SidebarProps } from './Sidebar.types';
-
 // Assets
-import Close from '../../../public/icons/close.svg';
 import Draw from '../../../public/icons/tennis-bracket.svg';
 import Venue from '../../../public/icons/tennis-court.svg';
 import Dashboard from '../../../public/icons/tennis-dashboard.svg';
@@ -19,14 +11,13 @@ import Ranking from '../../../public/icons/tennis-leaderboard.svg';
 import Player from '../../../public/icons/tennis-player.svg';
 import Stats from '../../../public/icons/tennis-stats.svg';
 import Tournament from '../../../public/icons/tennis-table.svg';
-import Hamburguer from '../../assets/images/hamburguer.svg';
 
-const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
+const SidebarTemplate = () => {
   const items = [
     {
       label: 'Ranking',
       icon: Ranking,
-      path: '/leaderboard',
+      path: '/feature/leaderboard',
     },
     {
       label: 'Torneos',
@@ -74,13 +65,9 @@ const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
     });
   }
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
     <>
-      <button onClick={toggleMenu} className="flex">
+      {/* <button onClick={toggleMenu} className="flex">
         <Image src={Hamburguer} height={24} width={24} alt="Menu" />
         Menu
       </button>
@@ -90,14 +77,15 @@ const SidebarTemplate = ({ isOpen, setIsOpen }: SidebarProps) => {
           onClick={toggleMenu}
           className="fixed inset-0 z-30 bg-gray-500 bg-opacity-20 transition-opacity backdrop-blur-[2px]"
         />
-      )}
+      )} */}
 
-      <div className={isOpen ? 'left-0' : 'left-[-320px]'}>
+      {/* <div className={isOpen ? 'left-0' : 'left-[-320px]'}> */}
+      <div>
         {/* Menu Options */}
-        <button onClick={toggleMenu} className="mb-10 flex items-center text-sm gap-2 p-1">
+        {/* <button onClick={toggleMenu} className="mb-10 flex items-center text-sm gap-2 p-1">
           <Image src={Close} height={24} width={24} alt="Close" />
           Cerrar
-        </button>
+        </button> */}
 
         <ul>
           {items.map((item, index) => (

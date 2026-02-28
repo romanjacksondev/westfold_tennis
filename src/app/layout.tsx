@@ -11,9 +11,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="min-h-screen bg-gray-100 dark:bg-zinc-800">
         <SessionProvider>
-          <div className="bg-white h-full z-10">
+          <div className="h-full z-10">
             <Head>
               <title>{'title'}</title>
             </Head>

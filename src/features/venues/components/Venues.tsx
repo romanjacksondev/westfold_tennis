@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import VenuesTemplate from './Venues.template';
 
-const VenuesView = () => {
+const Venues = () => {
   const [venues, setVenues] = useState([]);
 
   useEffect(() => {
@@ -15,4 +15,4 @@ const VenuesView = () => {
   return <VenuesTemplate venues={venues}></VenuesTemplate>;
 };
 
-export default VenuesView;
+export default Venues;

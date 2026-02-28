@@ -1,8 +1,7 @@
-import SidebarTemplate from './Sidebar.template'
-import { SidebarProps } from './Sidebar.types'
+import SidebarTemplate from './Sidebar.template';
 
-const Sidebar = ({ ...props }: SidebarProps) => {
-  return <SidebarTemplate {...props} />
-}
+const Sidebar = () => {
+  return <SidebarTemplate />;
+};
 
-export default Sidebar
+export default Sidebar;
