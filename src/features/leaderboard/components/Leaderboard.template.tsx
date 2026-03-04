@@ -1,9 +1,10 @@
+import CardComponent from '@/components/Card/Card.template';
 import { Spinner } from 'flowbite-react';
 // import LoadingComponent from 'components/Loader';
 // import RankingCard from 'components/RankingCard';
 // import { format, subMonths } from 'date-fns';
 
-const LeaderboardTemplate = ({ leaderboard, rankingMode, setRankingMode, hasTournaments }) => {
+const LeaderboardTemplate = ({ leaderboard, rankingMode, setRankingMode /*hasTournaments*/ }) => {
   const today = new Date();
 
   // Calcular la fecha hace 12 meses
@@ -40,29 +41,35 @@ const LeaderboardTemplate = ({ leaderboard, rankingMode, setRankingMode, hasTour
         </Button>
       </div> */}
 
-      {!hasTournaments ? (
+      {!leaderboard || leaderboard.length === 0 ? (
         <Spinner aria-label="Default status example" />
       ) : (
         <>
           <div
             className={rankingMode == 'calendar' ? 'bg-wimbledonGreen' : 'bg-rolandGarrosOrange'}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 shadow-lg rounded-lg p-2 lg:p-10 place-items-center">
-              asdasdasdas
-              {/* {leaderboard.map(
-                (player, i) => 'SDFSDF',
-                <RankingCard
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-4 shadow-lg rounded-lg   p-2 lg:p-10">
+              {leaderboard.map((player, i) => (
+                // <RankingCard
+                //   key={player.id}
+                //   id={player.id}
+                //   ranking={i + 1}
+                //   points={player.points.points}
+                //   name={player.name}
+                //   lastname={player.lastname}
+                //   imageUrl={`/img/avatar/${player.nickname.replace(' ', '').toLowerCase()}.jpeg`}
+                //   nickname={player.nickname}
+                //   pointsBreakdown={player.points.breakdown}
+                // />
+                <CardComponent
                   key={player.id}
                   id={player.id}
-                  ranking={i + 1}
-                  points={player.points.points}
                   name={player.name}
                   lastname={player.lastname}
-                  imageUrl={`/img/avatar/${player.nickname.replace(' ', '').toLowerCase()}.jpeg`}
+                  imageUrl={''}
                   nickname={player.nickname}
-                  pointsBreakdown={player.points.breakdown}
                 />
-              )} */}
+              ))}
             </div>
           </div>
           {/* <p className="text-black text-lg lg:text-2xl mt-6">

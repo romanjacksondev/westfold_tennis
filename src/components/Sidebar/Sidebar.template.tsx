@@ -11,28 +11,29 @@ import Ranking from '../../../public/icons/tennis-leaderboard.svg';
 import Player from '../../../public/icons/tennis-player.svg';
 import Stats from '../../../public/icons/tennis-stats.svg';
 import Tournament from '../../../public/icons/tennis-table.svg';
+import { SidebarInterface } from './interfaces/Sidebar.interface';
 
-const SidebarTemplate = () => {
+const SidebarTemplate = ({ handleClose }: SidebarInterface) => {
   const items = [
     {
       label: 'Ranking',
       icon: Ranking,
-      path: '/feature/leaderboard',
+      path: '/leaderboard',
     },
     {
       label: 'Torneos',
       icon: Tournament,
-      path: '/torneos',
+      path: '/tournaments',
     },
     {
       label: 'Jugadores',
       icon: Player,
-      path: '/jugadores',
+      path: '/players',
     },
     {
       label: 'Sedes',
       icon: Venue,
-      path: '/sedes',
+      path: '/venues',
     },
     {
       label: 'Estadisticas',
@@ -90,7 +91,11 @@ const SidebarTemplate = () => {
         <ul>
           {items.map((item, index) => (
             <li className="flex items-center p-1 gap-2 mt-3 font-bold" key={`list-${index}`}>
-              <Link href={item.path} className="flex items-center gap-2 w-full">
+              <Link
+                href={item.path}
+                className="flex items-center gap-2 w-full"
+                onClick={handleClose}
+              >
                 <Image src={item.icon} height={24} width={24} alt={item.label} />
                 {item.label}
               </Link>

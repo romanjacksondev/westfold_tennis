@@ -2,8 +2,8 @@ import { prisma } from '@/utils/prisma';
 import { calculatePlayerPoints } from '@/utils/utils';
 import { NextRequest, NextResponse } from 'next/server';
 
-async function getPlayers(initialDate: Date, now: Date) {
-  return prisma.tournament.findMany({
+async function getTournaments(initialDate: Date, now: Date) {
+  const tournaments = await prisma.tournament.findMany({
     orderBy: [
       {
         date: 'desc',
@@ -49,6 +49,7 @@ async function getPlayers(initialDate: Date, now: Date) {
       },
     },
   });
+  return tournaments;
 }
 
 function getInitialDate(rankingMode: string | null, now: Date): Date {
@@ -68,16 +69,17 @@ export async function GET(req: NextRequest, res: NextResponse) {
     const rankingMode = req.nextUrl.searchParams.get('rankingMode');
     const initialDate = getInitialDate(rankingMode, now);
 
-    const players = await getPlayers(initialDate, now);
+    // console.log('initialDate: ', initialDate);
+    const tournaments = await getTournaments(initialDate, now);
 
-    console.log('leaderboard: ', players);
+    // console.log('tournaments: ', tournaments);
 
-    const playerPoints = calculatePlayerPoints(players);
-    // console.log(playerPoints)
+    const playerPoints = calculatePlayerPoints(tournaments);
+    console.log(playerPoints);
     const entries = Object.entries(playerPoints);
     entries.sort((a, b) => b[1].points - a[1].points);
     const sortedArray = entries.map(([key, value]) => ({ key, value }));
-
+    console.log('sortedArray', sortedArray);
     return NextResponse.json(sortedArray, { status: 200 });
   } catch (e) {
     console.log(e);

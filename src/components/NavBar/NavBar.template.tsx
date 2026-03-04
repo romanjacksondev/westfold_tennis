@@ -10,7 +10,7 @@ import {
   NavbarLink,
   NavbarToggle,
 } from 'flowbite-react';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Sidebar from '../Sidebar';
@@ -35,11 +35,12 @@ const NavBarTemplate = () => {
         <Drawer open={isOpen} onClose={handleClose}>
           <DrawerHeader title="Drawer" />
           <DrawerItems>
-            <Sidebar />
+            <Sidebar handleClose={handleClose} />
           </DrawerItems>
         </Drawer>
         <div className="flex md:order-2">
-          <Button onClick={() => signIn()}>Ingresar</Button>
+          {!user && <Button onClick={() => signIn()}>Ingresar</Button>}
+          {user && <Button onClick={() => signOut()}>Salir</Button>}
           <NavbarToggle />
         </div>
         <NavbarCollapse>
@@ -47,10 +48,10 @@ const NavBarTemplate = () => {
             Menu
           </NavbarLink>
         </NavbarCollapse>
-        <NavbarBrand as={Link} href="https://flowbite-react.com">
-          <img src="/favicon.svg" className="mr-3 h-6 sm:h-9" alt="Flowbite React Logo" />
+        <NavbarBrand as={Link} href="/">
+          <img src="/img/logo/logo_3.jpg" className="mr-3 h-6 sm:h-9" alt="Tennis is fun!" />
           <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-            Flowbite React
+            Westfold Tennis
           </span>
         </NavbarBrand>
       </Navbar>

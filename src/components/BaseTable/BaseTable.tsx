@@ -18,6 +18,12 @@ export default function BaseTable<T extends object>({ title, data, columns }: Ba
 
   return (
     <div className="overflow-x-auto">
+      <h1
+        id="default-title"
+        className="font-semibold text-gray-900 dark:text-white text-center my-4 text-2xl"
+      >
+        {title}
+      </h1>
       <Table>
         <TableHead>
           {table.getHeaderGroups().map((headerGroup) => (

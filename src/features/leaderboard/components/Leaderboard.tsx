@@ -4,7 +4,7 @@ import LeaderboardTemplate from './Leaderboard.template';
 
 const Leaderboard = () => {
   const [leaderboard, setLeaderboard] = useState([]);
-  const [hasTournaments, setHasTournaments] = useState(false);
+  // const [hasTournaments, setHasTournaments] = useState(false);
   //year: last 12 months
   //calendar: from 01/01
   const [rankingMode, setRankingMode] = useState('year');
@@ -46,7 +46,7 @@ const Leaderboard = () => {
       leaderboard={leaderboard}
       rankingMode={rankingMode}
       setRankingMode={setRankingMode}
-      hasTournaments={hasTournaments}
+      // hasTournaments={hasTournaments}
     />
   );
 };

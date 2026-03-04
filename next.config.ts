@@ -1,8 +1,8 @@
-import type { NextConfig } from "next";
-import withFlowbiteReact from "flowbite-react/plugin/nextjs";
+import withFlowbiteReact from 'flowbite-react/plugin/nextjs';
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  cacheComponents: true,
 };
 
 export default withFlowbiteReact(nextConfig);

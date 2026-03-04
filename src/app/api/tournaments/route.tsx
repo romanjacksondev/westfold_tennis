@@ -1,41 +1,43 @@
-import prisma from "lib/prisma";
+import { prisma } from '@/utils/prisma';
+import { NextResponse } from 'next/server';
 
-export default async function handler(req, res) {
+export async function GET() {
   try {
     const tournaments = await prisma.tournament.findMany({
       orderBy: [
         {
           date: 'desc',
-        }],
+        },
+      ],
       include: {
         champion: {
           select: { name: true },
         },
         surface: {
-          select: { name: true }
+          select: { name: true },
         },
         venue: {
-          select: { name: true }
+          select: { name: true },
         },
         tournamentCategory: {
           include: {
             tournamentCategoryPoints: {
               where: {
                 initial_position: 1,
-                final_position: 1
+                final_position: 1,
               },
               select: {
-                points: true
+                points: true,
               },
-            }
-          }
-        }
+            },
+          },
+        },
       },
     });
 
-    res.status(200).json(tournaments);
+    return NextResponse.json(tournaments);
   } catch (e) {
     console.log(e);
-    res.status(500).json(e);
+    return NextResponse.error();
   }
 }
