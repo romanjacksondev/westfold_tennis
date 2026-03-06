@@ -1,4 +1,4 @@
-import BaseTable from '@/components/BaseTable/BaseTable';
+import BaseTable from '@/components/SimpleTable/SimpleTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Venue } from '../types/Venues';
 

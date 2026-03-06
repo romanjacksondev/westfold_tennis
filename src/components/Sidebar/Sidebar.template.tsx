@@ -38,12 +38,12 @@ const SidebarTemplate = ({ handleClose }: SidebarInterface) => {
     {
       label: 'Estadisticas',
       icon: Stats,
-      path: '/estadisticas',
+      path: '/stats',
     },
     {
       label: 'Draw Generator',
       icon: Draw,
-      path: '/drawGenerator',
+      path: '/draws',
     },
     {
       label: 'Informacion General',

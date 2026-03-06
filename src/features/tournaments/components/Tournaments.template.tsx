@@ -1,5 +1,5 @@
 'use client';
-import BaseTable from '@/components/BaseTable/BaseTable';
+import SimpleTable from '@/components/SimpleTable/SimpleTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import Link from 'next/link';
@@ -41,7 +41,7 @@ const TournamentsTemplate = ({ tournaments }) => {
     }),
   ];
 
-  return <BaseTable title="Historial de torneos" data={tournaments} columns={columns} />;
+  return <SimpleTable title="Historial de torneos" data={tournaments} columns={columns} />;
 };
 
 export default TournamentsTemplate;
