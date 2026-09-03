@@ -4,7 +4,15 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import Link from 'next/link';
 
-const TournamentsTemplate = ({ tournaments }) => {
+type Tournament = {
+  id: string;
+  name: string;
+  date: string | Date;
+  champion?: { name?: string } | null;
+  tournamentCategory?: { tournamentCategoryPoints?: { points?: number }[] } | null;
+};
+
+const TournamentsTemplate = ({ tournaments }: { tournaments: Tournament[] }) => {
   const columnHelper = createColumnHelper<any>();
 
   const columns = [
@@ -41,7 +49,29 @@ const TournamentsTemplate = ({ tournaments }) => {
     }),
   ];
 
-  return <SimpleTable title="Historial de torneos" data={tournaments} columns={columns} />;
+  return (
+    <main className="tournament-page">
+      <header className="tournament-header">
+        <div>
+          <p className="eyebrow">Competencia</p>
+          <h1>Torneos</h1>
+          <p className="muted">Explora el historial y los resultados del circuito.</p>
+        </div>
+        <div className="status-pill"><span /> {tournaments.length} registrados</div>
+      </header>
+      <section className="tournament-panel">
+        <div className="panel-heading">
+          <div>
+            <p className="eyebrow">Archivo deportivo</p>
+            <h2>Historial de torneos</h2>
+          </div>
+        </div>
+        <div className="tournament-table">
+          <SimpleTable data={tournaments} columns={columns} />
+        </div>
+      </section>
+    </main>
+  );
 };
 
 export default TournamentsTemplate;

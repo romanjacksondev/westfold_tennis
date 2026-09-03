@@ -31,7 +31,7 @@ const NavBarTemplate = () => {
 
   return (
     <>
-      <Navbar fluid rounded>
+      <Navbar fluid className="site-nav">
         <Drawer open={isOpen} onClose={handleClose}>
           <DrawerHeader title="Drawer" />
           <DrawerItems>
@@ -39,19 +39,20 @@ const NavBarTemplate = () => {
           </DrawerItems>
         </Drawer>
         <div className="flex md:order-2">
-          {!user && <Button onClick={() => signIn()}>Ingresar</Button>}
-          {user && <Button onClick={() => signOut({ callbackUrl: '/' })}>Salir</Button>}
+          {!user && <Button className="nav-action" onClick={() => signIn()}>Ingresar</Button>}
+          {user && <Button className="nav-action" onClick={() => signOut({ callbackUrl: '/' })}>Salir</Button>}
           <NavbarToggle />
         </div>
         <NavbarCollapse>
-          <NavbarLink href="#" active onClick={() => setIsOpen(true)}>
+          <NavbarLink className="nav-menu-link" href="#" active onClick={() => setIsOpen(true)}>
             Menu
           </NavbarLink>
         </NavbarCollapse>
-        <NavbarBrand as={Link} href="/">
-          <img src="/img/logo/logo_3.jpg" className="mr-3 h-6 sm:h-9" alt="Tennis is fun!" />
-          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
-            Westfold Tennis
+        <NavbarBrand as={Link} href="/" className="site-brand">
+          <span className="site-brand-mark">WT</span>
+          <span className="site-brand-name">
+            <strong>Westfold</strong>
+            <small>Tennis club</small>
           </span>
         </NavbarBrand>
       </Navbar>
