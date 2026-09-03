@@ -1,9 +1,11 @@
 'use client';
 import { useEffect, useState } from 'react';
-import LeaderboardTemplate from './Leaderboard.template';
+import LeaderboardTemplate, { type LeaderboardEntry } from './Leaderboard.template';
 
 const Leaderboard = () => {
-  const [leaderboard, setLeaderboard] = useState([]);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   // const [hasTournaments, setHasTournaments] = useState(false);
   //year: last 12 months
   //calendar: from 01/01
@@ -11,10 +13,20 @@ const Leaderboard = () => {
 
   useEffect(() => {
     const getLeaderboardData = async () => {
-      fetch('/api/leaderboard?rankingMode=' + rankingMode)
-        .then((res) => res.json())
-        .then((data) => setLeaderboard(data))
-        .catch((err) => console.error(err));
+      setLoading(true);
+      setError(false);
+      try {
+        const response = await fetch('/api/leaderboard?rankingMode=' + rankingMode);
+        if (!response.ok) throw new Error('No se pudo cargar el leaderboard');
+        const data = await response.json();
+        setLeaderboard(Array.isArray(data) ? (data as LeaderboardEntry[]) : []);
+      } catch (err) {
+        console.error(err);
+        setLeaderboard([]);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
 
       // const data = await getLeaderboard(rankingMode);
       //  console.log("data: ", data)
@@ -45,6 +57,8 @@ const Leaderboard = () => {
     <LeaderboardTemplate
       leaderboard={leaderboard}
       rankingMode={rankingMode}
+      loading={loading}
+      error={error}
       setRankingMode={setRankingMode}
       // hasTournaments={hasTournaments}
     />

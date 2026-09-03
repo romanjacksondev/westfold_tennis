@@ -5,22 +5,26 @@
 @source "../../node_modules/flowbite-react/dist/**/*.js";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #f5f4ef;
+  --foreground: #18231f;
 }
 body {
-  background: var(--background);
+  background: #f5f4ef;
   color: var(--foreground);
   font-family: Georgia, 'Times New Roman', serif;
 }
-.site-nav { min-height: 64px; border: 0 !important; border-radius: 0 !important; background: #183b32 !important; padding: 10px clamp(16px, 5vw, 72px) !important; }
+.site-content { min-height: 100vh; margin-left: 250px; }
+.site-sidebar { position: fixed; inset: 0 auto 0 0; z-index: 40; display: flex; width: 250px; flex-direction: column; gap: 32px; padding: 28px 18px; background: #183b32; color: #f8f7ef; }
+.site-sidebar-brand { display: flex; align-items: center; gap: 12px; padding: 0 10px; }
+.site-sidebar .site-brand-name strong, .site-sidebar .site-brand-name small { display: block; }
+.site-sidebar .site-brand-name strong { font-size: 19px; line-height: 1; }
+.site-sidebar .site-brand-name small { margin-top: 5px; color: #b7cbc2; font: 10px Arial, sans-serif; letter-spacing: .1em; text-transform: uppercase; }
+.site-sidebar ul { display: grid; gap: 5px; }
+.site-sidebar li { margin: 0 !important; padding: 0 !important; font: 600 14px Arial, sans-serif; }
+.site-sidebar li a { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-left: 3px solid transparent; color: #d8e3dd; text-decoration: none; }
+.site-sidebar li a:hover { border-left-color: #e7795b; background: #245044; color: #fff; }
+.site-sidebar li img { width: 22px; height: 22px; }
+.site-nav { min-height: 64px; margin-left: 250px; border: 0 !important; border-radius: 0 !important; background: #183b32 !important; padding: 10px clamp(16px, 5vw, 72px) !important; }
 .site-brand { gap: 12px; color: #f8f7ef !important; }
 .site-brand-mark { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #e7795b; color: #fff; font: 700 13px Arial, sans-serif; }
 .site-brand-name strong, .site-brand-name small { display: block; }
@@ -38,7 +42,7 @@ body {
 .tournament-table { overflow-x: auto; }
 .tournament-table #default-title { display: none; }
 .tournament-table table { width: 100%; color: #18231f; font: 14px Arial, sans-serif; }
-.tournament-table thead { border-bottom: 1px solid #dce3dd; background: #f7f9f6; color: #45534d; font: 700 11px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.tournament-table thead, .tournament-table thead th { border-bottom: 1px solid #526174; background: #465366 !important; color: #f8f7ef !important; font: 700 11px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
 .tournament-table tbody tr { border-bottom: 1px solid #e0e7e2; background: #fff !important; }
 .tournament-table tbody tr:last-child { border-bottom: 0; }
 .tournament-table tbody tr:hover { background: #fbfcfa !important; }
@@ -52,17 +56,49 @@ body {
 .players-panel { max-width: 1500px; margin: 0 auto; padding: 26px; border: 1px solid #dce3dd; border-radius: 8px; background: #fff; box-shadow: 0 12px 30px rgba(24,59,50,.06); }
 .players-panel h2 { margin: 0 0 22px; font: 400 24px Georgia, serif; }
 .players-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
-.player-card { min-height: 245px; border: 1px solid #dce3dd !important; border-radius: 8px !important; background: #fbfcfa !important; box-shadow: none !important; }
+.player-card { min-height: 285px; border: 1px solid #dce3dd !important; border-radius: 8px !important; background: #fbfcfa !important; box-shadow: none !important; }
 .player-card:hover { border-color: #9bb8aa !important; box-shadow: 0 8px 18px rgba(24,59,50,.08) !important; }
 .player-card-menu { display: flex; justify-content: flex-end; padding: 12px 12px 0; }
 .player-card-edit, .player-card-delete { display: block; padding: 8px 16px; font: 12px Arial, sans-serif; }
 .player-card-edit { color: #31745d; }
 .player-card-delete { color: #c05f48; }
-.player-card-body { display: flex; flex-direction: column; align-items: center; padding: 26px 16px 30px; text-align: center; }
-.player-avatar { width: 88px; height: 88px; margin-bottom: 16px; border: 3px solid #e5eee8; border-radius: 50%; object-fit: cover; }
+.player-card-body { display: flex; flex-direction: column; align-items: center; padding: 30px 16px 30px; text-align: center; }
+.player-avatar { width: 116px; height: 116px; margin-bottom: 16px; border: 3px solid #e5eee8; border-radius: 50%; object-fit: cover; }
 .player-card-name { margin: 0; color: #18231f; font: 600 16px Arial, sans-serif; }
 .player-card-nickname { margin: 7px 0 0; color: #87928c; font: 13px Arial, sans-serif; }
+.player-card-stats { display: flex; gap: 12px; margin-top: 20px; padding-top: 14px; border-top: 1px solid #e0e7e2; color: #87928c; font: 10px Arial, sans-serif; text-transform: uppercase; letter-spacing: .04em; }
+.player-card-stats span { display: flex; flex-direction: column; gap: 4px; }
+.player-card-stats strong { color: #31745d; font: 700 14px Arial, sans-serif; letter-spacing: 0; }
 .players-empty { padding: 46px 0 20px; color: #87928c; text-align: center; font: 14px Arial, sans-serif; }
+.leaderboard-page { min-height: calc(100vh - 64px); padding: 46px clamp(20px, 5vw, 72px); background: #f5f4ef; color: #18231f; }
+.leaderboard-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; max-width: 1100px; margin: 0 auto 30px; }
+.leaderboard-header h1 { margin: 0; font-size: clamp(34px, 4vw, 54px); font-weight: 400; }
+.leaderboard-panel { max-width: 1100px; margin: 0 auto; padding: 26px; border: 1px solid #dce3dd; border-radius: 8px; background: #fff; box-shadow: 0 12px 30px rgba(24,59,50,.06); }
+.leaderboard-panel h2 { margin: 0 0 22px; font: 400 24px Georgia, serif; }
+.leaderboard-table-wrap { overflow-x: auto; }
+.leaderboard-table { width: 100%; border-collapse: collapse; color: #18231f; font: 14px Arial, sans-serif; }
+.leaderboard-table thead { background: #f7f9f6; color: #45534d; font: 700 11px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.leaderboard-table th, .leaderboard-table td { padding: 15px 16px; text-align: left; border-bottom: 1px solid #e0e7e2; }
+.leaderboard-table th:first-child, .leaderboard-table td:first-child { width: 80px; }
+.leaderboard-table th:nth-child(3), .leaderboard-table td:nth-child(3), .leaderboard-table th:last-child, .leaderboard-table td:last-child { text-align: right; }
+.leaderboard-table tbody tr:hover { background: #fbfcfa; }
+.leaderboard-position { color: #d66e52; font-weight: 700; }
+.leaderboard-player { font-weight: 600; }
+.leaderboard-points { color: #31745d; font-weight: 700; }
+.venue-page { min-height: calc(100vh - 64px); padding: 46px clamp(20px, 5vw, 72px); background: #f5f4ef; color: #18231f; }
+.venue-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; max-width: 1500px; margin: 0 auto 30px; }
+.venue-header h1 { margin: 0; font-size: clamp(34px, 4vw, 54px); font-weight: 400; }
+.venue-panel { max-width: 1500px; margin: 0 auto; padding: 26px; border: 1px solid #dce3dd; border-radius: 8px; background: #fff; box-shadow: 0 12px 30px rgba(24,59,50,.06); }
+.venue-panel h2 { margin: 0 0 22px; font: 400 24px Georgia, serif; }
+.venue-table { overflow-x: auto; }
+.venue-table #default-title { display: none; }
+.venue-table table { width: 100%; color: #18231f; font: 14px Arial, sans-serif; }
+.venue-table thead { border-bottom: 1px solid #dce3dd; background: #f7f9f6; color: #45534d; font: 700 11px Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; }
+.venue-table tbody tr { border-bottom: 1px solid #e0e7e2; background: #fff !important; }
+.venue-table tbody tr:last-child { border-bottom: 0; }
+.venue-table tbody tr:hover { background: #fbfcfa !important; }
+.venue-table td, .venue-table th { padding: 15px 16px !important; }
+.venue-table td i { font-style: normal; }
 
 .admin-shell { min-height: calc(100vh - 64px); display: grid; grid-template-columns: 250px 1fr; background: #f5f4ef; color: #18231f; }
 .admin-sidebar { background: #183b32; color: #f8f7ef; padding: 28px 18px; display: flex; flex-direction: column; gap: 32px; }
@@ -108,8 +144,10 @@ body {
 .text-button { color: #31745d; }
 .danger-button { color: #c05f48; }
 .empty-state { padding: 46px 0; color: #87928c; text-align: center; font: 14px Arial, sans-serif; }
-.site-footer { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 22px 5vw; background: #183b32; color: #d8e3dd; font: 12px Arial, sans-serif; }
-.site-footer nav { display: flex; gap: 16px; }
+.site-footer { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 18px; padding: 22px 5vw; background: #183b32; color: #d8e3dd; font: 12px Arial, sans-serif; }
+.site-footer-brand { grid-column: 1; grid-row: 1; justify-self: start; }
+.site-footer-note { grid-column: 2; grid-row: 1; justify-self: center; align-self: center; text-align: center; }
+.site-footer-links { grid-column: 3; grid-row: 1; display: flex; justify-self: end; align-self: center; gap: 16px; }
 .site-footer a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 .auth-page { min-height: calc(100vh - 64px); display: grid; grid-template-rows: 1fr auto; background: #f5f4ef; }
 .auth-card { width: min(440px, calc(100% - 32px)); align-self: center; justify-self: center; padding: 34px; background: #fff; border: 1px solid #dce3dd; border-radius: 8px; box-shadow: 0 18px 40px rgba(24,59,50,.08); }
@@ -121,7 +159,10 @@ body {
 .legal-notice { margin: 18px 0; color: #68756f; font: 12px/1.5 Arial, sans-serif; }
 .legal-notice a { color: #31745d; text-decoration: underline; text-underline-offset: 2px; }
 .legal-page { min-height: calc(100vh - 64px); max-width: 760px; margin: 0 auto; padding: 64px 24px; background: #f5f4ef; color: #34443c; font: 16px/1.7 Georgia, serif; }
-@media (max-width: 600px) { .site-footer { align-items: flex-start; flex-direction: column; } .auth-card { padding: 24px; } }
+@media (max-width: 600px) { .site-footer { display: flex; align-items: flex-start; flex-direction: column; } .site-footer-note, .site-footer-links { grid-column: auto; justify-self: auto; } .auth-card { padding: 24px; } }
 @media (max-width: 600px) { .site-nav { padding-inline: 16px !important; } .site-brand-name small { display: none; } .tournament-page { padding: 28px 16px; } .tournament-header { display: block; } .tournament-header .status-pill { display: inline-block; margin-top: 18px; } .tournament-panel { padding: 18px 14px; } }
 @media (max-width: 600px) { .players-page { padding: 28px 16px; } .players-header { display: block; } .players-header .status-pill { display: inline-block; margin-top: 18px; } .players-panel { padding: 18px 14px; } }
+@media (max-width: 600px) { .venue-page { padding: 28px 16px; } .venue-header { display: block; } .venue-header .status-pill { display: inline-block; margin-top: 18px; } .venue-panel { padding: 18px 14px; } }
+@media (max-width: 600px) { .leaderboard-page { padding: 28px 16px; } .leaderboard-header { display: block; } .leaderboard-header .status-pill { display: inline-block; margin-top: 18px; } .leaderboard-panel { padding: 18px 14px; } .leaderboard-table th, .leaderboard-table td { padding: 13px 10px; } }
+@media (max-width: 800px) { .site-content { margin-left: 0; } .site-sidebar { display: none; } .site-nav { margin-left: 0; } .site-drawer { background: #f5f4ef !important; } .site-drawer .site-sidebar { position: static; display: flex; width: auto; min-height: 100%; padding: 0; background: transparent; color: #183b32; } .site-drawer .site-sidebar-brand { display: none; } .site-drawer .site-sidebar ul { width: 100%; } .site-drawer .site-sidebar li a { border-left-color: transparent; color: #183b32; } .site-drawer .site-sidebar li a:hover { border-left-color: #e7795b; background: #e9eee9; color: #183b32; } }
 @media (max-width: 800px) { .admin-shell { display: block; } .admin-sidebar { padding: 16px; } .admin-sidebar nav { display: flex; overflow-x: auto; } .nav-item { min-width: 130px; } .admin-user { display: none; } .admin-content { padding: 28px 16px; } .admin-grid { grid-template-columns: 1fr; } .panel-heading { display: block; } .search-input { max-width: none; margin-top: 12px; } }

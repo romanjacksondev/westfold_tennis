@@ -31,9 +31,19 @@ const NavBarTemplate = () => {
 
   return (
     <>
+      <aside className="site-sidebar">
+        <div className="site-sidebar-brand">
+          <span className="site-brand-mark">WT</span>
+          <span className="site-brand-name">
+            <strong>Westfold</strong>
+            <small>Tennis club</small>
+          </span>
+        </div>
+        <Sidebar handleClose={() => undefined} />
+      </aside>
       <Navbar fluid className="site-nav">
-        <Drawer open={isOpen} onClose={handleClose}>
-          <DrawerHeader title="Drawer" />
+        <Drawer className="site-drawer" open={isOpen} onClose={handleClose}>
+          <DrawerHeader title="Westfold Tennis" />
           <DrawerItems>
             <Sidebar handleClose={handleClose} />
           </DrawerItems>

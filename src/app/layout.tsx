@@ -15,8 +15,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <NextAuthSessionProvider>
           <NavBar />
-          {children}
-          <SiteFooter />
+          <div className="site-content">
+            {children}
+            <SiteFooter />
+          </div>
         </NextAuthSessionProvider>
       </body>
     </html>

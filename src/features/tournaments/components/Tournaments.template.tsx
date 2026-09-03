@@ -3,6 +3,7 @@ import SimpleTable from '@/components/SimpleTable/SimpleTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 type Tournament = {
   id: string;
@@ -13,7 +14,12 @@ type Tournament = {
 };
 
 const TournamentsTemplate = ({ tournaments }: { tournaments: Tournament[] }) => {
+  const [tableReady, setTableReady] = useState(false);
   const columnHelper = createColumnHelper<any>();
+
+  useEffect(() => {
+    setTableReady(true);
+  }, []);
 
   const columns = [
     columnHelper.accessor('name', {
@@ -67,7 +73,7 @@ const TournamentsTemplate = ({ tournaments }: { tournaments: Tournament[] }) => 
           </div>
         </div>
         <div className="tournament-table">
-          <SimpleTable data={tournaments} columns={columns} />
+          {tableReady ? <SimpleTable data={tournaments} columns={columns} /> : <div className="empty-state">Cargando torneos...</div>}
         </div>
       </section>
     </main>

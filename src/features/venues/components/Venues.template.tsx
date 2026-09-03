@@ -35,9 +35,27 @@ const VenuesTemplate = ({ venues }: { venues: Venue[] }) => {
   ];
 
   return (
-    <>
-      <BaseTable title="Sedes" data={venues} columns={columns} />
-    </>
+    <main className="venue-page">
+      <header className="venue-header">
+        <div>
+          <p className="eyebrow">Circuito</p>
+          <h1>Sedes</h1>
+          <p className="muted">Consulta los clubes y canchas disponibles.</p>
+        </div>
+        <div className="status-pill"><span /> {venues.length} registradas</div>
+      </header>
+      <section className="venue-panel">
+        <div className="panel-heading">
+          <div>
+            <p className="eyebrow">Infraestructura</p>
+            <h2>Clubes y canchas</h2>
+          </div>
+        </div>
+        <div className="venue-table">
+          <BaseTable data={venues} columns={columns} />
+        </div>
+      </section>
+    </main>
   );
 };
 

@@ -9,4 +9,10 @@ export type TennisPlayerProps = {
   winLossRatio?: string;
   grandSlams?: number;
   imageUrl: string;
+  stats?: {
+    matchesWon: number;
+    matchesLost: number;
+    gamesWon: number;
+    gamesLost: number;
+  };
 };

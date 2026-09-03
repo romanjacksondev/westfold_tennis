@@ -31,6 +31,7 @@ const PlayersTemplate = ({ players }: { players: TennisPlayerProps[] }) => {
                 lastname={player.lastname}
                 imageUrl={`/img/avatar/${player.nickname.replace(' ', '').toLowerCase()}.jpeg`}
                 nickname={player.nickname}
+                stats={player.stats}
               />
             ))}
           </div>

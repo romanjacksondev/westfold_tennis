@@ -1,10 +1,17 @@
-import CardComponent from '@/components/Card/Card.template';
 import { Spinner } from 'flowbite-react';
 // import LoadingComponent from 'components/Loader';
 // import RankingCard from 'components/RankingCard';
 // import { format, subMonths } from 'date-fns';
 
-const LeaderboardTemplate = ({ leaderboard, rankingMode, setRankingMode /*hasTournaments*/ }) => {
+export type LeaderboardEntry = {
+  key: string;
+  value: {
+    points: number;
+    breakdown: { tournament: string; points: number }[];
+  };
+};
+
+const LeaderboardTemplate = ({ leaderboard, rankingMode, loading, error }: { leaderboard: LeaderboardEntry[]; rankingMode: string; setRankingMode?: (mode: string) => void; loading: boolean; error: boolean }) => {
   // const handleOnClick = (value) => {
   //   setRankingMode(value);
   // };
@@ -31,42 +38,37 @@ const LeaderboardTemplate = ({ leaderboard, rankingMode, setRankingMode /*hasTou
         </Button>
       </div> */}
 
-      {!leaderboard || leaderboard.length === 0 ? (
+      {loading ? (
         <Spinner aria-label="Default status example" />
+      ) : error ? (
+        <div className="empty-state">No se pudo cargar el leaderboard.</div>
+      ) : leaderboard.length === 0 ? (
+        <div className="empty-state">No hay resultados para este período.</div>
       ) : (
-        <>
-          <div
-            className={rankingMode == 'calendar' ? 'bg-wimbledonGreen' : 'bg-rolandGarrosOrange'}
-          >
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-4 shadow-lg rounded-lg   p-2 lg:p-10">
-              {leaderboard.map((player, i) => (
-                // <RankingCard
-                //   key={player.id}
-                //   id={player.id}
-                //   ranking={i + 1}
-                //   points={player.points.points}
-                //   name={player.name}
-                //   lastname={player.lastname}
-                //   imageUrl={`/img/avatar/${player.nickname.replace(' ', '').toLowerCase()}.jpeg`}
-                //   nickname={player.nickname}
-                //   pointsBreakdown={player.points.breakdown}
-                // />
-                <CardComponent
-                  key={player.id}
-                  id={player.id}
-                  name={player.name}
-                  lastname={player.lastname}
-                  imageUrl={''}
-                  nickname={player.nickname}
-                />
-              ))}
+        <main className="leaderboard-page">
+          <header className="leaderboard-header">
+            <div>
+              <p className="eyebrow">Clasificación</p>
+              <h1>Leaderboard</h1>
+              <p className="muted">Rendimiento acumulado del circuito.</p>
             </div>
-          </div>
-          {/* <p className="text-black text-lg lg:text-2xl mt-6">
-            * Desde {rankingMode == 'year' ? twelveMonthsAgoFormatted : firstDayOfYear} hasta{' '}
-            {todayFormatted}
-          </p> */}
-        </>
+            <div className="status-pill"><span /> {rankingMode === 'calendar' ? 'Año calendario' : 'Últimos 12 meses'}</div>
+          </header>
+          <section className="leaderboard-panel">
+            <div className="panel-heading">
+              <div>
+                <p className="eyebrow">Posiciones</p>
+                <h2>Ranking de jugadores</h2>
+              </div>
+            </div>
+            <div className="leaderboard-table-wrap">
+              <table className="leaderboard-table">
+                <thead><tr><th>Pos.</th><th>Jugador</th><th>Torneos</th><th>Puntos</th></tr></thead>
+                <tbody>{leaderboard.map((player, index) => <tr key={player.key}><td className="leaderboard-position">{index + 1}</td><td className="leaderboard-player">{player.key}</td><td>{player.value.breakdown.length}</td><td className="leaderboard-points">{player.value.points}</td></tr>)}</tbody>
+              </table>
+            </div>
+          </section>
+        </main>
       )}
     </>
   );

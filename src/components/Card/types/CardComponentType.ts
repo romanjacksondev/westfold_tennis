@@ -4,4 +4,10 @@ export type CardComponentType = {
   lastname: string;
   imageUrl: string;
   nickname: string;
+  stats?: {
+    matchesWon: number;
+    matchesLost: number;
+    gamesWon: number;
+    gamesLost: number;
+  };
 };
