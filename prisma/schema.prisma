@@ -14,8 +14,8 @@ model Tournament {
   name                 String
   venueId              String
   venue                Venue              @relation(fields: [venueId], references: [id])
-  championId           String
-  champion             Player             @relation("champion", fields: [championId], references: [id])
+  championId           String?
+  champion             Player?            @relation("champion", fields: [championId], references: [id])
   date                 DateTime           @default(now())
   matches              Match[]
   surfaceId            String

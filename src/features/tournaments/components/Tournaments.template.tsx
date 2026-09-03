@@ -4,6 +4,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { HiOutlineEye } from 'react-icons/hi';
 
 type Tournament = {
   id: string;
@@ -50,7 +51,16 @@ const TournamentsTemplate = ({ tournaments }: { tournaments: Tournament[] }) => 
     }),
     columnHelper.accessor('id', {
       id: 'actions',
-      cell: (info) => <Link href={`/torneos/${info.getValue()}`}>EDIT</Link>,
+      cell: (info) => (
+        <Link
+          href={`/tournaments/${info.getValue()}`}
+          className="tournament-details-link"
+          aria-label="Ver detalles del torneo"
+          title="Ver detalles del torneo"
+        >
+          <HiOutlineEye aria-hidden="true" />
+        </Link>
+      ),
       header: () => <span>Acciones</span>,
     }),
   ];

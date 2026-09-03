@@ -51,7 +51,7 @@ const NavBarTemplate = () => {
         <div className="flex md:order-2">
           {!user && <Button className="nav-action" onClick={() => signIn()}>Ingresar</Button>}
           {user && <Button className="nav-action" onClick={() => signOut({ callbackUrl: '/' })}>Salir</Button>}
-          <NavbarToggle />
+          <NavbarToggle className="nav-toggle" />
         </div>
         <NavbarCollapse>
           <NavbarLink className="nav-menu-link" href="#" active onClick={() => setIsOpen(true)}>

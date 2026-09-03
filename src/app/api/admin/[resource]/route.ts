@@ -80,7 +80,7 @@ export async function POST(request: NextRequest, context: Context) {
         ...fields,
         venue: { connect: { id: venueId } },
         surface: { connect: { id: surfaceId } },
-        champion: { connect: { id: championId } },
+        champion: championId ? { connect: { id: championId } } : undefined,
         tournamentCategory: { connect: { id: tournamentCategoryId } },
         tournamentType: tournamentTypeId ? { connect: { id: tournamentTypeId } } : undefined,
         players: Array.isArray(playerIds) ? { connect: playerIds.map((id: string) => ({ id })) } : undefined,

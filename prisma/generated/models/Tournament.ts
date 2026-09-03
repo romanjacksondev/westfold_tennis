@@ -175,7 +175,7 @@ export type TournamentGroupByOutputType = {
   id: string
   name: string
   venueId: string
-  championId: string
+  championId: string | null
   date: Date
   surfaceId: string
   tournamentCategoryId: string
@@ -208,14 +208,14 @@ export type TournamentWhereInput = {
   id?: Prisma.StringFilter<"Tournament"> | string
   name?: Prisma.StringFilter<"Tournament"> | string
   venueId?: Prisma.StringFilter<"Tournament"> | string
-  championId?: Prisma.StringFilter<"Tournament"> | string
+  championId?: Prisma.StringNullableFilter<"Tournament"> | string | null
   date?: Prisma.DateTimeFilter<"Tournament"> | Date | string
   surfaceId?: Prisma.StringFilter<"Tournament"> | string
   tournamentCategoryId?: Prisma.StringFilter<"Tournament"> | string
   tournamentTypeId?: Prisma.StringNullableFilter<"Tournament"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Tournament"> | Date | string | null
   venue?: Prisma.XOR<Prisma.VenueScalarRelationFilter, Prisma.VenueWhereInput>
-  champion?: Prisma.XOR<Prisma.PlayerScalarRelationFilter, Prisma.PlayerWhereInput>
+  champion?: Prisma.XOR<Prisma.PlayerNullableScalarRelationFilter, Prisma.PlayerWhereInput> | null
   matches?: Prisma.MatchListRelationFilter
   surface?: Prisma.XOR<Prisma.SurfaceScalarRelationFilter, Prisma.SurfaceWhereInput>
   tournamentCategory?: Prisma.XOR<Prisma.TournamentCategoryScalarRelationFilter, Prisma.TournamentCategoryWhereInput>
@@ -227,7 +227,7 @@ export type TournamentOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   venueId?: Prisma.SortOrder
-  championId?: Prisma.SortOrder
+  championId?: Prisma.SortOrderInput | Prisma.SortOrder
   date?: Prisma.SortOrder
   surfaceId?: Prisma.SortOrder
   tournamentCategoryId?: Prisma.SortOrder
@@ -249,14 +249,14 @@ export type TournamentWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.TournamentWhereInput | Prisma.TournamentWhereInput[]
   name?: Prisma.StringFilter<"Tournament"> | string
   venueId?: Prisma.StringFilter<"Tournament"> | string
-  championId?: Prisma.StringFilter<"Tournament"> | string
+  championId?: Prisma.StringNullableFilter<"Tournament"> | string | null
   date?: Prisma.DateTimeFilter<"Tournament"> | Date | string
   surfaceId?: Prisma.StringFilter<"Tournament"> | string
   tournamentCategoryId?: Prisma.StringFilter<"Tournament"> | string
   tournamentTypeId?: Prisma.StringNullableFilter<"Tournament"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Tournament"> | Date | string | null
   venue?: Prisma.XOR<Prisma.VenueScalarRelationFilter, Prisma.VenueWhereInput>
-  champion?: Prisma.XOR<Prisma.PlayerScalarRelationFilter, Prisma.PlayerWhereInput>
+  champion?: Prisma.XOR<Prisma.PlayerNullableScalarRelationFilter, Prisma.PlayerWhereInput> | null
   matches?: Prisma.MatchListRelationFilter
   surface?: Prisma.XOR<Prisma.SurfaceScalarRelationFilter, Prisma.SurfaceWhereInput>
   tournamentCategory?: Prisma.XOR<Prisma.TournamentCategoryScalarRelationFilter, Prisma.TournamentCategoryWhereInput>
@@ -268,7 +268,7 @@ export type TournamentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   venueId?: Prisma.SortOrder
-  championId?: Prisma.SortOrder
+  championId?: Prisma.SortOrderInput | Prisma.SortOrder
   date?: Prisma.SortOrder
   surfaceId?: Prisma.SortOrder
   tournamentCategoryId?: Prisma.SortOrder
@@ -286,7 +286,7 @@ export type TournamentScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Tournament"> | string
   name?: Prisma.StringWithAggregatesFilter<"Tournament"> | string
   venueId?: Prisma.StringWithAggregatesFilter<"Tournament"> | string
-  championId?: Prisma.StringWithAggregatesFilter<"Tournament"> | string
+  championId?: Prisma.StringNullableWithAggregatesFilter<"Tournament"> | string | null
   date?: Prisma.DateTimeWithAggregatesFilter<"Tournament"> | Date | string
   surfaceId?: Prisma.StringWithAggregatesFilter<"Tournament"> | string
   tournamentCategoryId?: Prisma.StringWithAggregatesFilter<"Tournament"> | string
@@ -300,7 +300,7 @@ export type TournamentCreateInput = {
   date?: Date | string
   deletedAt?: Date | string | null
   venue: Prisma.VenueCreateNestedOneWithoutTournamentsInput
-  champion: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
+  champion?: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
   matches?: Prisma.MatchCreateNestedManyWithoutTournamentInput
   surface: Prisma.SurfaceCreateNestedOneWithoutTournamentsInput
   tournamentCategory: Prisma.TournamentCategoryCreateNestedOneWithoutTournamentsInput
@@ -312,7 +312,7 @@ export type TournamentUncheckedCreateInput = {
   id?: string
   name: string
   venueId: string
-  championId: string
+  championId?: string | null
   date?: Date | string
   surfaceId: string
   tournamentCategoryId: string
@@ -328,7 +328,7 @@ export type TournamentUpdateInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   venue?: Prisma.VenueUpdateOneRequiredWithoutTournamentsNestedInput
-  champion?: Prisma.PlayerUpdateOneRequiredWithoutWonTournamentsNestedInput
+  champion?: Prisma.PlayerUpdateOneWithoutWonTournamentsNestedInput
   matches?: Prisma.MatchUpdateManyWithoutTournamentNestedInput
   surface?: Prisma.SurfaceUpdateOneRequiredWithoutTournamentsNestedInput
   tournamentCategory?: Prisma.TournamentCategoryUpdateOneRequiredWithoutTournamentsNestedInput
@@ -340,7 +340,7 @@ export type TournamentUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   venueId?: Prisma.StringFieldUpdateOperationsInput | string
-  championId?: Prisma.StringFieldUpdateOperationsInput | string
+  championId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   surfaceId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -354,7 +354,7 @@ export type TournamentCreateManyInput = {
   id?: string
   name: string
   venueId: string
-  championId: string
+  championId?: string | null
   date?: Date | string
   surfaceId: string
   tournamentCategoryId: string
@@ -373,7 +373,7 @@ export type TournamentUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   venueId?: Prisma.StringFieldUpdateOperationsInput | string
-  championId?: Prisma.StringFieldUpdateOperationsInput | string
+  championId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   surfaceId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -718,7 +718,7 @@ export type TournamentCreateWithoutSurfaceInput = {
   date?: Date | string
   deletedAt?: Date | string | null
   venue: Prisma.VenueCreateNestedOneWithoutTournamentsInput
-  champion: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
+  champion?: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
   matches?: Prisma.MatchCreateNestedManyWithoutTournamentInput
   tournamentCategory: Prisma.TournamentCategoryCreateNestedOneWithoutTournamentsInput
   tournamentType?: Prisma.TournamentTypeCreateNestedOneWithoutTournamentsInput
@@ -729,7 +729,7 @@ export type TournamentUncheckedCreateWithoutSurfaceInput = {
   id?: string
   name: string
   venueId: string
-  championId: string
+  championId?: string | null
   date?: Date | string
   tournamentCategoryId: string
   tournamentTypeId?: string | null
@@ -771,7 +771,7 @@ export type TournamentScalarWhereInput = {
   id?: Prisma.StringFilter<"Tournament"> | string
   name?: Prisma.StringFilter<"Tournament"> | string
   venueId?: Prisma.StringFilter<"Tournament"> | string
-  championId?: Prisma.StringFilter<"Tournament"> | string
+  championId?: Prisma.StringNullableFilter<"Tournament"> | string | null
   date?: Prisma.DateTimeFilter<"Tournament"> | Date | string
   surfaceId?: Prisma.StringFilter<"Tournament"> | string
   tournamentCategoryId?: Prisma.StringFilter<"Tournament"> | string
@@ -784,7 +784,7 @@ export type TournamentCreateWithoutVenueInput = {
   name: string
   date?: Date | string
   deletedAt?: Date | string | null
-  champion: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
+  champion?: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
   matches?: Prisma.MatchCreateNestedManyWithoutTournamentInput
   surface: Prisma.SurfaceCreateNestedOneWithoutTournamentsInput
   tournamentCategory: Prisma.TournamentCategoryCreateNestedOneWithoutTournamentsInput
@@ -795,7 +795,7 @@ export type TournamentCreateWithoutVenueInput = {
 export type TournamentUncheckedCreateWithoutVenueInput = {
   id?: string
   name: string
-  championId: string
+  championId?: string | null
   date?: Date | string
   surfaceId: string
   tournamentCategoryId: string
@@ -837,7 +837,7 @@ export type TournamentCreateWithoutPlayersInput = {
   date?: Date | string
   deletedAt?: Date | string | null
   venue: Prisma.VenueCreateNestedOneWithoutTournamentsInput
-  champion: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
+  champion?: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
   matches?: Prisma.MatchCreateNestedManyWithoutTournamentInput
   surface: Prisma.SurfaceCreateNestedOneWithoutTournamentsInput
   tournamentCategory: Prisma.TournamentCategoryCreateNestedOneWithoutTournamentsInput
@@ -848,7 +848,7 @@ export type TournamentUncheckedCreateWithoutPlayersInput = {
   id?: string
   name: string
   venueId: string
-  championId: string
+  championId?: string | null
   date?: Date | string
   surfaceId: string
   tournamentCategoryId: string
@@ -936,7 +936,7 @@ export type TournamentCreateWithoutTournamentCategoryInput = {
   date?: Date | string
   deletedAt?: Date | string | null
   venue: Prisma.VenueCreateNestedOneWithoutTournamentsInput
-  champion: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
+  champion?: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
   matches?: Prisma.MatchCreateNestedManyWithoutTournamentInput
   surface: Prisma.SurfaceCreateNestedOneWithoutTournamentsInput
   tournamentType?: Prisma.TournamentTypeCreateNestedOneWithoutTournamentsInput
@@ -947,7 +947,7 @@ export type TournamentUncheckedCreateWithoutTournamentCategoryInput = {
   id?: string
   name: string
   venueId: string
-  championId: string
+  championId?: string | null
   date?: Date | string
   surfaceId: string
   tournamentTypeId?: string | null
@@ -988,7 +988,7 @@ export type TournamentCreateWithoutTournamentTypeInput = {
   date?: Date | string
   deletedAt?: Date | string | null
   venue: Prisma.VenueCreateNestedOneWithoutTournamentsInput
-  champion: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
+  champion?: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
   matches?: Prisma.MatchCreateNestedManyWithoutTournamentInput
   surface: Prisma.SurfaceCreateNestedOneWithoutTournamentsInput
   tournamentCategory: Prisma.TournamentCategoryCreateNestedOneWithoutTournamentsInput
@@ -999,7 +999,7 @@ export type TournamentUncheckedCreateWithoutTournamentTypeInput = {
   id?: string
   name: string
   venueId: string
-  championId: string
+  championId?: string | null
   date?: Date | string
   surfaceId: string
   tournamentCategoryId: string
@@ -1040,7 +1040,7 @@ export type TournamentCreateWithoutMatchesInput = {
   date?: Date | string
   deletedAt?: Date | string | null
   venue: Prisma.VenueCreateNestedOneWithoutTournamentsInput
-  champion: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
+  champion?: Prisma.PlayerCreateNestedOneWithoutWonTournamentsInput
   surface: Prisma.SurfaceCreateNestedOneWithoutTournamentsInput
   tournamentCategory: Prisma.TournamentCategoryCreateNestedOneWithoutTournamentsInput
   tournamentType?: Prisma.TournamentTypeCreateNestedOneWithoutTournamentsInput
@@ -1051,7 +1051,7 @@ export type TournamentUncheckedCreateWithoutMatchesInput = {
   id?: string
   name: string
   venueId: string
-  championId: string
+  championId?: string | null
   date?: Date | string
   surfaceId: string
   tournamentCategoryId: string
@@ -1082,7 +1082,7 @@ export type TournamentUpdateWithoutMatchesInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   venue?: Prisma.VenueUpdateOneRequiredWithoutTournamentsNestedInput
-  champion?: Prisma.PlayerUpdateOneRequiredWithoutWonTournamentsNestedInput
+  champion?: Prisma.PlayerUpdateOneWithoutWonTournamentsNestedInput
   surface?: Prisma.SurfaceUpdateOneRequiredWithoutTournamentsNestedInput
   tournamentCategory?: Prisma.TournamentCategoryUpdateOneRequiredWithoutTournamentsNestedInput
   tournamentType?: Prisma.TournamentTypeUpdateOneWithoutTournamentsNestedInput
@@ -1093,7 +1093,7 @@ export type TournamentUncheckedUpdateWithoutMatchesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   venueId?: Prisma.StringFieldUpdateOperationsInput | string
-  championId?: Prisma.StringFieldUpdateOperationsInput | string
+  championId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   surfaceId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1106,7 +1106,7 @@ export type TournamentCreateManySurfaceInput = {
   id?: string
   name: string
   venueId: string
-  championId: string
+  championId?: string | null
   date?: Date | string
   tournamentCategoryId: string
   tournamentTypeId?: string | null
@@ -1119,7 +1119,7 @@ export type TournamentUpdateWithoutSurfaceInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   venue?: Prisma.VenueUpdateOneRequiredWithoutTournamentsNestedInput
-  champion?: Prisma.PlayerUpdateOneRequiredWithoutWonTournamentsNestedInput
+  champion?: Prisma.PlayerUpdateOneWithoutWonTournamentsNestedInput
   matches?: Prisma.MatchUpdateManyWithoutTournamentNestedInput
   tournamentCategory?: Prisma.TournamentCategoryUpdateOneRequiredWithoutTournamentsNestedInput
   tournamentType?: Prisma.TournamentTypeUpdateOneWithoutTournamentsNestedInput
@@ -1130,7 +1130,7 @@ export type TournamentUncheckedUpdateWithoutSurfaceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   venueId?: Prisma.StringFieldUpdateOperationsInput | string
-  championId?: Prisma.StringFieldUpdateOperationsInput | string
+  championId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tournamentCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentTypeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1143,7 +1143,7 @@ export type TournamentUncheckedUpdateManyWithoutSurfaceInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   venueId?: Prisma.StringFieldUpdateOperationsInput | string
-  championId?: Prisma.StringFieldUpdateOperationsInput | string
+  championId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   tournamentCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentTypeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1153,7 +1153,7 @@ export type TournamentUncheckedUpdateManyWithoutSurfaceInput = {
 export type TournamentCreateManyVenueInput = {
   id?: string
   name: string
-  championId: string
+  championId?: string | null
   date?: Date | string
   surfaceId: string
   tournamentCategoryId: string
@@ -1166,7 +1166,7 @@ export type TournamentUpdateWithoutVenueInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  champion?: Prisma.PlayerUpdateOneRequiredWithoutWonTournamentsNestedInput
+  champion?: Prisma.PlayerUpdateOneWithoutWonTournamentsNestedInput
   matches?: Prisma.MatchUpdateManyWithoutTournamentNestedInput
   surface?: Prisma.SurfaceUpdateOneRequiredWithoutTournamentsNestedInput
   tournamentCategory?: Prisma.TournamentCategoryUpdateOneRequiredWithoutTournamentsNestedInput
@@ -1177,7 +1177,7 @@ export type TournamentUpdateWithoutVenueInput = {
 export type TournamentUncheckedUpdateWithoutVenueInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  championId?: Prisma.StringFieldUpdateOperationsInput | string
+  championId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   surfaceId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1190,7 +1190,7 @@ export type TournamentUncheckedUpdateWithoutVenueInput = {
 export type TournamentUncheckedUpdateManyWithoutVenueInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  championId?: Prisma.StringFieldUpdateOperationsInput | string
+  championId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   surfaceId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1215,7 +1215,7 @@ export type TournamentUpdateWithoutPlayersInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   venue?: Prisma.VenueUpdateOneRequiredWithoutTournamentsNestedInput
-  champion?: Prisma.PlayerUpdateOneRequiredWithoutWonTournamentsNestedInput
+  champion?: Prisma.PlayerUpdateOneWithoutWonTournamentsNestedInput
   matches?: Prisma.MatchUpdateManyWithoutTournamentNestedInput
   surface?: Prisma.SurfaceUpdateOneRequiredWithoutTournamentsNestedInput
   tournamentCategory?: Prisma.TournamentCategoryUpdateOneRequiredWithoutTournamentsNestedInput
@@ -1226,7 +1226,7 @@ export type TournamentUncheckedUpdateWithoutPlayersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   venueId?: Prisma.StringFieldUpdateOperationsInput | string
-  championId?: Prisma.StringFieldUpdateOperationsInput | string
+  championId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   surfaceId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1239,7 +1239,7 @@ export type TournamentUncheckedUpdateManyWithoutPlayersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   venueId?: Prisma.StringFieldUpdateOperationsInput | string
-  championId?: Prisma.StringFieldUpdateOperationsInput | string
+  championId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   surfaceId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1288,7 +1288,7 @@ export type TournamentCreateManyTournamentCategoryInput = {
   id?: string
   name: string
   venueId: string
-  championId: string
+  championId?: string | null
   date?: Date | string
   surfaceId: string
   tournamentTypeId?: string | null
@@ -1301,7 +1301,7 @@ export type TournamentUpdateWithoutTournamentCategoryInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   venue?: Prisma.VenueUpdateOneRequiredWithoutTournamentsNestedInput
-  champion?: Prisma.PlayerUpdateOneRequiredWithoutWonTournamentsNestedInput
+  champion?: Prisma.PlayerUpdateOneWithoutWonTournamentsNestedInput
   matches?: Prisma.MatchUpdateManyWithoutTournamentNestedInput
   surface?: Prisma.SurfaceUpdateOneRequiredWithoutTournamentsNestedInput
   tournamentType?: Prisma.TournamentTypeUpdateOneWithoutTournamentsNestedInput
@@ -1312,7 +1312,7 @@ export type TournamentUncheckedUpdateWithoutTournamentCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   venueId?: Prisma.StringFieldUpdateOperationsInput | string
-  championId?: Prisma.StringFieldUpdateOperationsInput | string
+  championId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   surfaceId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentTypeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1325,7 +1325,7 @@ export type TournamentUncheckedUpdateManyWithoutTournamentCategoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   venueId?: Prisma.StringFieldUpdateOperationsInput | string
-  championId?: Prisma.StringFieldUpdateOperationsInput | string
+  championId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   surfaceId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentTypeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1336,7 +1336,7 @@ export type TournamentCreateManyTournamentTypeInput = {
   id?: string
   name: string
   venueId: string
-  championId: string
+  championId?: string | null
   date?: Date | string
   surfaceId: string
   tournamentCategoryId: string
@@ -1349,7 +1349,7 @@ export type TournamentUpdateWithoutTournamentTypeInput = {
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   venue?: Prisma.VenueUpdateOneRequiredWithoutTournamentsNestedInput
-  champion?: Prisma.PlayerUpdateOneRequiredWithoutWonTournamentsNestedInput
+  champion?: Prisma.PlayerUpdateOneWithoutWonTournamentsNestedInput
   matches?: Prisma.MatchUpdateManyWithoutTournamentNestedInput
   surface?: Prisma.SurfaceUpdateOneRequiredWithoutTournamentsNestedInput
   tournamentCategory?: Prisma.TournamentCategoryUpdateOneRequiredWithoutTournamentsNestedInput
@@ -1360,7 +1360,7 @@ export type TournamentUncheckedUpdateWithoutTournamentTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   venueId?: Prisma.StringFieldUpdateOperationsInput | string
-  championId?: Prisma.StringFieldUpdateOperationsInput | string
+  championId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   surfaceId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1373,7 +1373,7 @@ export type TournamentUncheckedUpdateManyWithoutTournamentTypeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   venueId?: Prisma.StringFieldUpdateOperationsInput | string
-  championId?: Prisma.StringFieldUpdateOperationsInput | string
+  championId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   surfaceId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentCategoryId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1431,7 +1431,7 @@ export type TournamentSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   tournamentTypeId?: boolean
   deletedAt?: boolean
   venue?: boolean | Prisma.VenueDefaultArgs<ExtArgs>
-  champion?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
+  champion?: boolean | Prisma.Tournament$championArgs<ExtArgs>
   matches?: boolean | Prisma.Tournament$matchesArgs<ExtArgs>
   surface?: boolean | Prisma.SurfaceDefaultArgs<ExtArgs>
   tournamentCategory?: boolean | Prisma.TournamentCategoryDefaultArgs<ExtArgs>
@@ -1451,7 +1451,7 @@ export type TournamentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ex
   tournamentTypeId?: boolean
   deletedAt?: boolean
   venue?: boolean | Prisma.VenueDefaultArgs<ExtArgs>
-  champion?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
+  champion?: boolean | Prisma.Tournament$championArgs<ExtArgs>
   surface?: boolean | Prisma.SurfaceDefaultArgs<ExtArgs>
   tournamentCategory?: boolean | Prisma.TournamentCategoryDefaultArgs<ExtArgs>
   tournamentType?: boolean | Prisma.Tournament$tournamentTypeArgs<ExtArgs>
@@ -1468,7 +1468,7 @@ export type TournamentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ex
   tournamentTypeId?: boolean
   deletedAt?: boolean
   venue?: boolean | Prisma.VenueDefaultArgs<ExtArgs>
-  champion?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
+  champion?: boolean | Prisma.Tournament$championArgs<ExtArgs>
   surface?: boolean | Prisma.SurfaceDefaultArgs<ExtArgs>
   tournamentCategory?: boolean | Prisma.TournamentCategoryDefaultArgs<ExtArgs>
   tournamentType?: boolean | Prisma.Tournament$tournamentTypeArgs<ExtArgs>
@@ -1489,7 +1489,7 @@ export type TournamentSelectScalar = {
 export type TournamentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "venueId" | "championId" | "date" | "surfaceId" | "tournamentCategoryId" | "tournamentTypeId" | "deletedAt", ExtArgs["result"]["tournament"]>
 export type TournamentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   venue?: boolean | Prisma.VenueDefaultArgs<ExtArgs>
-  champion?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
+  champion?: boolean | Prisma.Tournament$championArgs<ExtArgs>
   matches?: boolean | Prisma.Tournament$matchesArgs<ExtArgs>
   surface?: boolean | Prisma.SurfaceDefaultArgs<ExtArgs>
   tournamentCategory?: boolean | Prisma.TournamentCategoryDefaultArgs<ExtArgs>
@@ -1499,14 +1499,14 @@ export type TournamentInclude<ExtArgs extends runtime.Types.Extensions.InternalA
 }
 export type TournamentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   venue?: boolean | Prisma.VenueDefaultArgs<ExtArgs>
-  champion?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
+  champion?: boolean | Prisma.Tournament$championArgs<ExtArgs>
   surface?: boolean | Prisma.SurfaceDefaultArgs<ExtArgs>
   tournamentCategory?: boolean | Prisma.TournamentCategoryDefaultArgs<ExtArgs>
   tournamentType?: boolean | Prisma.Tournament$tournamentTypeArgs<ExtArgs>
 }
 export type TournamentIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   venue?: boolean | Prisma.VenueDefaultArgs<ExtArgs>
-  champion?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
+  champion?: boolean | Prisma.Tournament$championArgs<ExtArgs>
   surface?: boolean | Prisma.SurfaceDefaultArgs<ExtArgs>
   tournamentCategory?: boolean | Prisma.TournamentCategoryDefaultArgs<ExtArgs>
   tournamentType?: boolean | Prisma.Tournament$tournamentTypeArgs<ExtArgs>
@@ -1516,7 +1516,7 @@ export type $TournamentPayload<ExtArgs extends runtime.Types.Extensions.Internal
   name: "Tournament"
   objects: {
     venue: Prisma.$VenuePayload<ExtArgs>
-    champion: Prisma.$PlayerPayload<ExtArgs>
+    champion: Prisma.$PlayerPayload<ExtArgs> | null
     matches: Prisma.$MatchPayload<ExtArgs>[]
     surface: Prisma.$SurfacePayload<ExtArgs>
     tournamentCategory: Prisma.$TournamentCategoryPayload<ExtArgs>
@@ -1527,7 +1527,7 @@ export type $TournamentPayload<ExtArgs extends runtime.Types.Extensions.Internal
     id: string
     name: string
     venueId: string
-    championId: string
+    championId: string | null
     date: Date
     surfaceId: string
     tournamentCategoryId: string
@@ -1928,7 +1928,7 @@ readonly fields: TournamentFieldRefs;
 export interface Prisma__TournamentClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   venue<T extends Prisma.VenueDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VenueDefaultArgs<ExtArgs>>): Prisma.Prisma__VenueClient<runtime.Types.Result.GetResult<Prisma.$VenuePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  champion<T extends Prisma.PlayerDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PlayerDefaultArgs<ExtArgs>>): Prisma.Prisma__PlayerClient<runtime.Types.Result.GetResult<Prisma.$PlayerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  champion<T extends Prisma.Tournament$championArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tournament$championArgs<ExtArgs>>): Prisma.Prisma__PlayerClient<runtime.Types.Result.GetResult<Prisma.$PlayerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   matches<T extends Prisma.Tournament$matchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Tournament$matchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   surface<T extends Prisma.SurfaceDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SurfaceDefaultArgs<ExtArgs>>): Prisma.Prisma__SurfaceClient<runtime.Types.Result.GetResult<Prisma.$SurfacePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   tournamentCategory<T extends Prisma.TournamentCategoryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TournamentCategoryDefaultArgs<ExtArgs>>): Prisma.Prisma__TournamentCategoryClient<runtime.Types.Result.GetResult<Prisma.$TournamentCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
@@ -2370,6 +2370,25 @@ export type TournamentDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Limit how many Tournaments to delete.
    */
   limit?: number
+}
+
+/**
+ * Tournament.champion
+ */
+export type Tournament$championArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Player
+   */
+  select?: Prisma.PlayerSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Player
+   */
+  omit?: Prisma.PlayerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlayerInclude<ExtArgs> | null
+  where?: Prisma.PlayerWhereInput
 }
 
 /**

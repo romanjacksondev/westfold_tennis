@@ -389,9 +389,9 @@ export type PlayerUncheckedUpdateManyInput = {
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
-export type PlayerScalarRelationFilter = {
-  is?: Prisma.PlayerWhereInput
-  isNot?: Prisma.PlayerWhereInput
+export type PlayerNullableScalarRelationFilter = {
+  is?: Prisma.PlayerWhereInput | null
+  isNot?: Prisma.PlayerWhereInput | null
 }
 
 export type PlayerListRelationFilter = {
@@ -437,9 +437,9 @@ export type PlayerMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
 }
 
-export type PlayerNullableScalarRelationFilter = {
-  is?: Prisma.PlayerWhereInput | null
-  isNot?: Prisma.PlayerWhereInput | null
+export type PlayerScalarRelationFilter = {
+  is?: Prisma.PlayerWhereInput
+  isNot?: Prisma.PlayerWhereInput
 }
 
 export type PlayerCreateNestedOneWithoutWonTournamentsInput = {
@@ -460,10 +460,12 @@ export type PlayerUncheckedCreateNestedManyWithoutTournamentsInput = {
   connect?: Prisma.PlayerWhereUniqueInput | Prisma.PlayerWhereUniqueInput[]
 }
 
-export type PlayerUpdateOneRequiredWithoutWonTournamentsNestedInput = {
+export type PlayerUpdateOneWithoutWonTournamentsNestedInput = {
   create?: Prisma.XOR<Prisma.PlayerCreateWithoutWonTournamentsInput, Prisma.PlayerUncheckedCreateWithoutWonTournamentsInput>
   connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutWonTournamentsInput
   upsert?: Prisma.PlayerUpsertWithoutWonTournamentsInput
+  disconnect?: Prisma.PlayerWhereInput | boolean
+  delete?: Prisma.PlayerWhereInput | boolean
   connect?: Prisma.PlayerWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.PlayerUpdateToOneWithWhereWithoutWonTournamentsInput, Prisma.PlayerUpdateWithoutWonTournamentsInput>, Prisma.PlayerUncheckedUpdateWithoutWonTournamentsInput>
 }

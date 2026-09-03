@@ -35,6 +35,14 @@ async function main() {
       data: { role: 'ADMIN' },
     });
   }
+  await prisma.tournamentType.createMany({
+    data: [
+      { name: 'Round Robin' },
+      { name: 'Round Robin + Playoffs' },
+      { name: 'Playoffs' },
+    ],
+    skipDuplicates: true,
+  });
   // Venue
   await prisma.venue.createMany({
     data: [

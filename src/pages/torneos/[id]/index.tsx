@@ -1,6 +1,12 @@
-import MatchesView from 'views/Matches';
-import MainLayout from '../../../layout';
+import type { GetServerSideProps } from 'next';
 
-const Partidos = () => <MainLayout component={MatchesView} pageTitle={`Partidos`} />;
+export const getServerSideProps: GetServerSideProps = async ({ params }) => ({
+	redirect: {
+		destination: `/tournaments/${params?.id ?? ''}`,
+		permanent: false,
+	},
+});
+
+const Partidos = () => null;
 
 export default Partidos;
