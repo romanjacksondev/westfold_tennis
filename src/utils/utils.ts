@@ -289,7 +289,10 @@ export const createMatchSummary = (matchesList) => {
         match.sets.map(set => {
             const setData = {
                 gamesJugador1: 0,
-                gamesJugador2: 0
+                gamesJugador2: 0,
+                hasTiebreak: set.hasTiebreak,
+                tiebreakPlayer1Points: set.tiebreakPlayer1Points,
+                tiebreakPlayer2Points: set.tiebreakPlayer2Points
             }
             set.games.map(game => {
                 if (game.winnerId == matchData.player1Id) {

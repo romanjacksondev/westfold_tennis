@@ -5,16 +5,6 @@ import { Spinner } from 'flowbite-react';
 // import { format, subMonths } from 'date-fns';
 
 const LeaderboardTemplate = ({ leaderboard, rankingMode, setRankingMode /*hasTournaments*/ }) => {
-  const today = new Date();
-
-  // Calcular la fecha hace 12 meses
-  // const twelveMonthsAgo = subMonths(today, 12);
-
-  // // Formatear las fechas
-  // const todayFormatted = format(today, 'dd/MM/yyyy');
-  // const twelveMonthsAgoFormatted = format(twelveMonthsAgo, 'dd/MM/yyyy');
-  // const firstDayOfYear = format(new Date(today.getFullYear(), 0, 1), 'dd/MM/yyyy');
-
   // const handleOnClick = (value) => {
   //   setRankingMode(value);
   // };

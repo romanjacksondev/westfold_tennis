@@ -52,6 +52,7 @@ const MatchHistory = () => {
                         {row.getValue().map((game, i) =>
                             <li key={i}>
                                 {game.gamesJugador1} - {game.gamesJugador2}
+                                {game.hasTiebreak && ` (${game.tiebreakPlayer1Points}-${game.tiebreakPlayer2Points})`}
                             </li>
                         )}
                     </ul>

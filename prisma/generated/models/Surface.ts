@@ -137,7 +137,7 @@ export type SurfaceGroupByOutputType = {
   _max: SurfaceMaxAggregateOutputType | null
 }
 
-type GetSurfaceGroupByPayload<T extends SurfaceGroupByArgs> = Prisma.PrismaPromise<
+export type GetSurfaceGroupByPayload<T extends SurfaceGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<SurfaceGroupByOutputType, T['by']> &
       {
@@ -992,6 +992,11 @@ export type SurfaceFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * Skip the first `n` Surfaces.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Surfaces.
+   */
   distinct?: Prisma.SurfaceScalarFieldEnum | Prisma.SurfaceScalarFieldEnum[]
 }
 

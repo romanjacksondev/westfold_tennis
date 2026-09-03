@@ -41,6 +41,7 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
         control,
         name: 'setQuantity'
     });
+    const watchedValues = useWatch({ control });
 
 
     const onSubmit = async () => {
@@ -49,6 +50,13 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
         const sets = Array.from({ length: setQuantity }, (_, index) => ({
             gamesPlayer1: values[`gamesPlayer1_set${index + 1}`],
             gamesPlayer2: values[`gamesPlayer2_set${index + 1}`],
+            hasTiebreak: Boolean(values[`hasTiebreak_set${index + 1}`]),
+            tiebreakPlayer1Points: values[`hasTiebreak_set${index + 1}`]
+                ? values[`tiebreakPlayer1_set${index + 1}`]
+                : null,
+            tiebreakPlayer2Points: values[`hasTiebreak_set${index + 1}`]
+                ? values[`tiebreakPlayer2_set${index + 1}`]
+                : null,
             winner: values[`gamesPlayer1_set${index + 1}`] > values[`gamesPlayer2_set${index + 1}`] ? values.player1.id : values.player2.id
         }));
 
@@ -172,6 +180,31 @@ export default function AddMatchForm({ openModal, setOpenModal }) {
                                 rules={{ required: "Requerido" }}
                             />
                         </div>
+                        <label className="mt-3 flex items-center gap-2 text-sm">
+                            <input
+                                type="checkbox"
+                                {...register(`hasTiebreak_set${index + 1}`)}
+                            />
+                            Tiebreak
+                        </label>
+                        {watchedValues[`hasTiebreak_set${index + 1}`] && (
+                            <div className="mt-3 grid grid-cols-2 gap-4">
+                                <TextInput
+                                    name={`tiebreakPlayer1_set${index + 1}`}
+                                    register={register}
+                                    placeholder="Puntos tiebreak Jugador 1"
+                                    label={`Puntos tiebreak Jugador 1 - Set ${index + 1}`}
+                                    rules={{ required: "Requerido" }}
+                                />
+                                <TextInput
+                                    name={`tiebreakPlayer2_set${index + 1}`}
+                                    register={register}
+                                    placeholder="Puntos tiebreak Jugador 2"
+                                    label={`Puntos tiebreak Jugador 2 - Set ${index + 1}`}
+                                    rules={{ required: "Requerido" }}
+                                />
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>

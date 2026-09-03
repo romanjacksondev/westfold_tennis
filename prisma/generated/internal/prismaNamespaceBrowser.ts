@@ -155,7 +155,10 @@ export type MatchScalarFieldEnum = (typeof MatchScalarFieldEnum)[keyof typeof Ma
 export const SetScalarFieldEnum = {
   id: 'id',
   winnerId: 'winnerId',
-  matchId: 'matchId'
+  matchId: 'matchId',
+  hasTiebreak: 'hasTiebreak',
+  tiebreakPlayer1Points: 'tiebreakPlayer1Points',
+  tiebreakPlayer2Points: 'tiebreakPlayer2Points'
 } as const
 
 export type SetScalarFieldEnum = (typeof SetScalarFieldEnum)[keyof typeof SetScalarFieldEnum]

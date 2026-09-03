@@ -20,46 +20,86 @@ export type SetModel = runtime.Types.Result.DefaultSelection<Prisma.$SetPayload>
 
 export type AggregateSet = {
   _count: SetCountAggregateOutputType | null
+  _avg: SetAvgAggregateOutputType | null
+  _sum: SetSumAggregateOutputType | null
   _min: SetMinAggregateOutputType | null
   _max: SetMaxAggregateOutputType | null
+}
+
+export type SetAvgAggregateOutputType = {
+  tiebreakPlayer1Points: number | null
+  tiebreakPlayer2Points: number | null
+}
+
+export type SetSumAggregateOutputType = {
+  tiebreakPlayer1Points: number | null
+  tiebreakPlayer2Points: number | null
 }
 
 export type SetMinAggregateOutputType = {
   id: string | null
   winnerId: string | null
   matchId: string | null
+  hasTiebreak: boolean | null
+  tiebreakPlayer1Points: number | null
+  tiebreakPlayer2Points: number | null
 }
 
 export type SetMaxAggregateOutputType = {
   id: string | null
   winnerId: string | null
   matchId: string | null
+  hasTiebreak: boolean | null
+  tiebreakPlayer1Points: number | null
+  tiebreakPlayer2Points: number | null
 }
 
 export type SetCountAggregateOutputType = {
   id: number
   winnerId: number
   matchId: number
+  hasTiebreak: number
+  tiebreakPlayer1Points: number
+  tiebreakPlayer2Points: number
   _all: number
 }
 
+
+export type SetAvgAggregateInputType = {
+  tiebreakPlayer1Points?: true
+  tiebreakPlayer2Points?: true
+}
+
+export type SetSumAggregateInputType = {
+  tiebreakPlayer1Points?: true
+  tiebreakPlayer2Points?: true
+}
 
 export type SetMinAggregateInputType = {
   id?: true
   winnerId?: true
   matchId?: true
+  hasTiebreak?: true
+  tiebreakPlayer1Points?: true
+  tiebreakPlayer2Points?: true
 }
 
 export type SetMaxAggregateInputType = {
   id?: true
   winnerId?: true
   matchId?: true
+  hasTiebreak?: true
+  tiebreakPlayer1Points?: true
+  tiebreakPlayer2Points?: true
 }
 
 export type SetCountAggregateInputType = {
   id?: true
   winnerId?: true
   matchId?: true
+  hasTiebreak?: true
+  tiebreakPlayer1Points?: true
+  tiebreakPlayer2Points?: true
   _all?: true
 }
 
@@ -101,6 +141,18 @@ export type SetAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: SetAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: SetSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: SetMinAggregateInputType
@@ -131,6 +183,8 @@ export type SetGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   _count?: SetCountAggregateInputType | true
+  _avg?: SetAvgAggregateInputType
+  _sum?: SetSumAggregateInputType
   _min?: SetMinAggregateInputType
   _max?: SetMaxAggregateInputType
 }
@@ -139,12 +193,17 @@ export type SetGroupByOutputType = {
   id: string
   winnerId: string
   matchId: string
+  hasTiebreak: boolean
+  tiebreakPlayer1Points: number | null
+  tiebreakPlayer2Points: number | null
   _count: SetCountAggregateOutputType | null
+  _avg: SetAvgAggregateOutputType | null
+  _sum: SetSumAggregateOutputType | null
   _min: SetMinAggregateOutputType | null
   _max: SetMaxAggregateOutputType | null
 }
 
-type GetSetGroupByPayload<T extends SetGroupByArgs> = Prisma.PrismaPromise<
+export type GetSetGroupByPayload<T extends SetGroupByArgs> = Prisma.PrismaPromise<
   Array<
     Prisma.PickEnumerable<SetGroupByOutputType, T['by']> &
       {
@@ -166,6 +225,9 @@ export type SetWhereInput = {
   id?: Prisma.StringFilter<"Set"> | string
   winnerId?: Prisma.StringFilter<"Set"> | string
   matchId?: Prisma.StringFilter<"Set"> | string
+  hasTiebreak?: Prisma.BoolFilter<"Set"> | boolean
+  tiebreakPlayer1Points?: Prisma.IntNullableFilter<"Set"> | number | null
+  tiebreakPlayer2Points?: Prisma.IntNullableFilter<"Set"> | number | null
   winner?: Prisma.XOR<Prisma.PlayerScalarRelationFilter, Prisma.PlayerWhereInput>
   match?: Prisma.XOR<Prisma.MatchNullableScalarRelationFilter, Prisma.MatchWhereInput> | null
   games?: Prisma.GameListRelationFilter
@@ -175,6 +237,9 @@ export type SetOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   winnerId?: Prisma.SortOrder
   matchId?: Prisma.SortOrder
+  hasTiebreak?: Prisma.SortOrder
+  tiebreakPlayer1Points?: Prisma.SortOrderInput | Prisma.SortOrder
+  tiebreakPlayer2Points?: Prisma.SortOrderInput | Prisma.SortOrder
   winner?: Prisma.PlayerOrderByWithRelationInput
   match?: Prisma.MatchOrderByWithRelationInput
   games?: Prisma.GameOrderByRelationAggregateInput
@@ -187,6 +252,9 @@ export type SetWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.SetWhereInput | Prisma.SetWhereInput[]
   winnerId?: Prisma.StringFilter<"Set"> | string
   matchId?: Prisma.StringFilter<"Set"> | string
+  hasTiebreak?: Prisma.BoolFilter<"Set"> | boolean
+  tiebreakPlayer1Points?: Prisma.IntNullableFilter<"Set"> | number | null
+  tiebreakPlayer2Points?: Prisma.IntNullableFilter<"Set"> | number | null
   winner?: Prisma.XOR<Prisma.PlayerScalarRelationFilter, Prisma.PlayerWhereInput>
   match?: Prisma.XOR<Prisma.MatchNullableScalarRelationFilter, Prisma.MatchWhereInput> | null
   games?: Prisma.GameListRelationFilter
@@ -196,9 +264,14 @@ export type SetOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   winnerId?: Prisma.SortOrder
   matchId?: Prisma.SortOrder
+  hasTiebreak?: Prisma.SortOrder
+  tiebreakPlayer1Points?: Prisma.SortOrderInput | Prisma.SortOrder
+  tiebreakPlayer2Points?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.SetCountOrderByAggregateInput
+  _avg?: Prisma.SetAvgOrderByAggregateInput
   _max?: Prisma.SetMaxOrderByAggregateInput
   _min?: Prisma.SetMinOrderByAggregateInput
+  _sum?: Prisma.SetSumOrderByAggregateInput
 }
 
 export type SetScalarWhereWithAggregatesInput = {
@@ -208,10 +281,16 @@ export type SetScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"Set"> | string
   winnerId?: Prisma.StringWithAggregatesFilter<"Set"> | string
   matchId?: Prisma.StringWithAggregatesFilter<"Set"> | string
+  hasTiebreak?: Prisma.BoolWithAggregatesFilter<"Set"> | boolean
+  tiebreakPlayer1Points?: Prisma.IntNullableWithAggregatesFilter<"Set"> | number | null
+  tiebreakPlayer2Points?: Prisma.IntNullableWithAggregatesFilter<"Set"> | number | null
 }
 
 export type SetCreateInput = {
   id?: string
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: number | null
+  tiebreakPlayer2Points?: number | null
   winner: Prisma.PlayerCreateNestedOneWithoutSetsInput
   match?: Prisma.MatchCreateNestedOneWithoutSetsInput
   games?: Prisma.GameCreateNestedManyWithoutSetInput
@@ -221,11 +300,17 @@ export type SetUncheckedCreateInput = {
   id?: string
   winnerId: string
   matchId: string
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: number | null
+  tiebreakPlayer2Points?: number | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutSetInput
 }
 
 export type SetUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  hasTiebreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tiebreakPlayer1Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tiebreakPlayer2Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   winner?: Prisma.PlayerUpdateOneRequiredWithoutSetsNestedInput
   match?: Prisma.MatchUpdateOneWithoutSetsNestedInput
   games?: Prisma.GameUpdateManyWithoutSetNestedInput
@@ -235,6 +320,9 @@ export type SetUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   winnerId?: Prisma.StringFieldUpdateOperationsInput | string
   matchId?: Prisma.StringFieldUpdateOperationsInput | string
+  hasTiebreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tiebreakPlayer1Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tiebreakPlayer2Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   games?: Prisma.GameUncheckedUpdateManyWithoutSetNestedInput
 }
 
@@ -242,16 +330,25 @@ export type SetCreateManyInput = {
   id?: string
   winnerId: string
   matchId: string
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: number | null
+  tiebreakPlayer2Points?: number | null
 }
 
 export type SetUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  hasTiebreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tiebreakPlayer1Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tiebreakPlayer2Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type SetUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   winnerId?: Prisma.StringFieldUpdateOperationsInput | string
   matchId?: Prisma.StringFieldUpdateOperationsInput | string
+  hasTiebreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tiebreakPlayer1Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tiebreakPlayer2Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type SetListRelationFilter = {
@@ -268,18 +365,37 @@ export type SetCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   winnerId?: Prisma.SortOrder
   matchId?: Prisma.SortOrder
+  hasTiebreak?: Prisma.SortOrder
+  tiebreakPlayer1Points?: Prisma.SortOrder
+  tiebreakPlayer2Points?: Prisma.SortOrder
+}
+
+export type SetAvgOrderByAggregateInput = {
+  tiebreakPlayer1Points?: Prisma.SortOrder
+  tiebreakPlayer2Points?: Prisma.SortOrder
 }
 
 export type SetMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   winnerId?: Prisma.SortOrder
   matchId?: Prisma.SortOrder
+  hasTiebreak?: Prisma.SortOrder
+  tiebreakPlayer1Points?: Prisma.SortOrder
+  tiebreakPlayer2Points?: Prisma.SortOrder
 }
 
 export type SetMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   winnerId?: Prisma.SortOrder
   matchId?: Prisma.SortOrder
+  hasTiebreak?: Prisma.SortOrder
+  tiebreakPlayer1Points?: Prisma.SortOrder
+  tiebreakPlayer2Points?: Prisma.SortOrder
+}
+
+export type SetSumOrderByAggregateInput = {
+  tiebreakPlayer1Points?: Prisma.SortOrder
+  tiebreakPlayer2Points?: Prisma.SortOrder
 }
 
 export type SetNullableScalarRelationFilter = {
@@ -371,6 +487,18 @@ export type SetUncheckedUpdateManyWithoutMatchNestedInput = {
   deleteMany?: Prisma.SetScalarWhereInput | Prisma.SetScalarWhereInput[]
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type SetCreateNestedOneWithoutGamesInput = {
   create?: Prisma.XOR<Prisma.SetCreateWithoutGamesInput, Prisma.SetUncheckedCreateWithoutGamesInput>
   connectOrCreate?: Prisma.SetCreateOrConnectWithoutGamesInput
@@ -389,6 +517,9 @@ export type SetUpdateOneWithoutGamesNestedInput = {
 
 export type SetCreateWithoutWinnerInput = {
   id?: string
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: number | null
+  tiebreakPlayer2Points?: number | null
   match?: Prisma.MatchCreateNestedOneWithoutSetsInput
   games?: Prisma.GameCreateNestedManyWithoutSetInput
 }
@@ -396,6 +527,9 @@ export type SetCreateWithoutWinnerInput = {
 export type SetUncheckedCreateWithoutWinnerInput = {
   id?: string
   matchId: string
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: number | null
+  tiebreakPlayer2Points?: number | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutSetInput
 }
 
@@ -432,10 +566,16 @@ export type SetScalarWhereInput = {
   id?: Prisma.StringFilter<"Set"> | string
   winnerId?: Prisma.StringFilter<"Set"> | string
   matchId?: Prisma.StringFilter<"Set"> | string
+  hasTiebreak?: Prisma.BoolFilter<"Set"> | boolean
+  tiebreakPlayer1Points?: Prisma.IntNullableFilter<"Set"> | number | null
+  tiebreakPlayer2Points?: Prisma.IntNullableFilter<"Set"> | number | null
 }
 
 export type SetCreateWithoutMatchInput = {
   id?: string
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: number | null
+  tiebreakPlayer2Points?: number | null
   winner: Prisma.PlayerCreateNestedOneWithoutSetsInput
   games?: Prisma.GameCreateNestedManyWithoutSetInput
 }
@@ -443,6 +583,9 @@ export type SetCreateWithoutMatchInput = {
 export type SetUncheckedCreateWithoutMatchInput = {
   id?: string
   winnerId: string
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: number | null
+  tiebreakPlayer2Points?: number | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutSetInput
 }
 
@@ -474,6 +617,9 @@ export type SetUpdateManyWithWhereWithoutMatchInput = {
 
 export type SetCreateWithoutGamesInput = {
   id?: string
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: number | null
+  tiebreakPlayer2Points?: number | null
   winner: Prisma.PlayerCreateNestedOneWithoutSetsInput
   match?: Prisma.MatchCreateNestedOneWithoutSetsInput
 }
@@ -482,6 +628,9 @@ export type SetUncheckedCreateWithoutGamesInput = {
   id?: string
   winnerId: string
   matchId: string
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: number | null
+  tiebreakPlayer2Points?: number | null
 }
 
 export type SetCreateOrConnectWithoutGamesInput = {
@@ -502,6 +651,9 @@ export type SetUpdateToOneWithWhereWithoutGamesInput = {
 
 export type SetUpdateWithoutGamesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  hasTiebreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tiebreakPlayer1Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tiebreakPlayer2Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   winner?: Prisma.PlayerUpdateOneRequiredWithoutSetsNestedInput
   match?: Prisma.MatchUpdateOneWithoutSetsNestedInput
 }
@@ -510,15 +662,24 @@ export type SetUncheckedUpdateWithoutGamesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   winnerId?: Prisma.StringFieldUpdateOperationsInput | string
   matchId?: Prisma.StringFieldUpdateOperationsInput | string
+  hasTiebreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tiebreakPlayer1Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tiebreakPlayer2Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type SetCreateManyWinnerInput = {
   id?: string
   matchId: string
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: number | null
+  tiebreakPlayer2Points?: number | null
 }
 
 export type SetUpdateWithoutWinnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  hasTiebreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tiebreakPlayer1Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tiebreakPlayer2Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   match?: Prisma.MatchUpdateOneWithoutSetsNestedInput
   games?: Prisma.GameUpdateManyWithoutSetNestedInput
 }
@@ -526,21 +687,33 @@ export type SetUpdateWithoutWinnerInput = {
 export type SetUncheckedUpdateWithoutWinnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   matchId?: Prisma.StringFieldUpdateOperationsInput | string
+  hasTiebreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tiebreakPlayer1Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tiebreakPlayer2Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   games?: Prisma.GameUncheckedUpdateManyWithoutSetNestedInput
 }
 
 export type SetUncheckedUpdateManyWithoutWinnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   matchId?: Prisma.StringFieldUpdateOperationsInput | string
+  hasTiebreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tiebreakPlayer1Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tiebreakPlayer2Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type SetCreateManyMatchInput = {
   id?: string
   winnerId: string
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: number | null
+  tiebreakPlayer2Points?: number | null
 }
 
 export type SetUpdateWithoutMatchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  hasTiebreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tiebreakPlayer1Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tiebreakPlayer2Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   winner?: Prisma.PlayerUpdateOneRequiredWithoutSetsNestedInput
   games?: Prisma.GameUpdateManyWithoutSetNestedInput
 }
@@ -548,12 +721,18 @@ export type SetUpdateWithoutMatchInput = {
 export type SetUncheckedUpdateWithoutMatchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   winnerId?: Prisma.StringFieldUpdateOperationsInput | string
+  hasTiebreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tiebreakPlayer1Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tiebreakPlayer2Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   games?: Prisma.GameUncheckedUpdateManyWithoutSetNestedInput
 }
 
 export type SetUncheckedUpdateManyWithoutMatchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   winnerId?: Prisma.StringFieldUpdateOperationsInput | string
+  hasTiebreak?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tiebreakPlayer1Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  tiebreakPlayer2Points?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 
@@ -591,6 +770,9 @@ export type SetSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = ru
   id?: boolean
   winnerId?: boolean
   matchId?: boolean
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: boolean
+  tiebreakPlayer2Points?: boolean
   winner?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
   match?: boolean | Prisma.Set$matchArgs<ExtArgs>
   games?: boolean | Prisma.Set$gamesArgs<ExtArgs>
@@ -601,6 +783,9 @@ export type SetSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extension
   id?: boolean
   winnerId?: boolean
   matchId?: boolean
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: boolean
+  tiebreakPlayer2Points?: boolean
   winner?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
   match?: boolean | Prisma.Set$matchArgs<ExtArgs>
 }, ExtArgs["result"]["set"]>
@@ -609,6 +794,9 @@ export type SetSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extension
   id?: boolean
   winnerId?: boolean
   matchId?: boolean
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: boolean
+  tiebreakPlayer2Points?: boolean
   winner?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
   match?: boolean | Prisma.Set$matchArgs<ExtArgs>
 }, ExtArgs["result"]["set"]>
@@ -617,9 +805,12 @@ export type SetSelectScalar = {
   id?: boolean
   winnerId?: boolean
   matchId?: boolean
+  hasTiebreak?: boolean
+  tiebreakPlayer1Points?: boolean
+  tiebreakPlayer2Points?: boolean
 }
 
-export type SetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "winnerId" | "matchId", ExtArgs["result"]["set"]>
+export type SetOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "winnerId" | "matchId" | "hasTiebreak" | "tiebreakPlayer1Points" | "tiebreakPlayer2Points", ExtArgs["result"]["set"]>
 export type SetInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   winner?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
   match?: boolean | Prisma.Set$matchArgs<ExtArgs>
@@ -646,6 +837,9 @@ export type $SetPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
     id: string
     winnerId: string
     matchId: string
+    hasTiebreak: boolean
+    tiebreakPlayer1Points: number | null
+    tiebreakPlayer2Points: number | null
   }, ExtArgs["result"]["set"]>
   composites: {}
 }
@@ -1075,6 +1269,9 @@ export interface SetFieldRefs {
   readonly id: Prisma.FieldRef<"Set", 'String'>
   readonly winnerId: Prisma.FieldRef<"Set", 'String'>
   readonly matchId: Prisma.FieldRef<"Set", 'String'>
+  readonly hasTiebreak: Prisma.FieldRef<"Set", 'Boolean'>
+  readonly tiebreakPlayer1Points: Prisma.FieldRef<"Set", 'Int'>
+  readonly tiebreakPlayer2Points: Prisma.FieldRef<"Set", 'Int'>
 }
     
 
@@ -1271,6 +1468,11 @@ export type SetFindManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    * Skip the first `n` Sets.
    */
   skip?: number
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+   * 
+   * Filter by unique combinations of Sets.
+   */
   distinct?: Prisma.SetScalarFieldEnum | Prisma.SetScalarFieldEnum[]
 }
 

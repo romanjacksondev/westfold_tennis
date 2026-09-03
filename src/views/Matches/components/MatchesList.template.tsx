@@ -9,6 +9,9 @@ const MatchesListTemplate = ({ summary }) => {
   type Set = {
     gamesJugador1: number
     gamesJugador2: number
+    hasTiebreak?: boolean
+    tiebreakPlayer1Points?: number | null
+    tiebreakPlayer2Points?: number | null
   }
   type MatchSummary = {
     player1Name: {
@@ -38,6 +41,7 @@ const MatchesListTemplate = ({ summary }) => {
             {row.getValue().map((game, i) =>
               <li key={i}>
                 {game.gamesJugador1} - {game.gamesJugador2}
+                {game.hasTiebreak && ` (${game.tiebreakPlayer1Points}-${game.tiebreakPlayer2Points})`}
               </li>
             )}
           </ul>
