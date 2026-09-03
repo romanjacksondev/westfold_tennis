@@ -56,6 +56,7 @@ export const ModelName = {
   Venue: 'Venue',
   Player: 'Player',
   TournamentCategory: 'TournamentCategory',
+  TournamentType: 'TournamentType',
   TournamentCategoryPoints: 'TournamentCategoryPoints',
   Match: 'Match',
   Set: 'Set',
@@ -86,7 +87,9 @@ export const TournamentScalarFieldEnum = {
   championId: 'championId',
   date: 'date',
   surfaceId: 'surfaceId',
-  tournamentCategoryId: 'tournamentCategoryId'
+  tournamentCategoryId: 'tournamentCategoryId',
+  tournamentTypeId: 'tournamentTypeId',
+  deletedAt: 'deletedAt'
 } as const
 
 export type TournamentScalarFieldEnum = (typeof TournamentScalarFieldEnum)[keyof typeof TournamentScalarFieldEnum]
@@ -94,7 +97,8 @@ export type TournamentScalarFieldEnum = (typeof TournamentScalarFieldEnum)[keyof
 
 export const SurfaceScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  deletedAt: 'deletedAt'
 } as const
 
 export type SurfaceScalarFieldEnum = (typeof SurfaceScalarFieldEnum)[keyof typeof SurfaceScalarFieldEnum]
@@ -104,7 +108,8 @@ export const VenueScalarFieldEnum = {
   id: 'id',
   name: 'name',
   phone: 'phone',
-  address: 'address'
+  address: 'address',
+  deletedAt: 'deletedAt'
 } as const
 
 export type VenueScalarFieldEnum = (typeof VenueScalarFieldEnum)[keyof typeof VenueScalarFieldEnum]
@@ -116,7 +121,9 @@ export const PlayerScalarFieldEnum = {
   nickname: 'nickname',
   lastname: 'lastname',
   mail: 'mail',
-  phone: 'phone'
+  phone: 'phone',
+  deletedAt: 'deletedAt',
+  userId: 'userId'
 } as const
 
 export type PlayerScalarFieldEnum = (typeof PlayerScalarFieldEnum)[keyof typeof PlayerScalarFieldEnum]
@@ -124,10 +131,20 @@ export type PlayerScalarFieldEnum = (typeof PlayerScalarFieldEnum)[keyof typeof 
 
 export const TournamentCategoryScalarFieldEnum = {
   id: 'id',
-  name: 'name'
+  name: 'name',
+  deletedAt: 'deletedAt'
 } as const
 
 export type TournamentCategoryScalarFieldEnum = (typeof TournamentCategoryScalarFieldEnum)[keyof typeof TournamentCategoryScalarFieldEnum]
+
+
+export const TournamentTypeScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  deletedAt: 'deletedAt'
+} as const
+
+export type TournamentTypeScalarFieldEnum = (typeof TournamentTypeScalarFieldEnum)[keyof typeof TournamentTypeScalarFieldEnum]
 
 
 export const TournamentCategoryPointsScalarFieldEnum = {
@@ -146,7 +163,8 @@ export const MatchScalarFieldEnum = {
   winnerId: 'winnerId',
   tournamentId: 'tournamentId',
   player1Id: 'player1Id',
-  player2Id: 'player2Id'
+  player2Id: 'player2Id',
+  deletedAt: 'deletedAt'
 } as const
 
 export type MatchScalarFieldEnum = (typeof MatchScalarFieldEnum)[keyof typeof MatchScalarFieldEnum]
@@ -178,6 +196,9 @@ export const UserScalarFieldEnum = {
   name: 'name',
   email: 'email',
   password: 'password',
+  role: 'role',
+  isActive: 'isActive',
+  deletedAt: 'deletedAt',
   emailVerified: 'emailVerified',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

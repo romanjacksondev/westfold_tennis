@@ -22,13 +22,17 @@ model Tournament {
   surface              Surface            @relation(fields: [surfaceId], references: [id])
   tournamentCategory   TournamentCategory @relation(fields: [tournamentCategoryId], references: [id])
   tournamentCategoryId String
+  tournamentTypeId     String?
+  tournamentType       TournamentType?   @relation(fields: [tournamentTypeId], references: [id])
   players              Player[]           @relation("participations")
+  deletedAt            DateTime?
 }
 
 model Surface {
   id          String       @id @default(cuid())
   name        String
   tournaments Tournament[]
+  deletedAt   DateTime?
 }
 
 model Venue {
@@ -37,6 +41,7 @@ model Venue {
   phone       String
   address     String
   tournaments Tournament[]
+  deletedAt   DateTime?
 }
 
 model Player {
@@ -53,6 +58,9 @@ model Player {
   player1Matches Match[]      @relation("Player1")
   player2Matches Match[]      @relation("Player2")
   wonTournaments Tournament[] @relation("champion") // Relación uno a muchos (torneos ganados)
+  deletedAt      DateTime?
+  userId         String?  @unique
+  user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model TournamentCategory {
@@ -60,6 +68,14 @@ model TournamentCategory {
   name                     String
   tournaments              Tournament[]
   tournamentCategoryPoints TournamentCategoryPoints[]
+  deletedAt                DateTime?
+}
+
+model TournamentType {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  tournaments Tournament[]
+  deletedAt   DateTime?
 }
 
 model TournamentCategoryPoints {
@@ -82,6 +98,7 @@ model Match {
   player2Id    String
   player2      Player      @relation("Player2", fields: [player2Id], references: [id])
   sets         Set[]
+  deletedAt    DateTime?
 }
 
 model Set {
@@ -109,7 +126,16 @@ model User {
   name          String?
   email         String    @unique
   password      String
+  role          UserRole  @default(USER)
+  isActive      Boolean   @default(true)
+  player        Player?
+  deletedAt     DateTime?
   emailVerified DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+enum UserRole {
+  USER
+  ADMIN
 }

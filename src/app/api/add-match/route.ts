@@ -1,4 +1,5 @@
 import { prisma } from '@/utils/prisma';
+import { requireUser } from '@/lib/require-session';
 import { NextRequest, NextResponse } from 'next/server';
 
 type MatchSet = {
@@ -16,6 +17,9 @@ function toScore(value: number | string | null | undefined) {
 }
 
 export async function POST(request: NextRequest) {
+  const { response } = await requireUser();
+  if (response) return response;
+
   try {
     const body = await request.json();
     const sets = body.sets as MatchSet[];

@@ -14,12 +14,14 @@ import Tournament from '../../../public/icons/tennis-table.svg';
 import { SidebarInterface } from './interfaces/Sidebar.interface';
 
 const SidebarTemplate = ({ handleClose }: SidebarInterface) => {
-  const items = [
+  const publicItems = [
     {
       label: 'Ranking',
       icon: Ranking,
       path: '/leaderboard',
     },
+  ];
+  const privateItems = [
     {
       label: 'Torneos',
       icon: Tournament,
@@ -57,8 +59,14 @@ const SidebarTemplate = ({ handleClose }: SidebarInterface) => {
     },
   ];
 
-  const { data: session } = useSession();
-  if (session) {
+  const { data: session, status } = useSession();
+  const items = status === 'loading'
+    ? []
+    : session
+      ? [...publicItems, ...privateItems]
+      : publicItems;
+
+  if (session?.user?.role === 'ADMIN') {
     items.push({
       label: 'Dashboard',
       icon: Dashboard,

@@ -40,7 +40,7 @@ const NavBarTemplate = () => {
         </Drawer>
         <div className="flex md:order-2">
           {!user && <Button onClick={() => signIn()}>Ingresar</Button>}
-          {user && <Button onClick={() => signOut()}>Salir</Button>}
+          {user && <Button onClick={() => signOut({ callbackUrl: '/' })}>Salir</Button>}
           <NavbarToggle />
         </div>
         <NavbarCollapse>

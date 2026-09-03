@@ -1,5 +1,6 @@
 import { NavBar } from '@/components/NavBar';
 import NextAuthSessionProvider from '@/utils/SessionProvider';
+import SiteFooter from '@/components/SiteFooter';
 import type { Metadata } from 'next';
 import './globals.css';
 
@@ -15,6 +16,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NextAuthSessionProvider>
           <NavBar />
           {children}
+          <SiteFooter />
         </NextAuthSessionProvider>
       </body>
     </html>

@@ -29,6 +29,7 @@ export type VenueMinAggregateOutputType = {
   name: string | null
   phone: string | null
   address: string | null
+  deletedAt: Date | null
 }
 
 export type VenueMaxAggregateOutputType = {
@@ -36,6 +37,7 @@ export type VenueMaxAggregateOutputType = {
   name: string | null
   phone: string | null
   address: string | null
+  deletedAt: Date | null
 }
 
 export type VenueCountAggregateOutputType = {
@@ -43,6 +45,7 @@ export type VenueCountAggregateOutputType = {
   name: number
   phone: number
   address: number
+  deletedAt: number
   _all: number
 }
 
@@ -52,6 +55,7 @@ export type VenueMinAggregateInputType = {
   name?: true
   phone?: true
   address?: true
+  deletedAt?: true
 }
 
 export type VenueMaxAggregateInputType = {
@@ -59,6 +63,7 @@ export type VenueMaxAggregateInputType = {
   name?: true
   phone?: true
   address?: true
+  deletedAt?: true
 }
 
 export type VenueCountAggregateInputType = {
@@ -66,6 +71,7 @@ export type VenueCountAggregateInputType = {
   name?: true
   phone?: true
   address?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -146,6 +152,7 @@ export type VenueGroupByOutputType = {
   name: string
   phone: string
   address: string
+  deletedAt: Date | null
   _count: VenueCountAggregateOutputType | null
   _min: VenueMinAggregateOutputType | null
   _max: VenueMaxAggregateOutputType | null
@@ -174,6 +181,7 @@ export type VenueWhereInput = {
   name?: Prisma.StringFilter<"Venue"> | string
   phone?: Prisma.StringFilter<"Venue"> | string
   address?: Prisma.StringFilter<"Venue"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Venue"> | Date | string | null
   tournaments?: Prisma.TournamentListRelationFilter
 }
 
@@ -182,6 +190,7 @@ export type VenueOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   tournaments?: Prisma.TournamentOrderByRelationAggregateInput
 }
 
@@ -193,6 +202,7 @@ export type VenueWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Venue"> | string
   phone?: Prisma.StringFilter<"Venue"> | string
   address?: Prisma.StringFilter<"Venue"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Venue"> | Date | string | null
   tournaments?: Prisma.TournamentListRelationFilter
 }, "id">
 
@@ -201,6 +211,7 @@ export type VenueOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.VenueCountOrderByAggregateInput
   _max?: Prisma.VenueMaxOrderByAggregateInput
   _min?: Prisma.VenueMinOrderByAggregateInput
@@ -214,6 +225,7 @@ export type VenueScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Venue"> | string
   phone?: Prisma.StringWithAggregatesFilter<"Venue"> | string
   address?: Prisma.StringWithAggregatesFilter<"Venue"> | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Venue"> | Date | string | null
 }
 
 export type VenueCreateInput = {
@@ -221,6 +233,7 @@ export type VenueCreateInput = {
   name: string
   phone: string
   address: string
+  deletedAt?: Date | string | null
   tournaments?: Prisma.TournamentCreateNestedManyWithoutVenueInput
 }
 
@@ -229,6 +242,7 @@ export type VenueUncheckedCreateInput = {
   name: string
   phone: string
   address: string
+  deletedAt?: Date | string | null
   tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutVenueInput
 }
 
@@ -237,6 +251,7 @@ export type VenueUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tournaments?: Prisma.TournamentUpdateManyWithoutVenueNestedInput
 }
 
@@ -245,6 +260,7 @@ export type VenueUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutVenueNestedInput
 }
 
@@ -253,6 +269,7 @@ export type VenueCreateManyInput = {
   name: string
   phone: string
   address: string
+  deletedAt?: Date | string | null
 }
 
 export type VenueUpdateManyMutationInput = {
@@ -260,6 +277,7 @@ export type VenueUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type VenueUncheckedUpdateManyInput = {
@@ -267,6 +285,7 @@ export type VenueUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type VenueScalarRelationFilter = {
@@ -279,6 +298,7 @@ export type VenueCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type VenueMaxOrderByAggregateInput = {
@@ -286,6 +306,7 @@ export type VenueMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type VenueMinOrderByAggregateInput = {
@@ -293,6 +314,7 @@ export type VenueMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   address?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type VenueCreateNestedOneWithoutTournamentsInput = {
@@ -314,6 +336,7 @@ export type VenueCreateWithoutTournamentsInput = {
   name: string
   phone: string
   address: string
+  deletedAt?: Date | string | null
 }
 
 export type VenueUncheckedCreateWithoutTournamentsInput = {
@@ -321,6 +344,7 @@ export type VenueUncheckedCreateWithoutTournamentsInput = {
   name: string
   phone: string
   address: string
+  deletedAt?: Date | string | null
 }
 
 export type VenueCreateOrConnectWithoutTournamentsInput = {
@@ -344,6 +368,7 @@ export type VenueUpdateWithoutTournamentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type VenueUncheckedUpdateWithoutTournamentsInput = {
@@ -351,6 +376,7 @@ export type VenueUncheckedUpdateWithoutTournamentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   phone?: Prisma.StringFieldUpdateOperationsInput | string
   address?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -389,6 +415,7 @@ export type VenueSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   name?: boolean
   phone?: boolean
   address?: boolean
+  deletedAt?: boolean
   tournaments?: boolean | Prisma.Venue$tournamentsArgs<ExtArgs>
   _count?: boolean | Prisma.VenueCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["venue"]>
@@ -398,6 +425,7 @@ export type VenueSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   name?: boolean
   phone?: boolean
   address?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["venue"]>
 
 export type VenueSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -405,6 +433,7 @@ export type VenueSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   name?: boolean
   phone?: boolean
   address?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["venue"]>
 
 export type VenueSelectScalar = {
@@ -412,9 +441,10 @@ export type VenueSelectScalar = {
   name?: boolean
   phone?: boolean
   address?: boolean
+  deletedAt?: boolean
 }
 
-export type VenueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "phone" | "address", ExtArgs["result"]["venue"]>
+export type VenueOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "phone" | "address" | "deletedAt", ExtArgs["result"]["venue"]>
 export type VenueInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournaments?: boolean | Prisma.Venue$tournamentsArgs<ExtArgs>
   _count?: boolean | Prisma.VenueCountOutputTypeDefaultArgs<ExtArgs>
@@ -432,6 +462,7 @@ export type $VenuePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     name: string
     phone: string
     address: string
+    deletedAt: Date | null
   }, ExtArgs["result"]["venue"]>
   composites: {}
 }
@@ -860,6 +891,7 @@ export interface VenueFieldRefs {
   readonly name: Prisma.FieldRef<"Venue", 'String'>
   readonly phone: Prisma.FieldRef<"Venue", 'String'>
   readonly address: Prisma.FieldRef<"Venue", 'String'>
+  readonly deletedAt: Prisma.FieldRef<"Venue", 'DateTime'>
 }
     
 

@@ -30,6 +30,7 @@ export type MatchMinAggregateOutputType = {
   tournamentId: string | null
   player1Id: string | null
   player2Id: string | null
+  deletedAt: Date | null
 }
 
 export type MatchMaxAggregateOutputType = {
@@ -38,6 +39,7 @@ export type MatchMaxAggregateOutputType = {
   tournamentId: string | null
   player1Id: string | null
   player2Id: string | null
+  deletedAt: Date | null
 }
 
 export type MatchCountAggregateOutputType = {
@@ -46,6 +48,7 @@ export type MatchCountAggregateOutputType = {
   tournamentId: number
   player1Id: number
   player2Id: number
+  deletedAt: number
   _all: number
 }
 
@@ -56,6 +59,7 @@ export type MatchMinAggregateInputType = {
   tournamentId?: true
   player1Id?: true
   player2Id?: true
+  deletedAt?: true
 }
 
 export type MatchMaxAggregateInputType = {
@@ -64,6 +68,7 @@ export type MatchMaxAggregateInputType = {
   tournamentId?: true
   player1Id?: true
   player2Id?: true
+  deletedAt?: true
 }
 
 export type MatchCountAggregateInputType = {
@@ -72,6 +77,7 @@ export type MatchCountAggregateInputType = {
   tournamentId?: true
   player1Id?: true
   player2Id?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -153,6 +159,7 @@ export type MatchGroupByOutputType = {
   tournamentId: string | null
   player1Id: string
   player2Id: string
+  deletedAt: Date | null
   _count: MatchCountAggregateOutputType | null
   _min: MatchMinAggregateOutputType | null
   _max: MatchMaxAggregateOutputType | null
@@ -182,6 +189,7 @@ export type MatchWhereInput = {
   tournamentId?: Prisma.StringNullableFilter<"Match"> | string | null
   player1Id?: Prisma.StringFilter<"Match"> | string
   player2Id?: Prisma.StringFilter<"Match"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Match"> | Date | string | null
   winner?: Prisma.XOR<Prisma.PlayerScalarRelationFilter, Prisma.PlayerWhereInput>
   tournament?: Prisma.XOR<Prisma.TournamentNullableScalarRelationFilter, Prisma.TournamentWhereInput> | null
   player1?: Prisma.XOR<Prisma.PlayerScalarRelationFilter, Prisma.PlayerWhereInput>
@@ -195,6 +203,7 @@ export type MatchOrderByWithRelationInput = {
   tournamentId?: Prisma.SortOrderInput | Prisma.SortOrder
   player1Id?: Prisma.SortOrder
   player2Id?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   winner?: Prisma.PlayerOrderByWithRelationInput
   tournament?: Prisma.TournamentOrderByWithRelationInput
   player1?: Prisma.PlayerOrderByWithRelationInput
@@ -211,6 +220,7 @@ export type MatchWhereUniqueInput = Prisma.AtLeast<{
   tournamentId?: Prisma.StringNullableFilter<"Match"> | string | null
   player1Id?: Prisma.StringFilter<"Match"> | string
   player2Id?: Prisma.StringFilter<"Match"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Match"> | Date | string | null
   winner?: Prisma.XOR<Prisma.PlayerScalarRelationFilter, Prisma.PlayerWhereInput>
   tournament?: Prisma.XOR<Prisma.TournamentNullableScalarRelationFilter, Prisma.TournamentWhereInput> | null
   player1?: Prisma.XOR<Prisma.PlayerScalarRelationFilter, Prisma.PlayerWhereInput>
@@ -224,6 +234,7 @@ export type MatchOrderByWithAggregationInput = {
   tournamentId?: Prisma.SortOrderInput | Prisma.SortOrder
   player1Id?: Prisma.SortOrder
   player2Id?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.MatchCountOrderByAggregateInput
   _max?: Prisma.MatchMaxOrderByAggregateInput
   _min?: Prisma.MatchMinOrderByAggregateInput
@@ -238,10 +249,12 @@ export type MatchScalarWhereWithAggregatesInput = {
   tournamentId?: Prisma.StringNullableWithAggregatesFilter<"Match"> | string | null
   player1Id?: Prisma.StringWithAggregatesFilter<"Match"> | string
   player2Id?: Prisma.StringWithAggregatesFilter<"Match"> | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Match"> | Date | string | null
 }
 
 export type MatchCreateInput = {
   id?: string
+  deletedAt?: Date | string | null
   winner: Prisma.PlayerCreateNestedOneWithoutWinnerMatchesInput
   tournament?: Prisma.TournamentCreateNestedOneWithoutMatchesInput
   player1: Prisma.PlayerCreateNestedOneWithoutPlayer1MatchesInput
@@ -255,11 +268,13 @@ export type MatchUncheckedCreateInput = {
   tournamentId?: string | null
   player1Id: string
   player2Id: string
+  deletedAt?: Date | string | null
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutMatchInput
 }
 
 export type MatchUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   winner?: Prisma.PlayerUpdateOneRequiredWithoutWinnerMatchesNestedInput
   tournament?: Prisma.TournamentUpdateOneWithoutMatchesNestedInput
   player1?: Prisma.PlayerUpdateOneRequiredWithoutPlayer1MatchesNestedInput
@@ -273,6 +288,7 @@ export type MatchUncheckedUpdateInput = {
   tournamentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   player1Id?: Prisma.StringFieldUpdateOperationsInput | string
   player2Id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sets?: Prisma.SetUncheckedUpdateManyWithoutMatchNestedInput
 }
 
@@ -282,10 +298,12 @@ export type MatchCreateManyInput = {
   tournamentId?: string | null
   player1Id: string
   player2Id: string
+  deletedAt?: Date | string | null
 }
 
 export type MatchUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type MatchUncheckedUpdateManyInput = {
@@ -294,6 +312,7 @@ export type MatchUncheckedUpdateManyInput = {
   tournamentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   player1Id?: Prisma.StringFieldUpdateOperationsInput | string
   player2Id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type MatchListRelationFilter = {
@@ -312,6 +331,7 @@ export type MatchCountOrderByAggregateInput = {
   tournamentId?: Prisma.SortOrder
   player1Id?: Prisma.SortOrder
   player2Id?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type MatchMaxOrderByAggregateInput = {
@@ -320,6 +340,7 @@ export type MatchMaxOrderByAggregateInput = {
   tournamentId?: Prisma.SortOrder
   player1Id?: Prisma.SortOrder
   player2Id?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type MatchMinOrderByAggregateInput = {
@@ -328,6 +349,7 @@ export type MatchMinOrderByAggregateInput = {
   tournamentId?: Prisma.SortOrder
   player1Id?: Prisma.SortOrder
   player2Id?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type MatchNullableScalarRelationFilter = {
@@ -521,6 +543,7 @@ export type MatchUpdateOneWithoutSetsNestedInput = {
 
 export type MatchCreateWithoutTournamentInput = {
   id?: string
+  deletedAt?: Date | string | null
   winner: Prisma.PlayerCreateNestedOneWithoutWinnerMatchesInput
   player1: Prisma.PlayerCreateNestedOneWithoutPlayer1MatchesInput
   player2: Prisma.PlayerCreateNestedOneWithoutPlayer2MatchesInput
@@ -532,6 +555,7 @@ export type MatchUncheckedCreateWithoutTournamentInput = {
   winnerId: string
   player1Id: string
   player2Id: string
+  deletedAt?: Date | string | null
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutMatchInput
 }
 
@@ -570,10 +594,12 @@ export type MatchScalarWhereInput = {
   tournamentId?: Prisma.StringNullableFilter<"Match"> | string | null
   player1Id?: Prisma.StringFilter<"Match"> | string
   player2Id?: Prisma.StringFilter<"Match"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Match"> | Date | string | null
 }
 
 export type MatchCreateWithoutWinnerInput = {
   id?: string
+  deletedAt?: Date | string | null
   tournament?: Prisma.TournamentCreateNestedOneWithoutMatchesInput
   player1: Prisma.PlayerCreateNestedOneWithoutPlayer1MatchesInput
   player2: Prisma.PlayerCreateNestedOneWithoutPlayer2MatchesInput
@@ -585,6 +611,7 @@ export type MatchUncheckedCreateWithoutWinnerInput = {
   tournamentId?: string | null
   player1Id: string
   player2Id: string
+  deletedAt?: Date | string | null
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutMatchInput
 }
 
@@ -600,6 +627,7 @@ export type MatchCreateManyWinnerInputEnvelope = {
 
 export type MatchCreateWithoutPlayer1Input = {
   id?: string
+  deletedAt?: Date | string | null
   winner: Prisma.PlayerCreateNestedOneWithoutWinnerMatchesInput
   tournament?: Prisma.TournamentCreateNestedOneWithoutMatchesInput
   player2: Prisma.PlayerCreateNestedOneWithoutPlayer2MatchesInput
@@ -611,6 +639,7 @@ export type MatchUncheckedCreateWithoutPlayer1Input = {
   winnerId: string
   tournamentId?: string | null
   player2Id: string
+  deletedAt?: Date | string | null
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutMatchInput
 }
 
@@ -626,6 +655,7 @@ export type MatchCreateManyPlayer1InputEnvelope = {
 
 export type MatchCreateWithoutPlayer2Input = {
   id?: string
+  deletedAt?: Date | string | null
   winner: Prisma.PlayerCreateNestedOneWithoutWinnerMatchesInput
   tournament?: Prisma.TournamentCreateNestedOneWithoutMatchesInput
   player1: Prisma.PlayerCreateNestedOneWithoutPlayer1MatchesInput
@@ -637,6 +667,7 @@ export type MatchUncheckedCreateWithoutPlayer2Input = {
   winnerId: string
   tournamentId?: string | null
   player1Id: string
+  deletedAt?: Date | string | null
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutMatchInput
 }
 
@@ -700,6 +731,7 @@ export type MatchUpdateManyWithWhereWithoutPlayer2Input = {
 
 export type MatchCreateWithoutSetsInput = {
   id?: string
+  deletedAt?: Date | string | null
   winner: Prisma.PlayerCreateNestedOneWithoutWinnerMatchesInput
   tournament?: Prisma.TournamentCreateNestedOneWithoutMatchesInput
   player1: Prisma.PlayerCreateNestedOneWithoutPlayer1MatchesInput
@@ -712,6 +744,7 @@ export type MatchUncheckedCreateWithoutSetsInput = {
   tournamentId?: string | null
   player1Id: string
   player2Id: string
+  deletedAt?: Date | string | null
 }
 
 export type MatchCreateOrConnectWithoutSetsInput = {
@@ -732,6 +765,7 @@ export type MatchUpdateToOneWithWhereWithoutSetsInput = {
 
 export type MatchUpdateWithoutSetsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   winner?: Prisma.PlayerUpdateOneRequiredWithoutWinnerMatchesNestedInput
   tournament?: Prisma.TournamentUpdateOneWithoutMatchesNestedInput
   player1?: Prisma.PlayerUpdateOneRequiredWithoutPlayer1MatchesNestedInput
@@ -744,6 +778,7 @@ export type MatchUncheckedUpdateWithoutSetsInput = {
   tournamentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   player1Id?: Prisma.StringFieldUpdateOperationsInput | string
   player2Id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type MatchCreateManyTournamentInput = {
@@ -751,10 +786,12 @@ export type MatchCreateManyTournamentInput = {
   winnerId: string
   player1Id: string
   player2Id: string
+  deletedAt?: Date | string | null
 }
 
 export type MatchUpdateWithoutTournamentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   winner?: Prisma.PlayerUpdateOneRequiredWithoutWinnerMatchesNestedInput
   player1?: Prisma.PlayerUpdateOneRequiredWithoutPlayer1MatchesNestedInput
   player2?: Prisma.PlayerUpdateOneRequiredWithoutPlayer2MatchesNestedInput
@@ -766,6 +803,7 @@ export type MatchUncheckedUpdateWithoutTournamentInput = {
   winnerId?: Prisma.StringFieldUpdateOperationsInput | string
   player1Id?: Prisma.StringFieldUpdateOperationsInput | string
   player2Id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sets?: Prisma.SetUncheckedUpdateManyWithoutMatchNestedInput
 }
 
@@ -774,6 +812,7 @@ export type MatchUncheckedUpdateManyWithoutTournamentInput = {
   winnerId?: Prisma.StringFieldUpdateOperationsInput | string
   player1Id?: Prisma.StringFieldUpdateOperationsInput | string
   player2Id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type MatchCreateManyWinnerInput = {
@@ -781,6 +820,7 @@ export type MatchCreateManyWinnerInput = {
   tournamentId?: string | null
   player1Id: string
   player2Id: string
+  deletedAt?: Date | string | null
 }
 
 export type MatchCreateManyPlayer1Input = {
@@ -788,6 +828,7 @@ export type MatchCreateManyPlayer1Input = {
   winnerId: string
   tournamentId?: string | null
   player2Id: string
+  deletedAt?: Date | string | null
 }
 
 export type MatchCreateManyPlayer2Input = {
@@ -795,10 +836,12 @@ export type MatchCreateManyPlayer2Input = {
   winnerId: string
   tournamentId?: string | null
   player1Id: string
+  deletedAt?: Date | string | null
 }
 
 export type MatchUpdateWithoutWinnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tournament?: Prisma.TournamentUpdateOneWithoutMatchesNestedInput
   player1?: Prisma.PlayerUpdateOneRequiredWithoutPlayer1MatchesNestedInput
   player2?: Prisma.PlayerUpdateOneRequiredWithoutPlayer2MatchesNestedInput
@@ -810,6 +853,7 @@ export type MatchUncheckedUpdateWithoutWinnerInput = {
   tournamentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   player1Id?: Prisma.StringFieldUpdateOperationsInput | string
   player2Id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sets?: Prisma.SetUncheckedUpdateManyWithoutMatchNestedInput
 }
 
@@ -818,10 +862,12 @@ export type MatchUncheckedUpdateManyWithoutWinnerInput = {
   tournamentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   player1Id?: Prisma.StringFieldUpdateOperationsInput | string
   player2Id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type MatchUpdateWithoutPlayer1Input = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   winner?: Prisma.PlayerUpdateOneRequiredWithoutWinnerMatchesNestedInput
   tournament?: Prisma.TournamentUpdateOneWithoutMatchesNestedInput
   player2?: Prisma.PlayerUpdateOneRequiredWithoutPlayer2MatchesNestedInput
@@ -833,6 +879,7 @@ export type MatchUncheckedUpdateWithoutPlayer1Input = {
   winnerId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   player2Id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sets?: Prisma.SetUncheckedUpdateManyWithoutMatchNestedInput
 }
 
@@ -841,10 +888,12 @@ export type MatchUncheckedUpdateManyWithoutPlayer1Input = {
   winnerId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   player2Id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type MatchUpdateWithoutPlayer2Input = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   winner?: Prisma.PlayerUpdateOneRequiredWithoutWinnerMatchesNestedInput
   tournament?: Prisma.TournamentUpdateOneWithoutMatchesNestedInput
   player1?: Prisma.PlayerUpdateOneRequiredWithoutPlayer1MatchesNestedInput
@@ -856,6 +905,7 @@ export type MatchUncheckedUpdateWithoutPlayer2Input = {
   winnerId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   player1Id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sets?: Prisma.SetUncheckedUpdateManyWithoutMatchNestedInput
 }
 
@@ -864,6 +914,7 @@ export type MatchUncheckedUpdateManyWithoutPlayer2Input = {
   winnerId?: Prisma.StringFieldUpdateOperationsInput | string
   tournamentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   player1Id?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -903,6 +954,7 @@ export type MatchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   tournamentId?: boolean
   player1Id?: boolean
   player2Id?: boolean
+  deletedAt?: boolean
   winner?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
   tournament?: boolean | Prisma.Match$tournamentArgs<ExtArgs>
   player1?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
@@ -917,6 +969,7 @@ export type MatchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   tournamentId?: boolean
   player1Id?: boolean
   player2Id?: boolean
+  deletedAt?: boolean
   winner?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
   tournament?: boolean | Prisma.Match$tournamentArgs<ExtArgs>
   player1?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
@@ -929,6 +982,7 @@ export type MatchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   tournamentId?: boolean
   player1Id?: boolean
   player2Id?: boolean
+  deletedAt?: boolean
   winner?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
   tournament?: boolean | Prisma.Match$tournamentArgs<ExtArgs>
   player1?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
@@ -941,9 +995,10 @@ export type MatchSelectScalar = {
   tournamentId?: boolean
   player1Id?: boolean
   player2Id?: boolean
+  deletedAt?: boolean
 }
 
-export type MatchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "winnerId" | "tournamentId" | "player1Id" | "player2Id", ExtArgs["result"]["match"]>
+export type MatchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "winnerId" | "tournamentId" | "player1Id" | "player2Id" | "deletedAt", ExtArgs["result"]["match"]>
 export type MatchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   winner?: boolean | Prisma.PlayerDefaultArgs<ExtArgs>
   tournament?: boolean | Prisma.Match$tournamentArgs<ExtArgs>
@@ -980,6 +1035,7 @@ export type $MatchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     tournamentId: string | null
     player1Id: string
     player2Id: string
+    deletedAt: Date | null
   }, ExtArgs["result"]["match"]>
   composites: {}
 }
@@ -1413,6 +1469,7 @@ export interface MatchFieldRefs {
   readonly tournamentId: Prisma.FieldRef<"Match", 'String'>
   readonly player1Id: Prisma.FieldRef<"Match", 'String'>
   readonly player2Id: Prisma.FieldRef<"Match", 'String'>
+  readonly deletedAt: Prisma.FieldRef<"Match", 'DateTime'>
 }
     
 

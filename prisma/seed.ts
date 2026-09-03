@@ -13,13 +13,28 @@ async function main() {
         name: 'test',
         email: 'asdasd@asdas.com',
         password: '$2b$10$f.i.R3tKlsqPiG2OizMEg.ClxTAs6Ob1X8.U5QNjAFBxIf43ZCogS',
-        emailVerified: null,
-        createdAt: '2024-09-09T21:21:05.566Z',
-        updatedAt: '2024-09-10T15:39:47.864Z',
+        role: 'ADMIN',
+      },
+      {
+        id: 'cmadminuser00001ngmgi99lmru',
+        name: 'Usuario de prueba',
+        email: 'user@asdas.com',
+        password: '$2b$10$f.i.R3tKlsqPiG2OizMEg.ClxTAs6Ob1X8.U5QNjAFBxIf43ZCogS',
+        role: 'USER',
       },
     ],
     skipDuplicates: true,
   });
+  await prisma.user.update({
+    where: { email: 'asdasd@asdas.com' },
+    data: { role: 'ADMIN', isActive: true },
+  });
+  if (process.env.ADMIN_EMAIL) {
+    await prisma.user.updateMany({
+      where: { email: process.env.ADMIN_EMAIL.trim().toLowerCase() },
+      data: { role: 'ADMIN' },
+    });
+  }
   // Venue
   await prisma.venue.createMany({
     data: [

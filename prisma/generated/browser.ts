@@ -43,6 +43,11 @@ export type Player = Prisma.PlayerModel
  */
 export type TournamentCategory = Prisma.TournamentCategoryModel
 /**
+ * Model TournamentType
+ * 
+ */
+export type TournamentType = Prisma.TournamentTypeModel
+/**
  * Model TournamentCategoryPoints
  * 
  */

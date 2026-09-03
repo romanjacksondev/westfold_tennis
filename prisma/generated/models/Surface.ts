@@ -27,16 +27,19 @@ export type AggregateSurface = {
 export type SurfaceMinAggregateOutputType = {
   id: string | null
   name: string | null
+  deletedAt: Date | null
 }
 
 export type SurfaceMaxAggregateOutputType = {
   id: string | null
   name: string | null
+  deletedAt: Date | null
 }
 
 export type SurfaceCountAggregateOutputType = {
   id: number
   name: number
+  deletedAt: number
   _all: number
 }
 
@@ -44,16 +47,19 @@ export type SurfaceCountAggregateOutputType = {
 export type SurfaceMinAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
 }
 
 export type SurfaceMaxAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
 }
 
 export type SurfaceCountAggregateInputType = {
   id?: true
   name?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -132,6 +138,7 @@ export type SurfaceGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type SurfaceGroupByOutputType = {
   id: string
   name: string
+  deletedAt: Date | null
   _count: SurfaceCountAggregateOutputType | null
   _min: SurfaceMinAggregateOutputType | null
   _max: SurfaceMaxAggregateOutputType | null
@@ -158,12 +165,14 @@ export type SurfaceWhereInput = {
   NOT?: Prisma.SurfaceWhereInput | Prisma.SurfaceWhereInput[]
   id?: Prisma.StringFilter<"Surface"> | string
   name?: Prisma.StringFilter<"Surface"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Surface"> | Date | string | null
   tournaments?: Prisma.TournamentListRelationFilter
 }
 
 export type SurfaceOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   tournaments?: Prisma.TournamentOrderByRelationAggregateInput
 }
 
@@ -173,12 +182,14 @@ export type SurfaceWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.SurfaceWhereInput[]
   NOT?: Prisma.SurfaceWhereInput | Prisma.SurfaceWhereInput[]
   name?: Prisma.StringFilter<"Surface"> | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Surface"> | Date | string | null
   tournaments?: Prisma.TournamentListRelationFilter
 }, "id">
 
 export type SurfaceOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.SurfaceCountOrderByAggregateInput
   _max?: Prisma.SurfaceMaxOrderByAggregateInput
   _min?: Prisma.SurfaceMinOrderByAggregateInput
@@ -190,45 +201,53 @@ export type SurfaceScalarWhereWithAggregatesInput = {
   NOT?: Prisma.SurfaceScalarWhereWithAggregatesInput | Prisma.SurfaceScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Surface"> | string
   name?: Prisma.StringWithAggregatesFilter<"Surface"> | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Surface"> | Date | string | null
 }
 
 export type SurfaceCreateInput = {
   id?: string
   name: string
+  deletedAt?: Date | string | null
   tournaments?: Prisma.TournamentCreateNestedManyWithoutSurfaceInput
 }
 
 export type SurfaceUncheckedCreateInput = {
   id?: string
   name: string
+  deletedAt?: Date | string | null
   tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutSurfaceInput
 }
 
 export type SurfaceUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tournaments?: Prisma.TournamentUpdateManyWithoutSurfaceNestedInput
 }
 
 export type SurfaceUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutSurfaceNestedInput
 }
 
 export type SurfaceCreateManyInput = {
   id?: string
   name: string
+  deletedAt?: Date | string | null
 }
 
 export type SurfaceUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type SurfaceUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type SurfaceScalarRelationFilter = {
@@ -239,16 +258,19 @@ export type SurfaceScalarRelationFilter = {
 export type SurfaceCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type SurfaceMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type SurfaceMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type SurfaceCreateNestedOneWithoutTournamentsInput = {
@@ -268,11 +290,13 @@ export type SurfaceUpdateOneRequiredWithoutTournamentsNestedInput = {
 export type SurfaceCreateWithoutTournamentsInput = {
   id?: string
   name: string
+  deletedAt?: Date | string | null
 }
 
 export type SurfaceUncheckedCreateWithoutTournamentsInput = {
   id?: string
   name: string
+  deletedAt?: Date | string | null
 }
 
 export type SurfaceCreateOrConnectWithoutTournamentsInput = {
@@ -294,11 +318,13 @@ export type SurfaceUpdateToOneWithWhereWithoutTournamentsInput = {
 export type SurfaceUpdateWithoutTournamentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type SurfaceUncheckedUpdateWithoutTournamentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -335,6 +361,7 @@ export type SurfaceCountOutputTypeCountTournamentsArgs<ExtArgs extends runtime.T
 export type SurfaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  deletedAt?: boolean
   tournaments?: boolean | Prisma.Surface$tournamentsArgs<ExtArgs>
   _count?: boolean | Prisma.SurfaceCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["surface"]>
@@ -342,19 +369,22 @@ export type SurfaceSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type SurfaceSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["surface"]>
 
 export type SurfaceSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  deletedAt?: boolean
 }, ExtArgs["result"]["surface"]>
 
 export type SurfaceSelectScalar = {
   id?: boolean
   name?: boolean
+  deletedAt?: boolean
 }
 
-export type SurfaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name", ExtArgs["result"]["surface"]>
+export type SurfaceOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "deletedAt", ExtArgs["result"]["surface"]>
 export type SurfaceInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournaments?: boolean | Prisma.Surface$tournamentsArgs<ExtArgs>
   _count?: boolean | Prisma.SurfaceCountOutputTypeDefaultArgs<ExtArgs>
@@ -370,6 +400,7 @@ export type $SurfacePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
+    deletedAt: Date | null
   }, ExtArgs["result"]["surface"]>
   composites: {}
 }
@@ -796,6 +827,7 @@ export interface Prisma__SurfaceClient<T, Null = never, ExtArgs extends runtime.
 export interface SurfaceFieldRefs {
   readonly id: Prisma.FieldRef<"Surface", 'String'>
   readonly name: Prisma.FieldRef<"Surface", 'String'>
+  readonly deletedAt: Prisma.FieldRef<"Surface", 'DateTime'>
 }
     
 
