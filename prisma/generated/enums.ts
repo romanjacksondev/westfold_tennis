@@ -9,6 +9,15 @@
 * 🟢 You can import this file directly.
 */
 
+export const TournamentStatus = {
+  IN_PROGRESS: 'IN_PROGRESS',
+  FINISHED: 'FINISHED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type TournamentStatus = (typeof TournamentStatus)[keyof typeof TournamentStatus]
+
+
 export const UserRole = {
   USER: 'USER',
   ADMIN: 'ADMIN'

@@ -17,6 +17,9 @@ model Tournament {
   championId           String?
   champion             Player?            @relation("champion", fields: [championId], references: [id])
   date                 DateTime           @default(now())
+  createdAt            DateTime           @default(now())
+  finishedAt           DateTime?
+  status               TournamentStatus   @default(IN_PROGRESS)
   matches              Match[]
   surfaceId            String
   surface              Surface            @relation(fields: [surfaceId], references: [id])
@@ -26,6 +29,12 @@ model Tournament {
   tournamentType       TournamentType?   @relation(fields: [tournamentTypeId], references: [id])
   players              Player[]           @relation("participations")
   deletedAt            DateTime?
+}
+
+enum TournamentStatus {
+  IN_PROGRESS
+  FINISHED
+  CANCELLED
 }
 
 model Surface {

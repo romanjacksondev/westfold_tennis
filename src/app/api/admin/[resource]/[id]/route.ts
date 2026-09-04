@@ -29,6 +29,25 @@ export async function PATCH(request: NextRequest, context: Context) {
     const data = { ...body };
     delete data.id;
     delete data.deletedAt;
+    if (resource === 'tournaments' && data.action) {
+      const action = data.action;
+      if (action === 'cancel') {
+        const updated = await prisma.tournament.update({ where: { id }, data: { status: 'CANCELLED', finishedAt: null } });
+        return NextResponse.json({ data: updated, message: 'Torneo cancelado correctamente' });
+      }
+      if (action === 'reactivate') {
+        const current = await prisma.tournament.findUnique({ where: { id }, select: { championId: true, finishedAt: true } });
+        const status = current?.championId ? 'FINISHED' : 'IN_PROGRESS';
+        const finishedAt = current?.championId ? (current.finishedAt ?? new Date()) : null;
+        const updated = await prisma.tournament.update({ where: { id }, data: { status, finishedAt } });
+        return NextResponse.json({ data: updated, message: 'Torneo reactivado correctamente' });
+      }
+      return NextResponse.json({ message: 'Acción inválida' }, { status: 400 });
+    }
+    delete data.action;
+    delete data.status;
+    delete data.finishedAt;
+    delete data.createdAt;
     if (resource === 'users') {
       const current = await prisma.user.findUnique({ where: { id }, select: { role: true, isActive: true } });
       if (current?.role === 'ADMIN' && current.isActive && (data.role === 'USER' || data.isActive === false)) {
@@ -49,10 +68,25 @@ export async function PATCH(request: NextRequest, context: Context) {
     if (data.date) data.date = new Date(data.date);
     if (resource === 'tournaments') {
       const relations = ['venueId', 'surfaceId', 'championId', 'tournamentCategoryId', 'tournamentTypeId'] as const;
+      const championValue = data.championId;
       for (const relation of relations) {
         const value = data[relation];
         delete data[relation];
+        if (relation === 'championId') {
+          data.champion = value ? { connect: { id: value } } : { disconnect: true };
+          continue;
+        }
         if (value) data[relation.replace('Id', '')] = { connect: { id: value } };
+      }
+      if (championValue !== undefined) {
+        const current = await prisma.tournament.findUnique({ where: { id }, select: { status: true, finishedAt: true } });
+        if (championValue) {
+          data.status = 'FINISHED';
+          data.finishedAt = current?.finishedAt ?? new Date();
+        } else if (current?.status !== 'CANCELLED') {
+          data.status = 'IN_PROGRESS';
+          data.finishedAt = null;
+        }
       }
     }
     if (resource === 'matches') {

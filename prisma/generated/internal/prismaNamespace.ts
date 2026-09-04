@@ -1286,6 +1286,9 @@ export const TournamentScalarFieldEnum = {
   venueId: 'venueId',
   championId: 'championId',
   date: 'date',
+  createdAt: 'createdAt',
+  finishedAt: 'finishedAt',
+  status: 'status',
   surfaceId: 'surfaceId',
   tournamentCategoryId: 'tournamentCategoryId',
   tournamentTypeId: 'tournamentTypeId',
@@ -1462,6 +1465,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'TournamentStatus'
+ */
+export type EnumTournamentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TournamentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'TournamentStatus[]'
+ */
+export type ListEnumTournamentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TournamentStatus[]'>
     
 
 

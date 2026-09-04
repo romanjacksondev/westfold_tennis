@@ -41,7 +41,7 @@ export async function GET(_request: NextRequest, context: Context) {
         : undefined;
     const data = resource === 'users'
       ? await model.findMany({ where: { deletedAt: null }, orderBy: { email: 'asc' }, select: { id: true, name: true, email: true, role: true, isActive: true, player: { select: { id: true, name: true } } } })
-      : await model.findMany({ where: { deletedAt: null }, ...(resource === 'matches' ? {} : { orderBy: { name: 'asc' } }), ...(include ? { include } : {}) });
+      : await model.findMany({ where: { deletedAt: null }, ...(resource === 'tournaments' ? { orderBy: { date: 'desc' } } : resource === 'matches' ? {} : { orderBy: { name: 'asc' } }), ...(include ? { include } : {}) });
     return NextResponse.json(data);
   } catch (error) {
     return errorResponse(error);
@@ -73,10 +73,12 @@ export async function POST(request: NextRequest, context: Context) {
     }
 
     if (resource === 'tournaments') {
-      const { venueId, surfaceId, championId, tournamentCategoryId, tournamentTypeId, playerIds, date, role, ...fields } = data;
+      const { venueId, surfaceId, championId, tournamentCategoryId, tournamentTypeId, playerIds, date, role, status, finishedAt, createdAt, ...fields } = data;
       Object.assign(data, {
         ...fields,
         date: date ? new Date(date) : new Date(),
+        status: 'IN_PROGRESS',
+        finishedAt: null,
         venue: { connect: { id: venueId } },
         surface: { connect: { id: surfaceId } },
         champion: championId ? { connect: { id: championId } } : undefined,
