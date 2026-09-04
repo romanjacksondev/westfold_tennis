@@ -40,6 +40,8 @@ const todayInputValue = () => {
   const day = String(today.getDate()).padStart(2, '0');
   return `${today.getFullYear()}-${month}-${day}`;
 };
+type MatchSetForm = { gamesPlayer1: string; gamesPlayer2: string; hasTiebreak: boolean; tiebreakPlayer1: string; tiebreakPlayer2: string };
+const emptyMatchSet = (): MatchSetForm => ({ gamesPlayer1: '', gamesPlayer2: '', hasTiebreak: false, tiebreakPlayer1: '', tiebreakPlayer2: '' });
 
 async function requestJson(url: string, options?: RequestInit) {
   const response = await fetch(url, options);
@@ -59,6 +61,7 @@ export default function DashboardConsole({ userName }: { userName: string }) {
   const [query, setQuery] = useState('');
   const [options, setOptions] = useState<Options>({ players: [], venues: [], surfaces: [], categories: [], types: [], tournaments: [] });
   const [showTournamentTypeInfo, setShowTournamentTypeInfo] = useState(false);
+  const [matchSets, setMatchSets] = useState<MatchSetForm[]>([emptyMatchSet()]);
   const isSimple = resource !== 'tournaments' && resource !== 'matches';
   const newTournamentForm = () => ({ name: '', date: todayInputValue(), venueId: options.venues.find((venue) => venue.name === 'Kauri Club')?.id ?? '', surfaceId: options.surfaces.find((surface) => surface.name === 'Polvo de Ladrillo')?.id ?? '', role: 'USER' });
 
@@ -70,7 +73,7 @@ export default function DashboardConsole({ userName }: { userName: string }) {
   }
 
   useEffect(() => {
-    setEditing(null); setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER' }); setMessage(null); load();
+    setEditing(null); setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER' }); setMatchSets([emptyMatchSet()]); setMessage(null); load();
     if (resource === 'tournaments' || resource === 'matches' || resource === 'users') {
       Promise.all([
         requestJson('/api/admin/players'), requestJson('/api/admin/venues'), requestJson('/api/admin/surfaces'),
@@ -84,7 +87,7 @@ export default function DashboardConsole({ userName }: { userName: string }) {
 
   const visibleItems = useMemo(() => items.filter((item) => JSON.stringify(item).toLowerCase().includes(query.toLowerCase())), [items, query]);
   const relationOptions: Record<string, RecordItem[]> = { venueId: options.venues, surfaceId: options.surfaces, championId: options.players, tournamentCategoryId: options.categories, tournamentTypeId: options.types, tournamentId: options.tournaments, player1Id: options.players, player2Id: options.players, winnerId: options.players, playerId: options.players };
-  const fields = isSimple ? simpleFields[resource as Exclude<Resource, 'tournaments' | 'matches'>] : resource === 'tournaments' ? ['name', 'date', 'venueId', 'surfaceId', 'tournamentCategoryId', 'tournamentTypeId', ...(editing ? ['championId'] : [])] : ['tournamentId', 'player1Id', 'player2Id', 'winnerId'];
+  const fields = isSimple ? simpleFields[resource as Exclude<Resource, 'tournaments' | 'matches'>] : resource === 'tournaments' ? ['name', 'date', 'venueId', 'surfaceId', 'tournamentCategoryId', 'tournamentTypeId', ...(editing ? ['championId'] : [])] : resource === 'matches' && !editing ? ['tournamentId', 'player1Id', 'player2Id'] : ['tournamentId', 'player1Id', 'player2Id', 'winnerId'];
   const requiredFields = resource === 'users' ? ['email', 'role', ...(!editing ? ['password'] : [])] : fields.filter((field) => field !== 'date');
   const selectedTournamentType = options.types.find((option) => option.id === form.tournamentTypeId);
 
@@ -94,12 +97,46 @@ export default function DashboardConsole({ userName }: { userName: string }) {
     setMessage(null);
   }
 
-  function resetForm() { setEditing(null); setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER' }); }
+  function resetForm() { setEditing(null); setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER' }); setMatchSets([emptyMatchSet()]); }
+
+  function updateMatchSet(index: number, patch: Partial<MatchSetForm>) {
+    setMatchSets((current) => current.map((set, setIndex) => (setIndex === index ? { ...set, ...patch } : set)));
+  }
 
   async function submit(event: FormEvent) {
     event.preventDefault();
     const missingField = requiredFields.find((field) => !form[field]?.trim());
     if (missingField) { setMessage({ type: 'error', text: `El campo ${labels[missingField] ?? missingField} es obligatorio.` }); return; }
+    if (resource === 'matches' && !editing) {
+      if (form.player1Id === form.player2Id) { setMessage({ type: 'error', text: 'Jugador 1 y Jugador 2 deben ser distintos.' }); return; }
+      const invalidSet = matchSets.find((set) => {
+        const gamesPlayer1 = Number(set.gamesPlayer1);
+        const gamesPlayer2 = Number(set.gamesPlayer2);
+        if (!Number.isInteger(gamesPlayer1) || !Number.isInteger(gamesPlayer2) || gamesPlayer1 === gamesPlayer2) return true;
+        return set.hasTiebreak && (set.tiebreakPlayer1.trim() === '' || set.tiebreakPlayer2.trim() === '');
+      });
+      if (invalidSet) { setMessage({ type: 'error', text: 'Completá el resultado de cada set con un ganador claro.' }); return; }
+      setSaving(true); setMessage(null);
+      try {
+        const sets = matchSets.map((set) => {
+          const gamesPlayer1 = Number(set.gamesPlayer1);
+          const gamesPlayer2 = Number(set.gamesPlayer2);
+          return {
+            gamesPlayer1, gamesPlayer2,
+            winner: gamesPlayer1 > gamesPlayer2 ? form.player1Id : form.player2Id,
+            hasTiebreak: set.hasTiebreak,
+            tiebreakPlayer1Points: set.hasTiebreak ? Number(set.tiebreakPlayer1) : null,
+            tiebreakPlayer2Points: set.hasTiebreak ? Number(set.tiebreakPlayer2) : null,
+          };
+        });
+        const setsWonByPlayer1 = sets.filter((set) => set.winner === form.player1Id).length;
+        const winner = setsWonByPlayer1 > sets.length - setsWonByPlayer1 ? form.player1Id : form.player2Id;
+        await requestJson('/api/add-match', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idPlayer1: form.player1Id, idPlayer2: form.player2Id, tournamentId: form.tournamentId, winner, sets }) });
+        setMessage({ type: 'success', text: 'Partido creado correctamente' }); resetForm(); await load();
+      } catch (error) { setMessage({ type: 'error', text: error instanceof Error ? error.message : 'No se pudo guardar' }); }
+      finally { setSaving(false); }
+      return;
+    }
     setSaving(true); setMessage(null);
     try {
       const payload = Object.fromEntries(Object.entries(form).map(([key, value]) => [key, value.trim()]));
@@ -130,13 +167,13 @@ export default function DashboardConsole({ userName }: { userName: string }) {
         {message && <div className={`request-message ${message.type}`} role="status">{message.text}</div>}
         <div className="admin-grid">
           <section className="admin-panel form-panel"><div className="panel-heading"><div><p className="eyebrow">{editing ? 'Editar registro' : 'Nuevo registro'}</p><h2>{editing ? 'Actualizar datos' : resource === 'tournaments' ? 'Nuevo Torneo' : 'Agregar elemento'}</h2></div>{editing && <button className="text-button" onClick={resetForm}>Cancelar</button>}</div>
-            <form onSubmit={submit}>{fields.map((field) => <label key={field} className="field"><span>{labels[field] ?? field}{(resource === 'users' ? requiredFields.includes(field) : field !== 'date') ? <b aria-hidden="true"> *</b> : null}{field === 'tournamentTypeId' && <button type="button" className="field-info-button" onClick={() => setShowTournamentTypeInfo(true)} aria-label="Información sobre tipos de torneo" title="Ver formatos de torneo">i</button>}</span>{field === 'role' ? <select required value={form[field] ?? 'USER'} onChange={(event) => setForm((current) => ({ ...current, [field]: event.target.value }))}><option value="USER">Usuario</option><option value="ADMIN">Administrador</option></select> : field === 'tournamentTypeId' ? <button type="button" className={`type-selector ${selectedTournamentType ? 'has-value' : ''}`} onClick={() => setShowTournamentTypeInfo(true)}>{selectedTournamentType ? String(selectedTournamentType.name) : 'Seleccionar formato...'}</button> : relationOptions[field] ? <select required value={form[field] ?? ''} onChange={(event) => setForm((current) => ({ ...current, [field]: event.target.value }))}><option value="">Seleccionar...</option>{relationOptions[field].map((option) => <option key={option.id} value={option.id}>{String(option.name ?? option.id)}</option>)}</select> : <input required={resource === 'users' ? requiredFields.includes(field) : field === 'name'} type={field === 'date' ? 'date' : field === 'email' ? 'email' : field === 'password' ? 'password' : 'text'} value={form[field] ?? ''} onChange={(event) => setForm((current) => ({ ...current, [field]: event.target.value }))} placeholder={field === 'password' ? 'Mínimo 12 caracteres' : field === 'name' ? 'Escribí un nombre' : `Agregar ${labels[field]?.toLowerCase() ?? field}`} />}</label>)}{resource === 'users' && !editing && <label className="legal-consent"><input type="checkbox" required /> <span>La persona fue informada y acepta los <a href="/terms">Términos</a> y la <a href="/privacy">Política de privacidad</a>. <b>*</b></span></label>}<button className="primary-button" disabled={saving}>{saving ? 'Guardando...' : editing ? 'Guardar cambios' : 'Crear registro'}</button></form>
+            <form onSubmit={submit}>{fields.map((field) => <label key={field} className="field"><span>{labels[field] ?? field}{(resource === 'users' ? requiredFields.includes(field) : field !== 'date') ? <b aria-hidden="true"> *</b> : null}{field === 'tournamentTypeId' && <button type="button" className="field-info-button" onClick={() => setShowTournamentTypeInfo(true)} aria-label="Información sobre tipos de torneo" title="Ver formatos de torneo">i</button>}</span>{field === 'role' ? <select required value={form[field] ?? 'USER'} onChange={(event) => setForm((current) => ({ ...current, [field]: event.target.value }))}><option value="USER">Usuario</option><option value="ADMIN">Administrador</option></select> : field === 'tournamentTypeId' ? <button type="button" className={`type-selector ${selectedTournamentType ? 'has-value' : ''}`} onClick={() => setShowTournamentTypeInfo(true)}>{selectedTournamentType ? String(selectedTournamentType.name) : 'Seleccionar formato...'}</button> : relationOptions[field] ? <select required value={form[field] ?? ''} onChange={(event) => setForm((current) => ({ ...current, [field]: event.target.value }))}><option value="">Seleccionar...</option>{relationOptions[field].map((option) => <option key={option.id} value={option.id}>{String(option.name ?? option.id)}</option>)}</select> : <input required={resource === 'users' ? requiredFields.includes(field) : field === 'name'} type={field === 'date' ? 'date' : field === 'email' ? 'email' : field === 'password' ? 'password' : 'text'} value={form[field] ?? ''} onChange={(event) => setForm((current) => ({ ...current, [field]: event.target.value }))} placeholder={field === 'password' ? 'Mínimo 12 caracteres' : field === 'name' ? 'Escribí un nombre' : `Agregar ${labels[field]?.toLowerCase() ?? field}`} />}</label>)}{resource === 'matches' && !editing && <div className="match-sets-editor"><span className="match-sets-heading">Resultado del partido <b aria-hidden="true"> *</b></span>{matchSets.map((set, index) => <div className="match-set-row" key={index}><strong>Set {index + 1}</strong><div className="match-set-scores"><input type="number" min={0} required value={set.gamesPlayer1} onChange={(event) => updateMatchSet(index, { gamesPlayer1: event.target.value })} placeholder="Games J1" aria-label={`Games jugador 1 - set ${index + 1}`} /><span>-</span><input type="number" min={0} required value={set.gamesPlayer2} onChange={(event) => updateMatchSet(index, { gamesPlayer2: event.target.value })} placeholder="Games J2" aria-label={`Games jugador 2 - set ${index + 1}`} /></div><label className="match-set-tiebreak"><input type="checkbox" checked={set.hasTiebreak} onChange={(event) => updateMatchSet(index, { hasTiebreak: event.target.checked })} /> Tiebreak</label>{set.hasTiebreak && <div className="match-set-scores"><input type="number" min={0} required value={set.tiebreakPlayer1} onChange={(event) => updateMatchSet(index, { tiebreakPlayer1: event.target.value })} placeholder="Puntos J1" aria-label={`Puntos tiebreak jugador 1 - set ${index + 1}`} /><span>-</span><input type="number" min={0} required value={set.tiebreakPlayer2} onChange={(event) => updateMatchSet(index, { tiebreakPlayer2: event.target.value })} placeholder="Puntos J2" aria-label={`Puntos tiebreak jugador 2 - set ${index + 1}`} /></div>}{matchSets.length > 1 && <button type="button" className="text-button" onClick={() => setMatchSets((current) => current.filter((_, setIndex) => setIndex !== index))}>Quitar set</button>}</div>)}{matchSets.length < 5 && <button type="button" className="text-button" onClick={() => setMatchSets((current) => [...current, emptyMatchSet()])}>+ Agregar set</button>}</div>}{resource === 'users' && !editing && <label className="legal-consent"><input type="checkbox" required /> <span>La persona fue informada y acepta los <a href="/terms">Términos</a> y la <a href="/privacy">Política de privacidad</a>. <b>*</b></span></label>}<button className="primary-button" disabled={saving}>{saving ? 'Guardando...' : editing ? 'Guardar cambios' : 'Crear registro'}</button></form>
             {showTournamentTypeInfo && <div className="type-modal-backdrop" role="presentation" onClick={() => setShowTournamentTypeInfo(false)}><section className="type-modal" role="dialog" aria-modal="true" aria-labelledby="tournament-type-title" onClick={(event) => event.stopPropagation()}><div className="panel-heading"><div><p className="eyebrow">Formato de competencia</p><h2 id="tournament-type-title">Elegí el tipo de torneo</h2></div><button type="button" className="text-button" onClick={() => setShowTournamentTypeInfo(false)}>Cerrar</button></div><div className="type-info-list">{Object.entries(tournamentTypeInfo).map(([name, info]) => { const option = options.types.find((item) => String(item.name).trim().toLowerCase() === name.toLowerCase()); return <button type="button" className={`type-info-item ${form.tournamentTypeId === option?.id ? 'selected' : ''}`} key={name} disabled={!option} onClick={() => { if (!option) return; setForm((current) => ({ ...current, tournamentTypeId: option.id })); setShowTournamentTypeInfo(false); }}><div className={`draw-preview draw-${name.toLowerCase().replaceAll(' ', '-')}`}><span /><span /><span /><span /><span /></div><div><h3>{name}{form.tournamentTypeId === option?.id && <small className="type-selected-label">Seleccionado</small>}</h3><p>{info.description}</p><small>{info.rounds.join(' · ')}</small>{!option && <small className="type-unavailable">No disponible</small>}</div></button>})}</div></section></div>}
           </section>
           <section className="admin-panel list-panel"><div className="panel-heading"><div><p className="eyebrow">Registros activos</p><h2>{items.length} elementos</h2></div><input className="search-input" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar..." aria-label="Buscar registros" /></div>{loading ? <div className="empty-state">Cargando registros...</div> : visibleItems.length === 0 ? <div className="empty-state">No hay registros para mostrar.</div> : <div className="record-list">{visibleItems.map((item) => <div className="record-row" key={item.id}><div><strong>{String(item.name ?? item.email ?? item.id)}</strong><small>{item.email ? `${String(item.email)} · ${String(item.role ?? 'USER')}` : item.id}</small></div><div className="row-actions"><button className="text-button" onClick={() => startEdit(item)}>Editar</button><button className="danger-button" onClick={() => archive(item)}>Archivar</button></div></div>)}</div>}</section>
         </div>
-        <SiteFooter />
       </section>
+      <SiteFooter />
     </main>
   );
 }

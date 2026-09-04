@@ -17,6 +17,19 @@ export const toFixed = (value, precision) => {
     return String(Math.round(value * power) / power)
 }
 
+// Formats a set's real score, e.g. "6-4" or "7(7)-6(5)" when it was decided by tiebreak.
+export const formatSetScore = (
+  gamesFirst: number,
+  gamesSecond: number,
+  hasTiebreak?: boolean | null,
+  tiebreakFirst?: number | null,
+  tiebreakSecond?: number | null,
+) => {
+  const first = hasTiebreak && tiebreakFirst != null ? `${gamesFirst}(${tiebreakFirst})` : `${gamesFirst}`;
+  const second = hasTiebreak && tiebreakSecond != null ? `${gamesSecond}(${tiebreakSecond})` : `${gamesSecond}`;
+  return `${first}-${second}`;
+};
+
 export const calculatePlayerStats = (matches): Stat[] => {
     const playerStats = {};
     matches.forEach(match => {

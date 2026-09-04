@@ -3,6 +3,9 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
+import { formatSetScore } from '@/utils/utils';
+
+type MatchSet = { gamesJugador1: number; gamesJugador2: number; hasTiebreak: boolean; tiebreakPlayer1Points: number | null; tiebreakPlayer2Points: number | null };
 
 type Match = {
   player1Name?: { name?: string };
@@ -10,7 +13,7 @@ type Match = {
   player1Id: string;
   player2Id: string;
   winnerId: string;
-  sets?: { games?: unknown[] }[];
+  sets?: MatchSet[];
 };
 
 type TournamentData = {
@@ -74,8 +77,8 @@ function TournamentDetailsContent() {
               <h2>Partidos</h2>
               <div className="tournament-detail-table-wrap">
                 <table className="tournament-detail-table">
-                  <thead><tr><th>Jugador 1</th><th>Jugador 2</th><th>Ganador</th></tr></thead>
-                  <tbody>{data.matchSummary.map((match) => <tr key={`${match.player1Id}-${match.player2Id}-${match.winnerId}`}><td>{match.player1Name?.name ?? 'Sin nombre'}</td><td>{match.player2Name?.name ?? 'Sin nombre'}</td><td className="tournament-details-winner">{data.playerStats.find((player) => player.id === match.winnerId)?.name ?? 'Sin resultado'}</td></tr>)}</tbody>
+                  <thead><tr><th>Jugador 1</th><th>Jugador 2</th><th>Ganador</th><th>Resultado</th></tr></thead>
+                  <tbody>{data.matchSummary.map((match) => <tr key={`${match.player1Id}-${match.player2Id}-${match.winnerId}`}><td>{match.player1Name?.name ?? 'Sin nombre'}</td><td>{match.player2Name?.name ?? 'Sin nombre'}</td><td className="tournament-details-winner">{data.playerStats.find((player) => player.id === match.winnerId)?.name ?? 'Sin resultado'}</td><td>{(match.sets ?? []).map((set) => formatSetScore(set.gamesJugador1, set.gamesJugador2, set.hasTiebreak, set.tiebreakPlayer1Points, set.tiebreakPlayer2Points)).join(' ')}</td></tr>)}</tbody>
                 </table>
               </div>
             </section>

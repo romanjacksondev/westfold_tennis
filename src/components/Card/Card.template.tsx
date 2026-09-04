@@ -1,5 +1,6 @@
 import { Card } from 'flowbite-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import type { CardComponentType } from './types/CardComponentType';
 
 export default function CardComponent({
@@ -11,7 +12,8 @@ export default function CardComponent({
   stats,
 }: CardComponentType) {
   return (
-    <Card className="player-card" key={id}>
+    <Link href={`/players/${id}`} className="player-card-link" aria-label={`Ver estadísticas de ${name} ${lastname}`}>
+      <Card className="player-card" key={id}>
       <div className="player-card-body">
         <Image
           alt={`${name} ${lastname} image`}
@@ -28,6 +30,7 @@ export default function CardComponent({
           <span><strong>{(stats?.gamesWon ?? 0) - (stats?.gamesLost ?? 0) >= 0 ? '+' : ''}{(stats?.gamesWon ?? 0) - (stats?.gamesLost ?? 0)}</strong> games</span>
         </div>
       </div>
-    </Card>
+      </Card>
+    </Link>
   );
 }

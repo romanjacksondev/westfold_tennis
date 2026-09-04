@@ -73,11 +73,10 @@ export async function POST(request: NextRequest, context: Context) {
     }
 
     if (resource === 'tournaments') {
-      const { venueId, surfaceId, championId, tournamentCategoryId, tournamentTypeId, playerIds, ...fields } = data;
-      data.name = fields.name;
-      data.date = fields.date ? new Date(fields.date) : new Date();
+      const { venueId, surfaceId, championId, tournamentCategoryId, tournamentTypeId, playerIds, date, role, ...fields } = data;
       Object.assign(data, {
         ...fields,
+        date: date ? new Date(date) : new Date(),
         venue: { connect: { id: venueId } },
         surface: { connect: { id: surfaceId } },
         champion: championId ? { connect: { id: championId } } : undefined,
@@ -91,6 +90,7 @@ export async function POST(request: NextRequest, context: Context) {
       delete data.tournamentCategoryId;
       delete data.tournamentTypeId;
       delete data.playerIds;
+      delete data.role;
     }
 
     if (resource === 'matches') {
