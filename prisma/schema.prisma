@@ -28,6 +28,8 @@ model Tournament {
   tournamentTypeId     String?
   tournamentType       TournamentType?   @relation(fields: [tournamentTypeId], references: [id])
   players              Player[]           @relation("participations")
+  drawSize             Int?
+  qualifiers           Int?
   deletedAt            DateTime?
 }
 

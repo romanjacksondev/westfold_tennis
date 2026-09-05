@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 import { formatSetScore } from '@/utils/utils';
 
+// ─── Types ──────────────────────────────────────────────────────────────────
+
 type MatchSet = { gamesJugador1: number; gamesJugador2: number; hasTiebreak: boolean; tiebreakPlayer1Points: number | null; tiebreakPlayer2Points: number | null };
 
 type Match = {
@@ -27,8 +29,149 @@ type TournamentResponse = {
   matchSummary: Match[];
 };
 
+// ─── Draw types ─────────────────────────────────────────────────────────────
+
+type DrawSlot = { id: string | null; label: string };
+type BracketMatch = { top: DrawSlot; bottom: DrawSlot };
+type BracketRound = { roundName: string; matches: BracketMatch[] };
+
+type DrawResponse =
+  | { configured: false; message: string }
+  | { configured: true; type: 'playoffs'; rounds: BracketRound[] }
+  | { configured: true; type: 'round-robin'; rounds: BracketRound[] }
+  | { configured: true; type: 'mixed'; groupRounds: BracketRound[]; bracketRounds: BracketRound[] };
+
+// ─── Draw sub-components ────────────────────────────────────────────────────
+
+function DrawMatchCard({ top, bottom }: BracketMatch) {
+  return (
+    <div className="draw-match">
+      <div className={`draw-match-player${top.id === null && top.label !== 'Vacante' ? ' draw-placeholder' : ''}${top.label === 'Vacante' ? ' draw-vacancy' : ''}`}>
+        {top.label}
+      </div>
+      <div className={`draw-match-player${bottom.id === null && bottom.label !== 'Vacante' ? ' draw-placeholder' : ''}${bottom.label === 'Vacante' ? ' draw-vacancy' : ''}`}>
+        {bottom.label}
+      </div>
+    </div>
+  );
+}
+
+function DrawColumn({ round }: { round: BracketRound }) {
+  return (
+    <div className="draw-round">
+      <p className="draw-round-title">{round.roundName}</p>
+      {round.matches.map((match, i) => (
+        <DrawMatchCard key={i} top={match.top} bottom={match.bottom} />
+      ))}
+    </div>
+  );
+}
+
+function PlayoffsBracket({ rounds }: { rounds: BracketRound[] }) {
+  return (
+    <div className="draw-rounds">
+      {rounds.map((round, i) => (
+        <DrawColumn key={i} round={round} />
+      ))}
+    </div>
+  );
+}
+
+function RoundRobinFixture({ rounds }: { rounds: BracketRound[] }) {
+  return (
+    <div className="draw-rr-grid">
+      {rounds.map((round, i) => (
+        <div key={i} className="draw-rr-round">
+          <p className="draw-round-title">{round.roundName}</p>
+          {round.matches.map((match, j) => (
+            <div key={j} className="draw-rr-match">
+              <span className={match.top.label === 'Vacante' ? 'draw-vacancy' : ''}>{match.top.label}</span>
+              <span className="draw-vs">vs</span>
+              <span className={match.bottom.label === 'Vacante' ? 'draw-vacancy' : ''}>{match.bottom.label}</span>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ─── Draw section ────────────────────────────────────────────────────────────
+
+function DrawSection({ id }: { id: string }) {
+  const [draw, setDraw] = useState<DrawResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    fetch(`/api/tournaments/${id}/draw`)
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then((data: DrawResponse) => setDraw(data))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  }, [id]);
+
+  if (loading) return <p className="empty-state">Cargando cuadro...</p>;
+  if (error) return <p className="empty-state draw-error">No se pudo cargar el cuadro del torneo.</p>;
+  if (!draw) return null;
+
+  if (!draw.configured) {
+    return (
+      <div className="draw-unconfigured">
+        <span className="draw-unconfigured-icon">📋</span>
+        <p>{draw.message}</p>
+      </div>
+    );
+  }
+
+  if (draw.type === 'playoffs') {
+    return (
+      <section className="tournament-detail-panel">
+        <p className="eyebrow">Cuadro</p>
+        <h2>Llave del torneo</h2>
+        <PlayoffsBracket rounds={draw.rounds} />
+      </section>
+    );
+  }
+
+  if (draw.type === 'round-robin') {
+    return (
+      <section className="tournament-detail-panel">
+        <p className="eyebrow">Cuadro</p>
+        <h2>Fixture — Todos contra todos</h2>
+        <RoundRobinFixture rounds={draw.rounds} />
+      </section>
+    );
+  }
+
+  if (draw.type === 'mixed') {
+    return (
+      <>
+        <section className="tournament-detail-panel">
+          <p className="eyebrow">Cuadro · Fase de grupos</p>
+          <h2>Fixture — Todos contra todos</h2>
+          <RoundRobinFixture rounds={draw.groupRounds} />
+        </section>
+        <section className="tournament-detail-panel">
+          <p className="eyebrow">Cuadro · Playoffs</p>
+          <h2>Clasificados a Playoffs</h2>
+          <PlayoffsBracket rounds={draw.bracketRounds} />
+        </section>
+      </>
+    );
+  }
+
+  return null;
+}
+
+// ─── Main page ───────────────────────────────────────────────────────────────
+
 function TournamentDetailsContent() {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams<{ id: string }>();
+  const id = params?.id ?? '';
   const [data, setData] = useState<TournamentResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -62,6 +205,10 @@ function TournamentDetailsContent() {
                 </div>
               </div>
             </header>
+
+            {/* Draw section */}
+            <DrawSection id={id} />
+
             <section className="tournament-detail-panel">
               <p className="eyebrow">Rendimiento</p>
               <h2>Estadísticas de jugadores</h2>

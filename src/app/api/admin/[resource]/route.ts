@@ -35,7 +35,7 @@ export async function GET(_request: NextRequest, context: Context) {
   try {
     const model = (prisma as any)[models[resource]];
     const include = resource === 'tournaments'
-      ? { venue: { select: { name: true } }, surface: { select: { name: true } }, champion: { select: { name: true } }, tournamentCategory: { select: { name: true } }, tournamentType: { select: { name: true } } }
+      ? { venue: { select: { name: true } }, surface: { select: { name: true } }, champion: { select: { name: true } }, tournamentCategory: { select: { name: true } }, tournamentType: { select: { name: true } }, players: { select: { id: true, name: true } } }
       : resource === 'matches'
         ? { player1: { select: { name: true } }, player2: { select: { name: true } }, winner: { select: { name: true } }, sets: { include: { games: true } } }
         : undefined;
@@ -73,12 +73,14 @@ export async function POST(request: NextRequest, context: Context) {
     }
 
     if (resource === 'tournaments') {
-      const { venueId, surfaceId, championId, tournamentCategoryId, tournamentTypeId, playerIds, date, role, status, finishedAt, createdAt, ...fields } = data;
+      const { venueId, surfaceId, championId, tournamentCategoryId, tournamentTypeId, playerIds, drawSize, qualifiers, date, role, status, finishedAt, createdAt, ...fields } = data;
       Object.assign(data, {
         ...fields,
         date: date ? new Date(date) : new Date(),
         status: 'IN_PROGRESS',
         finishedAt: null,
+        drawSize: drawSize !== undefined && drawSize !== '' ? Number(drawSize) : null,
+        qualifiers: qualifiers !== undefined && qualifiers !== '' ? Number(qualifiers) : null,
         venue: { connect: { id: venueId } },
         surface: { connect: { id: surfaceId } },
         champion: championId ? { connect: { id: championId } } : undefined,
@@ -92,6 +94,8 @@ export async function POST(request: NextRequest, context: Context) {
       delete data.tournamentCategoryId;
       delete data.tournamentTypeId;
       delete data.playerIds;
+      delete data.drawSize;
+      delete data.qualifiers;
       delete data.role;
     }
 

@@ -285,6 +285,73 @@ export const generateDraw = (n, ps) => {  // n = num players
     return rs;
 };
 
+// ─── Elimination Bracket ───────────────────────────────────────────────────
+
+export type DrawSlot = { id: string | null; label: string };
+
+export type BracketMatch = { top: DrawSlot; bottom: DrawSlot };
+
+export type BracketRound = { roundName: string; matches: BracketMatch[] };
+
+/** Returns a human-readable name for a bracket round given the number of matches in it. */
+function bracketRoundName(matchCount: number): string {
+    const totalPlayers = matchCount * 2;
+    if (totalPlayers === 2) return 'Final';
+    if (totalPlayers === 4) return 'Semifinales';
+    if (totalPlayers === 8) return 'Cuartos de Final';
+    if (totalPlayers === 16) return 'Octavos de Final';
+    if (totalPlayers === 32) return 'Ronda de 32';
+    if (totalPlayers === 64) return 'Ronda de 64';
+    return `Ronda de ${totalPlayers}`;
+}
+
+/**
+ * Builds a single-elimination bracket from an ordered slot list.
+ * Slots should arrive pre-shuffled (random seeding). If `slots.length` is
+ * not a power of 2, it is padded with vacancy slots up to the next power of 2.
+ */
+export function buildEliminationBracket(slots: DrawSlot[]): BracketRound[] {
+    // Pad to next power of 2
+    let size = 1;
+    while (size < slots.length) size *= 2;
+    const paddedSlots: DrawSlot[] = [...slots];
+    while (paddedSlots.length < size) {
+        paddedSlots.push({ id: null, label: 'Vacante' });
+    }
+
+    const rounds: BracketRound[] = [];
+
+    // Round 1: mirror pairing — slot i vs slot (size - 1 - i)
+    const round1Matches: BracketMatch[] = [];
+    for (let i = 0; i < size / 2; i++) {
+        round1Matches.push({ top: paddedSlots[i], bottom: paddedSlots[size - 1 - i] });
+    }
+    rounds.push({ roundName: bracketRoundName(round1Matches.length), matches: round1Matches });
+
+    // Subsequent rounds: placeholder winners from the previous round
+    let matchCounter = round1Matches.length; // track match numbers across rounds
+    let prevMatchCount = round1Matches.length;
+
+    while (prevMatchCount > 1) {
+        const nextMatchCount = prevMatchCount / 2;
+        const startIndex = matchCounter - prevMatchCount + 1; // first match number of prev round
+        const matches: BracketMatch[] = [];
+        for (let i = 0; i < nextMatchCount; i++) {
+            const topMatchNum = startIndex + i * 2;
+            const bottomMatchNum = startIndex + i * 2 + 1;
+            matches.push({
+                top: { id: null, label: `Ganador Partido ${topMatchNum}` },
+                bottom: { id: null, label: `Ganador Partido ${bottomMatchNum}` },
+            });
+        }
+        matchCounter += nextMatchCount;
+        rounds.push({ roundName: bracketRoundName(nextMatchCount), matches });
+        prevMatchCount = nextMatchCount;
+    }
+
+    return rounds;
+}
+
 export const createMatchSummary = (matchesList) => {
     //  console.log("matchesList: ", JSON.stringify(matchesList))
     const data = []

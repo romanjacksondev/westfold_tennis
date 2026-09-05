@@ -491,14 +491,6 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type SetCreateNestedOneWithoutGamesInput = {
   create?: Prisma.XOR<Prisma.SetCreateWithoutGamesInput, Prisma.SetUncheckedCreateWithoutGamesInput>
   connectOrCreate?: Prisma.SetCreateOrConnectWithoutGamesInput

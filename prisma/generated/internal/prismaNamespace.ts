@@ -1292,6 +1292,8 @@ export const TournamentScalarFieldEnum = {
   surfaceId: 'surfaceId',
   tournamentCategoryId: 'tournamentCategoryId',
   tournamentTypeId: 'tournamentTypeId',
+  drawSize: 'drawSize',
+  qualifiers: 'qualifiers',
   deletedAt: 'deletedAt'
 } as const
 

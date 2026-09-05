@@ -67,6 +67,19 @@ export async function PATCH(request: NextRequest, context: Context) {
     }
     if (data.date) data.date = new Date(data.date);
     if (resource === 'tournaments') {
+      // Handle drawSize / qualifiers as nullable integers
+      if ('drawSize' in data) {
+        data.drawSize = data.drawSize !== undefined && data.drawSize !== '' ? Number(data.drawSize) : null;
+      }
+      if ('qualifiers' in data) {
+        data.qualifiers = data.qualifiers !== undefined && data.qualifiers !== '' ? Number(data.qualifiers) : null;
+      }
+      // Sync players many-to-many (use `set` so checklist can add and remove)
+      if ('playerIds' in data) {
+        const playerIds: string[] = Array.isArray(data.playerIds) ? data.playerIds : [];
+        data.players = { set: playerIds.map((pid: string) => ({ id: pid })) };
+        delete data.playerIds;
+      }
       const relations = ['venueId', 'surfaceId', 'championId', 'tournamentCategoryId', 'tournamentTypeId'] as const;
       const championValue = data.championId;
       for (const relation of relations) {

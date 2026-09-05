@@ -249,3 +249,34 @@ body {
 @media (min-width: 801px) { .site-nav .nav-menu-link, .site-nav .nav-toggle { display: none; } }
 @media (min-width: 801px) { .site-sidebar .site-sidebar-brand { display: none; } }
 @media (max-width: 800px) { .admin-shell { display: block; } .admin-sidebar { padding: 16px; } .admin-sidebar nav { display: flex; overflow-x: auto; } .nav-item { min-width: 130px; } .admin-user { display: none; } .admin-content { padding: 28px 16px; } .admin-grid { grid-template-columns: 1fr; } .panel-heading { display: block; } .search-input { max-width: none; margin-top: 12px; } }
+
+/* ── Draw section (public tournament page) ─────────────────────────────── */
+.draw-rounds { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px; }
+.draw-round { flex: 0 0 auto; min-width: 170px; }
+.draw-round-title { margin: 0 0 10px; color: #68756f; font: 700 10px Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; }
+.draw-match { margin-bottom: 10px; border: 1px solid #dce3dd; border-radius: 6px; background: #fff; overflow: hidden; box-shadow: 0 2px 8px rgba(24,59,50,.05); }
+.draw-match-player { padding: 9px 13px; font: 600 13px Arial, sans-serif; color: #18231f; border-bottom: 1px solid #e0e7e2; }
+.draw-match-player:last-child { border-bottom: 0; }
+.draw-vacancy { color: #9bb8aa !important; font-style: italic; font-weight: 400 !important; }
+.draw-placeholder { color: #a8bdb5 !important; font-weight: 400 !important; font-style: italic; }
+.draw-rr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+.draw-rr-round { border: 1px solid #dce3dd; border-radius: 6px; background: #fff; padding: 14px; box-shadow: 0 2px 8px rgba(24,59,50,.05); }
+.draw-rr-match { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid #f0f4f1; font: 13px Arial, sans-serif; color: #18231f; }
+.draw-rr-match:last-child { border-bottom: 0; }
+.draw-vs { flex: 0 0 auto; color: #9bb8aa; font: 700 10px Arial, sans-serif; text-transform: uppercase; }
+.draw-unconfigured { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding: 16px 18px; border: 1px dashed #cad8d0; border-radius: 6px; background: #f9faf7; color: #68756f; font: 13px Arial, sans-serif; }
+.draw-unconfigured-icon { font-size: 24px; line-height: 1; }
+.draw-unconfigured p { margin: 0; }
+.draw-error { color: #873c2b !important; }
+
+/* ── Players checklist (admin dashboard) ────────────────────────────────── */
+.players-checklist-label { display: block; margin-bottom: 8px; font: 600 12px Arial, sans-serif; color: #45534d; }
+.players-checklist-label small { color: #87928c; font-weight: 400; margin-left: 4px; }
+.players-checklist { max-height: 200px; overflow-y: auto; border: 1px solid #cbd7d0; border-radius: 4px; background: #fbfcfa; padding: 4px; scrollbar-width: thin; scrollbar-color: #9bb8aa transparent; }
+.players-checklist-item { display: flex; align-items: center; gap: 9px; padding: 7px 9px; border-radius: 3px; cursor: pointer; transition: background .12s; font: 13px Arial, sans-serif; color: #45534d; }
+.players-checklist-item:hover { background: #f0f5f1; }
+.players-checklist-item.checked { background: #e8f3ec; color: #183b32; }
+.players-checklist-item input[type="checkbox"] { accent-color: #31745d; width: 15px; height: 15px; flex-shrink: 0; cursor: pointer; }
+.players-checklist-empty { margin: 8px; color: #87928c; font: 13px Arial, sans-serif; }
+.draw-warning { margin: 6px 0 10px; padding: 8px 11px; border-left: 3px solid #d4a017; border-radius: 0 4px 4px 0; background: #fef9e6; color: #7a5c10; font: 12px/1.4 Arial, sans-serif; }
+
