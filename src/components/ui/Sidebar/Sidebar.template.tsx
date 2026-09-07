@@ -1,5 +1,6 @@
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { IconType } from 'react-icons';
 import {
   LuChartBar,
@@ -20,6 +21,7 @@ interface SidebarItem {
 }
 
 const SidebarTemplate = ({ handleClose }: SidebarInterface) => {
+  const pathname = usePathname();
   const publicItems: SidebarItem[] = [
     {
       label: 'Ranking',
@@ -82,12 +84,16 @@ const SidebarTemplate = ({ handleClose }: SidebarInterface) => {
         <ul>
           {items.map((item, index) => {
             const Icon = item.icon;
+            const isActive =
+              pathname === item.path ||
+              (item.path !== '/' && pathname.startsWith(`${item.path}/`));
             return (
               <li className="flex items-center p-1 gap-2 mt-3 font-bold" key={`list-${index}`}>
                 <Link
                   href={item.path}
-                  className="flex items-center gap-2 w-full"
+                  className={`flex items-center gap-2 w-full ${isActive ? 'active' : ''}`}
                   onClick={handleClose}
+                  aria-current={isActive ? 'page' : undefined}
                 >
                   <Icon className="w-[22px] h-[22px] shrink-0" />
                   {item.label}

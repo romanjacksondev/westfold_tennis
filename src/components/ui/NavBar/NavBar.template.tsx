@@ -71,7 +71,7 @@ const NavBarTemplate = () => {
           <span className="site-brand-mark">WT</span>
           <span className="site-brand-name">
             <strong>Westfold</strong>
-            <small>Tennis club</small>
+            <small>{isDashboardView ? 'Admin console' : 'Tennis club'}</small>
           </span>
         </NavbarBrand>
       </Navbar>

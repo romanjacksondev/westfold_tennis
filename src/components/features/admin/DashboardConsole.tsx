@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import SiteFooter from '@/components/features/SiteFooter';
 
 type Resource = 'tournaments' | 'tournament-types' | 'tournament-categories' | 'players' | 'surfaces' | 'venues' | 'matches' | 'users';
@@ -54,6 +55,8 @@ async function requestJson(url: string, options?: RequestInit) {
 
 // export default function DashboardConsole({ userName }: { userName: string }) {
 export default function DashboardConsole() {
+  const { data: session } = useSession();
+  const userName = session?.user?.name ?? session?.user?.email ?? 'Administrador';
   const [resource, setResource] = useState<Resource>('tournaments');
   const [items, setItems] = useState<RecordItem[]>([]);
   const [editing, setEditing] = useState<RecordItem | null>(null);
@@ -189,7 +192,7 @@ export default function DashboardConsole() {
         <nav aria-label="Secciones administrativas">
           {sections.map((section) => <button key={section.key} className={resource === section.key ? 'nav-item active' : 'nav-item'} onClick={() => setResource(section.key)}><span>{section.label}</span><small>{section.description}</small></button>)}
         </nav>
-        <div className="admin-user"><small>Sesión activa</small><strong>{"userName"}</strong></div>
+        <div className="admin-user"><small>Sesión activa</small><strong>{userName}</strong></div>
       </aside>
       <section className="admin-content">
         <header className="admin-header"><div><p className="eyebrow">Panel de gestión</p><h1>{sections.find((section) => section.key === resource)?.label}</h1><p className="muted">Administra el circuito con datos claros y controlados.</p></div><div className="status-pill"><span /> Conectado</div></header>
