@@ -1,4 +1,4 @@
-import Leaderboards from '@/features/leaderboard';
+import Leaderboards from '@/components/features/leaderboard';
 
 export default function Leaderboard() {
   return <Leaderboards />;

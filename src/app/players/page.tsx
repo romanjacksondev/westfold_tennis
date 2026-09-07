@@ -1,4 +1,4 @@
-import PlayersView from '@/features/players';
+import PlayersView from '@/components/features/players';
 
 export default function PlayersPage() {
   return <PlayersView />;

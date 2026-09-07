@@ -1,8 +1,8 @@
-import { NavBar } from '@/components/NavBar';
 import NextAuthSessionProvider from '@/utils/SessionProvider';
-import SiteFooter from '@/components/SiteFooter';
+import SiteFooter from '@/components/features/SiteFooter';
 import type { Metadata } from 'next';
 import './globals.css';
+import { NavBar } from '@/components/ui/NavBar';
 
 export const metadata: Metadata = {
   title: 'Westfold Tennis',

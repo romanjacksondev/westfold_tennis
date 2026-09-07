@@ -1,4 +1,4 @@
-import Information from '@/features/information';
+import Information from '@/components/features/information';
 
 export default function InformationPage() {
   return <Information />;
