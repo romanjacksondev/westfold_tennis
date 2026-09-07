@@ -22,8 +22,8 @@ body {
 .site-sidebar ul { display: grid; gap: 5px; }
 .site-sidebar li { margin: 0 !important; padding: 0 !important; font: 600 14px Arial, sans-serif; }
 .site-sidebar li a { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-left: 3px solid transparent; color: #d8e3dd; text-decoration: none; }
-.site-sidebar li a:hover { border-left-color: #e7795b; background: #245044; color: #fff; }
-.site-sidebar li img { width: 22px; height: 22px; }
+.site-sidebar li img,
+.site-sidebar li svg { width: 22px; height: 22px; flex-shrink: 0; }
 .site-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; min-height: 64px; border: 0 !important; border-radius: 0 !important; background: #183b32 !important; padding: 10px clamp(16px, 5vw, 72px) !important; }
 .site-brand { gap: 12px; color: #f8f7ef !important; }
 .site-brand-mark { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #e7795b; color: #fff; font: 700 13px Arial, sans-serif; }
@@ -230,6 +230,13 @@ body {
 .auth-page { min-height: calc(100vh - 64px); display: grid; grid-template-rows: 1fr auto; background: #f5f4ef; }
 .auth-card { width: min(440px, calc(100% - 32px)); align-self: center; justify-self: center; padding: 34px; background: #fff; border: 1px solid #dce3dd; border-radius: 8px; box-shadow: 0 18px 40px rgba(24,59,50,.08); }
 .auth-card h1, .legal-page h1 { margin: 0; font-size: 38px; font-weight: 400; }
+.auth-form { display: grid; gap: 18px; margin-top: 24px; }
+.auth-form label { display: grid; gap: 8px; color: #45534d; font: 600 12px Arial, sans-serif; }
+.auth-form input { display: block; width: 100%; padding: 11px 12px; border: 1px solid #cbd7d0; border-radius: 4px; background: #fbfcfa; color: #18231f; font: 14px Arial, sans-serif; }
+.auth-form input:focus { outline: 2px solid #e7795b; outline-offset: 1px; }
+.auth-form button { width: 100%; margin-top: 8px; border: 0; border-radius: 4px; padding: 13px 16px; background: #e7795b; color: #fff; cursor: pointer; font: 700 13px Arial, sans-serif; }
+.auth-form button:hover { filter: brightness(0.97); }
+.auth-form button:disabled { opacity: .7; cursor: wait; }
 .auth-error { padding: 10px 12px; background: #fbe9e4; color: #873c2b; font: 13px Arial, sans-serif; }
 .legal-consent { display: flex; gap: 8px; align-items: flex-start; margin: 18px 0; color: #68756f; font: 12px Arial, sans-serif; }
 .legal-consent b { color: #d66e52; }
