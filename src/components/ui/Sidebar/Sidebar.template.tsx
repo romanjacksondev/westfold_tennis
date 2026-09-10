@@ -10,6 +10,7 @@ import {
   LuMapPin,
   LuMedal,
   LuTrophy,
+  LuUser,
   LuUsers,
 } from 'react-icons/lu';
 import { SidebarInterface } from './interfaces/Sidebar.interface';
@@ -63,11 +64,24 @@ const SidebarTemplate = ({ handleClose }: SidebarInterface) => {
   ];
 
   const { data: session, status } = useSession();
+  const userPlayerId = session?.user?.playerId;
   const items: SidebarItem[] =
     status === 'loading'
       ? []
       : session
-        ? [...publicItems, ...privateItems]
+        ? [
+            ...(userPlayerId
+              ? [
+                  {
+                    label: 'Mi Perfil',
+                    icon: LuUser,
+                    path: `/players/${userPlayerId}`,
+                  },
+                ]
+              : []),
+            ...publicItems,
+            ...privateItems,
+          ]
         : [...publicItems];
 
   if ((session?.user as { role?: string } | undefined)?.role === 'ADMIN') {

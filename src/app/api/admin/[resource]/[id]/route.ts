@@ -49,7 +49,7 @@ export async function PATCH(request: NextRequest, context: Context) {
     delete data.finishedAt;
     delete data.createdAt;
     if (resource === 'users') {
-      const current = await prisma.user.findUnique({ where: { id }, select: { role: true, isActive: true } });
+      const current = await prisma.user.findUnique({ where: { id }, select: { role: true, isActive: true, player: { select: { id: true } } } });
       if (current?.role === 'ADMIN' && current.isActive && (data.role === 'USER' || data.isActive === false)) {
         const activeAdmins = await prisma.user.count({ where: { role: 'ADMIN', isActive: true, deletedAt: null } });
         if (activeAdmins <= 1) return NextResponse.json({ message: 'No se puede quitar acceso al último administrador activo' }, { status: 409 });
@@ -58,12 +58,51 @@ export async function PATCH(request: NextRequest, context: Context) {
       if (data.password) data.password = await bcrypt.hash(String(data.password), 12);
       else delete data.password;
       if (data.role && !['USER', 'ADMIN'].includes(data.role)) throw new Error('Rol inválido');
-      if (data.playerId) {
-        data.player = { connect: { id: data.playerId } };
+
+      if ('playerId' in data) {
+        const newPlayerId = data.playerId ? String(data.playerId).trim() : null;
         delete data.playerId;
+        if (newPlayerId) {
+          const otherUser = await prisma.user.findFirst({
+            where: { player: { id: newPlayerId }, id: { not: id }, deletedAt: null },
+          });
+          if (otherUser) {
+            throw new Error(`El jugador seleccionado ya está vinculado al usuario ${otherUser.email}`);
+          }
+          data.player = { connect: { id: newPlayerId } };
+        } else {
+          if (current?.player) {
+            data.player = { disconnect: true };
+          }
+        }
       }
-      const updated = await (prisma as any)[modelName].update({ where: { id }, data, select: { id: true, name: true, email: true, role: true, isActive: true } });
+
+      const updated = await (prisma as any)[modelName].update({
+        where: { id },
+        data,
+        select: { id: true, name: true, email: true, role: true, isActive: true, player: { select: { id: true, name: true, lastname: true, nickname: true } } }
+      });
       return NextResponse.json({ data: updated, message: 'Usuario actualizado correctamente' });
+    }
+    if (resource === 'players') {
+      if ('userId' in data) {
+        const newUserId = data.userId ? String(data.userId).trim() : null;
+        delete data.userId;
+        const currentPlayer = await prisma.player.findUnique({ where: { id }, select: { userId: true } });
+        if (newUserId) {
+          const otherPlayer = await prisma.player.findFirst({
+            where: { userId: newUserId, id: { not: id }, deletedAt: null },
+          });
+          if (otherPlayer) {
+            throw new Error(`El usuario seleccionado ya está vinculado al jugador ${otherPlayer.name}`);
+          }
+          data.user = { connect: { id: newUserId } };
+        } else {
+          if (currentPlayer?.userId) {
+            data.user = { disconnect: true };
+          }
+        }
+      }
     }
     if (data.date) data.date = new Date(data.date);
     if (resource === 'tournaments') {
@@ -110,11 +149,15 @@ export async function PATCH(request: NextRequest, context: Context) {
         if (value) data[relation.replace('Id', '')] = { connect: { id: value } };
       }
     }
-    const updated = await (prisma as any)[modelName].update({ where: { id }, data });
+    const updated = await (prisma as any)[modelName].update({
+      where: { id },
+      data,
+      ...(resource === 'players' ? { include: { user: { select: { id: true, email: true, role: true, isActive: true } } } } : {})
+    });
     return NextResponse.json({ data: updated, message: 'Registro actualizado correctamente' });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ message: 'No se pudo actualizar el registro' }, { status: 400 });
+    return NextResponse.json({ message: error instanceof Error ? error.message : 'No se pudo actualizar el registro' }, { status: 400 });
   }
 }
 
@@ -128,10 +171,16 @@ export async function DELETE(_request: NextRequest, context: Context) {
 
   try {
     if (resource === 'users') {
-      const target = await prisma.user.findUnique({ where: { id }, select: { role: true, isActive: true } });
+      const target = await prisma.user.findUnique({ where: { id }, select: { role: true, isActive: true, player: { select: { id: true } } } });
       if (target?.role === 'ADMIN' && target.isActive && await prisma.user.count({ where: { role: 'ADMIN', isActive: true, deletedAt: null } }) <= 1) {
         return NextResponse.json({ message: 'No se puede archivar el último administrador activo' }, { status: 409 });
       }
+      if (target?.player) {
+        await prisma.player.update({ where: { id: target.player.id }, data: { userId: null } });
+      }
+    }
+    if (resource === 'players') {
+      await prisma.player.update({ where: { id }, data: { userId: null } });
     }
     await (prisma as any)[modelName].update({ where: { id }, data: { deletedAt: new Date() } });
     return NextResponse.json({ message: 'Registro archivado correctamente' });

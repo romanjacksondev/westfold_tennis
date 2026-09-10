@@ -55,9 +55,26 @@ const NavBarTemplate = () => {
             </DrawerItems>
           </Drawer>
         )}
-        <div className="flex md:order-2">
+        <div className="flex md:order-2 items-center gap-2">
           {!user && <Button className="nav-action" onClick={() => signIn()}>Ingresar</Button>}
-          {user && <Button className="nav-action" onClick={() => signOut({ callbackUrl: '/' })}>Salir</Button>}
+          {user && (
+            <div className="flex items-center gap-2">
+              {user.playerId ? (
+                <Link
+                  href={`/players/${user.playerId}`}
+                  className="text-xs font-semibold px-2 py-1 rounded bg-stone-200 hover:bg-stone-300 text-stone-800 transition"
+                  title="Ver mi perfil deportivo"
+                >
+                  👤 {user.name || user.email}
+                </Link>
+              ) : (
+                <span className="text-xs text-stone-500 font-medium hidden sm:inline">
+                  {user.name || user.email}
+                </span>
+              )}
+              <Button className="nav-action" onClick={() => signOut({ callbackUrl: '/' })}>Salir</Button>
+            </div>
+          )}
           {!isDashboardView && <NavbarToggle className="nav-toggle" />}
         </div>
         {!isDashboardView && (

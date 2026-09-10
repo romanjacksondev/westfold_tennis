@@ -294,6 +294,16 @@ async function main() {
     ],
     skipDuplicates: true,
   });
+
+  // Link seed players with seed users
+  await prisma.player.update({
+    where: { id: 'cm0qzigha0001wrtos5fhqyb6' },
+    data: { userId: 'cm0vic8im00002ngmgi99lmrm' },
+  }).catch(() => undefined);
+  await prisma.player.update({
+    where: { id: 'cm0sd8l1q001ywrtoeoi30h1n' },
+    data: { userId: 'cmadminuser00001ngmgi99lmru' },
+  }).catch(() => undefined);
   await prisma.tournament.createMany({
     data: [
       {

@@ -38,9 +38,11 @@ export async function GET(_request: NextRequest, context: Context) {
       ? { venue: { select: { name: true } }, surface: { select: { name: true } }, champion: { select: { name: true } }, tournamentCategory: { select: { name: true } }, tournamentType: { select: { name: true } }, players: { select: { id: true, name: true } } }
       : resource === 'matches'
         ? { player1: { select: { name: true } }, player2: { select: { name: true } }, winner: { select: { name: true } }, sets: { include: { games: true } } }
-        : undefined;
+        : resource === 'players'
+          ? { user: { select: { id: true, email: true, role: true, isActive: true } } }
+          : undefined;
     const data = resource === 'users'
-      ? await model.findMany({ where: { deletedAt: null }, orderBy: { email: 'asc' }, select: { id: true, name: true, email: true, role: true, isActive: true, player: { select: { id: true, name: true } } } })
+      ? await model.findMany({ where: { deletedAt: null }, orderBy: { email: 'asc' }, select: { id: true, name: true, email: true, role: true, isActive: true, player: { select: { id: true, name: true, lastname: true, nickname: true } } } })
       : await model.findMany({ where: { deletedAt: null }, ...(resource === 'tournaments' ? { orderBy: { date: 'desc' } } : resource === 'matches' ? {} : { orderBy: { name: 'asc' } }), ...(include ? { include } : {}) });
     return NextResponse.json(data);
   } catch (error) {
@@ -67,9 +69,38 @@ export async function POST(request: NextRequest, context: Context) {
       const password = String(data.password ?? '');
       if (!email || password.length < 12) throw new Error('Email y contraseña de al menos 12 caracteres son obligatorios');
       if (!['USER', 'ADMIN'].includes(data.role)) throw new Error('Rol inválido');
-      const playerId = data.playerId;
-      const created = await model.create({ data: { name: data.name?.trim() || null, email, role: data.role, isActive: data.isActive !== false, password: await bcrypt.hash(password, 12), player: playerId ? { connect: { id: playerId } } : undefined }, select: { id: true, name: true, email: true, role: true, isActive: true, player: { select: { id: true, name: true } } } });
+      const playerId = data.playerId ? String(data.playerId).trim() : null;
+      delete data.playerId;
+      if (playerId) {
+        const existingUserWithPlayer = await prisma.user.findFirst({ where: { player: { id: playerId }, deletedAt: null } });
+        if (existingUserWithPlayer) {
+          throw new Error(`El jugador seleccionado ya está vinculado al usuario ${existingUserWithPlayer.email}`);
+        }
+      }
+      const created = await model.create({
+        data: {
+          name: data.name?.trim() || null,
+          email,
+          role: data.role,
+          isActive: data.isActive !== false,
+          password: await bcrypt.hash(password, 12),
+          player: playerId ? { connect: { id: playerId } } : undefined
+        },
+        select: { id: true, name: true, email: true, role: true, isActive: true, player: { select: { id: true, name: true, lastname: true, nickname: true } } }
+      });
       return NextResponse.json({ data: created, message: 'Usuario creado correctamente' }, { status: 201 });
+    }
+
+    if (resource === 'players') {
+      const userId = data.userId ? String(data.userId).trim() : null;
+      delete data.userId;
+      if (userId) {
+        const existingPlayer = await prisma.player.findFirst({ where: { userId, deletedAt: null } });
+        if (existingPlayer) {
+          throw new Error(`El usuario seleccionado ya está vinculado al jugador ${existingPlayer.name}`);
+        }
+        data.user = { connect: { id: userId } };
+      }
     }
 
     if (resource === 'tournaments') {
