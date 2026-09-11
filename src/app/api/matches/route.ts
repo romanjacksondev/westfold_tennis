@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
     const tournament = matches[0].tournament;
     const tournamentData = tournament
-      ? { champion: tournament.champion.name, name: tournament.name }
+      ? { champion: tournament.champion?.name ?? null, name: tournament.name }
       : null;
 
     return NextResponse.json({

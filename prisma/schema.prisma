@@ -19,7 +19,7 @@ model Tournament {
   date                 DateTime           @default(now())
   createdAt            DateTime           @default(now())
   finishedAt           DateTime?
-  status               TournamentStatus   @default(IN_PROGRESS)
+  status               TournamentStatus   @default(PREPARATION)
   matches              Match[]
   surfaceId            String
   surface              Surface            @relation(fields: [surfaceId], references: [id])
@@ -34,6 +34,7 @@ model Tournament {
 }
 
 enum TournamentStatus {
+  PREPARATION
   IN_PROGRESS
   FINISHED
   CANCELLED

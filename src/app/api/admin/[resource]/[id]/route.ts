@@ -31,14 +31,54 @@ export async function PATCH(request: NextRequest, context: Context) {
     delete data.deletedAt;
     if (resource === 'tournaments' && data.action) {
       const action = data.action;
+      if (action === 'start') {
+        const tournament = await prisma.tournament.findUnique({
+          where: { id },
+          include: { players: { select: { id: true } } },
+        });
+        if (!tournament) return NextResponse.json({ message: 'Torneo no encontrado' }, { status: 404 });
+        if (tournament.status !== 'PREPARATION') {
+          return NextResponse.json({ message: 'Solo se pueden iniciar torneos que estén en preparación' }, { status: 400 });
+        }
+        if (!tournament.name?.trim()) return NextResponse.json({ message: 'El torneo debe tener un nombre asignado' }, { status: 400 });
+        if (!tournament.venueId) return NextResponse.json({ message: 'Se debe seleccionar una sede' }, { status: 400 });
+        if (!tournament.surfaceId) return NextResponse.json({ message: 'Se debe seleccionar una superficie' }, { status: 400 });
+        if (!tournament.tournamentCategoryId) return NextResponse.json({ message: 'Se debe seleccionar una categoría' }, { status: 400 });
+        if (!tournament.tournamentTypeId) return NextResponse.json({ message: 'Se debe seleccionar un formato/tipo de torneo' }, { status: 400 });
+        if (!tournament.drawSize || tournament.drawSize < 2) {
+          return NextResponse.json({ message: 'El tamaño del cuadro debe ser de al menos 2 participantes' }, { status: 400 });
+        }
+        if (tournament.players.length < 2) {
+          return NextResponse.json({ message: 'Se deben confirmar al menos 2 jugadores para iniciar el torneo' }, { status: 400 });
+        }
+        if (tournament.players.length > tournament.drawSize) {
+          return NextResponse.json({ message: `Los jugadores confirmados (${tournament.players.length}) superan el tamaño del cuadro (${tournament.drawSize})` }, { status: 400 });
+        }
+        const updated = await prisma.tournament.update({
+          where: { id },
+          data: { status: 'IN_PROGRESS' },
+        });
+        return NextResponse.json({ data: updated, message: '¡Torneo iniciado con éxito! Estado: En curso' });
+      }
       if (action === 'cancel') {
-        const updated = await prisma.tournament.update({ where: { id }, data: { status: 'CANCELLED', finishedAt: null } });
+        const updated = await prisma.tournament.update({ where: { id }, data: { status: 'CANCELLED' } });
         return NextResponse.json({ data: updated, message: 'Torneo cancelado correctamente' });
       }
       if (action === 'reactivate') {
-        const current = await prisma.tournament.findUnique({ where: { id }, select: { championId: true, finishedAt: true } });
-        const status = current?.championId ? 'FINISHED' : 'IN_PROGRESS';
-        const finishedAt = current?.championId ? (current.finishedAt ?? new Date()) : null;
+        const current = await prisma.tournament.findUnique({
+          where: { id },
+          select: { championId: true, finishedAt: true, matches: { select: { id: true }, take: 1 } },
+        });
+        let status: 'PREPARATION' | 'IN_PROGRESS' | 'FINISHED' = 'PREPARATION';
+        let finishedAt: Date | null = null;
+        if (current?.championId) {
+          status = 'FINISHED';
+          finishedAt = current.finishedAt ?? new Date();
+        } else if (current?.matches && current.matches.length > 0) {
+          status = 'IN_PROGRESS';
+        } else {
+          status = 'PREPARATION';
+        }
         const updated = await prisma.tournament.update({ where: { id }, data: { status, finishedAt } });
         return NextResponse.json({ data: updated, message: 'Torneo reactivado correctamente' });
       }
@@ -106,6 +146,10 @@ export async function PATCH(request: NextRequest, context: Context) {
     }
     if (data.date) data.date = new Date(data.date);
     if (resource === 'tournaments') {
+      const currentTournament = await prisma.tournament.findUnique({ where: { id }, select: { status: true } });
+      if (currentTournament?.status === 'FINISHED') {
+        return NextResponse.json({ message: 'Los torneos terminados no pueden ser editados' }, { status: 400 });
+      }
       // Handle drawSize / qualifiers as nullable integers
       if ('drawSize' in data) {
         data.drawSize = data.drawSize !== undefined && data.drawSize !== '' ? Number(data.drawSize) : null;
@@ -135,7 +179,7 @@ export async function PATCH(request: NextRequest, context: Context) {
         if (championValue) {
           data.status = 'FINISHED';
           data.finishedAt = current?.finishedAt ?? new Date();
-        } else if (current?.status !== 'CANCELLED') {
+        } else if (current?.status === 'FINISHED') {
           data.status = 'IN_PROGRESS';
           data.finishedAt = null;
         }

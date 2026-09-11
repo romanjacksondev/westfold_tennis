@@ -1,66 +1,60 @@
 'use client';
 import { useEffect, useState } from 'react';
-import LeaderboardTemplate, { type LeaderboardEntry } from './Leaderboard.template';
+import LeaderboardTemplate, { type LeaderboardEntry, type RankingMode } from './Leaderboard.template';
 
 const Leaderboard = () => {
-  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [rankingMode, setRankingMode] = useState<RankingMode>('year');
+  const [cache, setCache] = useState<Partial<Record<RankingMode, LeaderboardEntry[]>>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  // const [hasTournaments, setHasTournaments] = useState(false);
-  //year: last 12 months
-  //calendar: from 01/01
-  const [rankingMode, setRankingMode] = useState('year');
 
   useEffect(() => {
-    const getLeaderboardData = async () => {
-      setLoading(true);
-      setError(false);
-      try {
-        const response = await fetch('/api/leaderboard?rankingMode=' + rankingMode);
-        if (!response.ok) throw new Error('No se pudo cargar el leaderboard');
-        const data = await response.json();
-        setLeaderboard(Array.isArray(data) ? (data as LeaderboardEntry[]) : []);
-      } catch (err) {
+    let isCancelled = false;
+
+    if (cache[rankingMode]) {
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(false);
+
+    fetch(`/api/leaderboard?rankingMode=${rankingMode}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('No se pudo cargar el leaderboard');
+        return res.json();
+      })
+      .then((data) => {
+        if (!isCancelled) {
+          setCache((prev) => ({
+            ...prev,
+            [rankingMode]: Array.isArray(data) ? (data as LeaderboardEntry[]) : [],
+          }));
+          setLoading(false);
+        }
+      })
+      .catch((err) => {
         console.error(err);
-        setLeaderboard([]);
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
+        if (!isCancelled) {
+          setError(true);
+          setLoading(false);
+        }
+      });
 
-      // const data = await getLeaderboard(rankingMode);
-      //  console.log("data: ", data)
-
-      // if (data.length > 0) {
-      //   const playerPoints = calculatePlayerPoints(data);
-
-      //   // console.log(playerPoints)
-      //   const entries = Object.entries(playerPoints);
-      //   entries.sort((a, b) => b[1].points - a[1].points);
-      //   const sortedArray = entries.map(([key, value]) => ({ key, value }));
-      //   setLeaderboard(sortedArray);
-      // } else {
-      //   setLeaderboard([]);
-      // }
-      // setHasTournaments(true);
+    return () => {
+      isCancelled = true;
     };
-    // console.log("ranking")
-    getLeaderboardData();
   }, [rankingMode]);
 
-  // const orderedPlayers: TennisPlayerProps[] = leaderboard.map((player) => {
-  //   const playerData = players.find((pl) => pl.name === player.key);
-  //   return { points: player.value, ...playerData };
-  // });
+  const currentLeaderboard = cache[rankingMode] ?? [];
 
   return (
     <LeaderboardTemplate
-      leaderboard={leaderboard}
+      leaderboard={currentLeaderboard}
       rankingMode={rankingMode}
       loading={loading}
       error={error}
       setRankingMode={setRankingMode}
-      // hasTournaments={hasTournaments}
     />
   );
 };

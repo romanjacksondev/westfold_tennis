@@ -108,7 +108,7 @@ export async function POST(request: NextRequest, context: Context) {
       Object.assign(data, {
         ...fields,
         date: date ? new Date(date) : new Date(),
-        status: 'IN_PROGRESS',
+        status: 'PREPARATION',
         finishedAt: null,
         drawSize: drawSize !== undefined && drawSize !== '' ? Number(drawSize) : null,
         qualifiers: qualifiers !== undefined && qualifiers !== '' ? Number(qualifiers) : null,

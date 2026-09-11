@@ -190,7 +190,7 @@ function TournamentDetailsContent() {
   return (
     <main className="tournament-detail-page">
       <div className="tournament-detail-content">
-        <Link href="/tournaments" className="back-link">Volver a torneos</Link>
+        <Link href="/tournaments" className="back-link">← Volver a torneos</Link>
         {loading && <p className="empty-state">Cargando detalles...</p>}
         {error && <p className="empty-state">No se pudo cargar el torneo.</p>}
         {data?.tournamentData && (
@@ -201,7 +201,7 @@ function TournamentDetailsContent() {
                 <h1>{data.tournamentData.name}</h1>
                 <div className="tournament-champion">
                   <span>Campeón</span>
-                  <strong>{data.tournamentData.champion}</strong>
+                  <strong>{data.tournamentData.champion || 'En disputa'}</strong>
                 </div>
               </div>
             </header>

@@ -1,0 +1,6 @@
+-- AlterEnum
+ALTER TYPE "TournamentStatus" ADD VALUE 'PREPARATION' BEFORE 'IN_PROGRESS';
+
+-- AlterTable
+ALTER TABLE "Tournament" ALTER COLUMN "status" SET DEFAULT 'PREPARATION';
+

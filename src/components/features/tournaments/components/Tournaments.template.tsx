@@ -29,7 +29,7 @@ const TournamentsTemplate = ({ tournaments }: { tournaments: Tournament[] }) => 
       cell: (row) => <i>{row.getValue()}</i>,
       header: () => <span>Nombre</span>,
     }),
-    columnHelper.accessor('champion.name', {
+    columnHelper.accessor((row) => row.champion?.name ?? '-', {
       id: 'championName',
       cell: (info) => (
         <div>
@@ -39,7 +39,7 @@ const TournamentsTemplate = ({ tournaments }: { tournaments: Tournament[] }) => 
       ),
       header: () => <span>Ganador</span>,
     }),
-    columnHelper.accessor((row) => row.tournamentCategory.tournamentCategoryPoints[0].points, {
+    columnHelper.accessor((row) => row.tournamentCategory?.tournamentCategoryPoints?.[0]?.points ?? '-', {
       id: 'somethingLong',
       cell: (info) => <i>{info.getValue()}</i>,
       header: () => <span>Puntos</span>,

@@ -2,7 +2,7 @@ import { prisma } from '@/utils/prisma';
 import { calculatePlayerPoints } from '@/utils/utils';
 import { NextRequest, NextResponse } from 'next/server';
 
-async function getTournaments(initialDate: Date, now: Date) {
+async function getTournaments(initialDate: Date, endDate: Date) {
   const tournaments = await prisma.tournament.findMany({
     orderBy: [
       {
@@ -10,9 +10,11 @@ async function getTournaments(initialDate: Date, now: Date) {
       },
     ],
     where: {
+      status: 'FINISHED',
+      deletedAt: null,
       date: {
-        gte: initialDate, // Mayor o igual a hace 12 meses
-        lte: now, // Menor o igual a la fecha actual
+        gte: initialDate,
+        lte: endDate,
       },
     },
     include: {
@@ -52,37 +54,40 @@ async function getTournaments(initialDate: Date, now: Date) {
   return tournaments;
 }
 
-function getInitialDate(rankingMode: string | null, now: Date): Date {
+function getDateRange(rankingMode: string | null, now: Date): { initialDate: Date; endDate: Date } {
   const currentYear = now.getFullYear();
-  let initialDate = new Date(now);
   if (rankingMode === 'calendar') {
-    initialDate = new Date(currentYear, 0, 1);
-  } else {
-    initialDate.setMonth(now.getMonth() - 12);
+    return {
+      initialDate: new Date(currentYear, 0, 1, 0, 0, 0, 0),
+      endDate: new Date(currentYear, 11, 31, 23, 59, 59, 999),
+    };
   }
-  return initialDate;
+
+  // Rolling 12 months (last 365 days / 1 year up to current date)
+  const initialDate = new Date(now);
+  initialDate.setFullYear(now.getFullYear() - 1);
+  return {
+    initialDate,
+    endDate: now,
+  };
 }
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
   try {
     const now = new Date();
     const rankingMode = req.nextUrl.searchParams.get('rankingMode');
-    const initialDate = getInitialDate(rankingMode, now);
+    const { initialDate, endDate } = getDateRange(rankingMode, now);
 
-    // console.log('initialDate: ', initialDate);
-    const tournaments = await getTournaments(initialDate, now);
-
-    // console.log('tournaments: ', tournaments);
-
+    const tournaments = await getTournaments(initialDate, endDate);
     const playerPoints = calculatePlayerPoints(tournaments);
-    console.log(playerPoints);
+
     const entries = Object.entries(playerPoints);
     entries.sort((a, b) => b[1].points - a[1].points);
     const sortedArray = entries.map(([key, value]) => ({ key, value }));
-    console.log('sortedArray', sortedArray);
+
     return NextResponse.json(sortedArray, { status: 200 });
   } catch (e) {
-    console.log(e);
-    return NextResponse.json(e, { status: 500 });
+    console.error('Error in /api/leaderboard:', e);
+    return NextResponse.json({ error: 'Error calculating leaderboard' }, { status: 500 });
   }
 }
