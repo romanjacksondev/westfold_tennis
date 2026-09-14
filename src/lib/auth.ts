@@ -43,10 +43,11 @@ export const authOptions: AuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
-        token.role = user.role;
-        token.playerId = (user as any).playerId ?? null;
-        token.playerNickname = (user as any).playerNickname ?? null;
+        const u = user as { id: string; role?: 'USER' | 'ADMIN'; playerId?: string | null; playerNickname?: string | null };
+        token.id = u.id;
+        token.role = u.role ?? 'USER';
+        token.playerId = u.playerId ?? null;
+        token.playerNickname = u.playerNickname ?? null;
       }
       return token;
     },

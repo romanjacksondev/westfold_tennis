@@ -1,4 +1,4 @@
-export async function useMatches(data) {
+export async function useMatches(data: any) {
   const params = new URLSearchParams({
     id: data,
   });
@@ -7,11 +7,11 @@ export async function useMatches(data) {
   return json;
 }
 
-export function useSetMatchesData(data) {}
+export function useSetMatchesData(data: any) {}
 
 export function useClearMatches() {}
 
-export async function useAddMatch(data) {
+export async function useAddMatch(data: any) {
   const response = await fetch("/api/add-match", {
     method: "POST",
     headers: {

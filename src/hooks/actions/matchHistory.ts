@@ -1,4 +1,4 @@
-export async function useMatchHistory(payload) {
+export async function useMatchHistory(payload: any) {
   const params = new URLSearchParams({
     player1Id: payload.player1Id,
     player2Id: payload.player2Id,

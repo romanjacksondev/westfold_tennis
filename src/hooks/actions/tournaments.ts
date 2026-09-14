@@ -1,12 +1,12 @@
-export async function useTournaments(dispatch) {
+export async function useTournaments(dispatch: any) {
   const response = await fetch("api/tournaments");
   const json = await response.json();
   return json;
 }
 
-export function useSetTournamentData(data) {}
+export function useSetTournamentData(data: any) {}
 
-export async function useAddTournament(payload) {
+export async function useAddTournament(payload: any) {
   const response = await fetch("/api/add-tournament", {
     method: "POST",
     headers: {

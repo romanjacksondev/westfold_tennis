@@ -1,4 +1,4 @@
-export async function usePlayerStats(payload) {
+export async function usePlayerStats(payload: any) {
   const params = new URLSearchParams({
     id: payload,
   });

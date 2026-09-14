@@ -4,9 +4,9 @@ export async function useVenues() {
   return json;
 }
 
-export function useSetVenuesData(data) {}
+export function useSetVenuesData(data: any) {}
 
-export async function useAddVenue(data) {
+export async function useAddVenue(data: any) {
   const response = await fetch("/api/add-venue", {
     method: "POST",
     headers: {

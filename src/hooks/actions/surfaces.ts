@@ -4,4 +4,4 @@ export async function useSurfaces() {
   return json;
 }
 
-export function useSetSurfacesData(data) {}
+export function useSetSurfacesData(data: any) {}

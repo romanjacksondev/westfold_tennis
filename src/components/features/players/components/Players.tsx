@@ -12,7 +12,7 @@ const PlayersView = () => {
         const playersData = await playersResponse.json();
         const matchesData = matchesResponse.ok ? await matchesResponse.json() : {};
         const statsById = new Map(
-          (Array.isArray(matchesData.playerStats) ? matchesData.playerStats : []).map((stat) => [stat.id, stat]),
+          (Array.isArray(matchesData.playerStats) ? matchesData.playerStats : []).map((stat: { id: string; [key: string]: unknown }) => [stat.id, stat]),
         );
         setPlayers(playersData.map((player: TennisPlayerProps) => ({ ...player, stats: statsById.get(player.id) })));
       })

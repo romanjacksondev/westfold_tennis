@@ -76,8 +76,8 @@ export async function GET(_request: Request, context: RouteContext) {
     });
 
     const titles = await prisma.tournament.count({ where: { deletedAt: null, championId: id } });
-    const surfaceStats = [...surfaces.values()].map((item) => ({ ...item, percentage: percentage(item.won, item.played) })).sort((a, b) => b.percentage - a.percentage || b.won - a.won);
-    const opponentStats = [...opponents.values()].map((item) => ({ ...item, percentage: percentage(item.won, item.played) })).sort((a, b) => b.won - a.won || b.played - a.played);
+    const surfaceStats = Array.from(surfaces.values()).map((item) => ({ ...item, percentage: percentage(item.won, item.played) })).sort((a, b) => b.percentage - a.percentage || b.won - a.won);
+    const opponentStats = Array.from(opponents.values()).map((item) => ({ ...item, percentage: percentage(item.won, item.played) })).sort((a, b) => b.won - a.won || b.played - a.played);
     const lossesAgainst = [...opponentStats].sort((a, b) => b.lost - a.lost || b.played - a.played);
 
     return NextResponse.json({
