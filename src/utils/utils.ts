@@ -333,6 +333,7 @@ export interface MatchSummarySet {
 }
 
 export interface MatchSummaryItem {
+  id?: string;
   winnerId: string | null;
   tournamentName?: string | null;
   player1Name?: { id?: string; name?: string } | null;
@@ -357,6 +358,7 @@ export const createMatchSummary = (matchesList: any[]): MatchSummaryItem[] => {
     }
 
     const matchData: MatchSummaryItem = {
+      id: match.id ?? undefined,
       winnerId: match.winnerId ?? null,
       tournamentName: match.tournament?.name ?? '',
       player1Name: match.player1 ?? null,
@@ -391,4 +393,62 @@ export const createMatchSummary = (matchesList: any[]): MatchSummaryItem[] => {
   });
 
   return data;
+};
+
+// ─── Tournaments by Player (Championships) ─────────────────────────────────
+
+export interface PlayerChampionshipWon {
+  id: string;
+  name: string;
+  category: string;
+  date: string;
+}
+
+export interface PlayerChampionships {
+  name: string;
+  total: number;
+  points: Record<string, number>;
+  tournaments: PlayerChampionshipWon[];
+}
+
+export const countTournamentsByPlayer = (tournaments: any[]): PlayerChampionships[] => {
+  const stats: Record<string, PlayerChampionships> = {};
+
+  (tournaments || []).forEach((tournament) => {
+    if (!tournament.champion?.name) return;
+    const winner = tournament.champion.name;
+    const category = tournament.tournamentCategory?.name || 'Otro';
+
+    if (!stats[winner]) {
+      stats[winner] = {
+        name: winner,
+        total: 0,
+        points: {},
+        tournaments: [],
+      };
+    }
+
+    stats[winner].total += 1;
+    stats[winner].points[category] = (stats[winner].points[category] || 0) + 1;
+
+    let formattedDate = '';
+    if (tournament.date) {
+      try {
+        formattedDate = format(new Date(tournament.date), 'dd/MM/yyyy');
+      } catch {
+        formattedDate = String(tournament.date);
+      }
+    }
+
+    stats[winner].tournaments.push({
+      id: tournament.id,
+      name: tournament.name,
+      category,
+      date: formattedDate,
+    });
+  });
+
+  const resultArray = Object.values(stats);
+  resultArray.sort((a, b) => b.total - a.total);
+  return resultArray;
 };

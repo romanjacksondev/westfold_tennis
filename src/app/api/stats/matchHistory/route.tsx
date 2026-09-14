@@ -7,16 +7,29 @@ export async function GET(request: NextRequest) {
   const player1Id = searchParams.get('player1Id');
   const player2Id = searchParams.get('player2Id');
 
-  const whereCondition = {
-    OR: [
-      {
-        AND: [{ player1Id: player1Id }, { player2Id: player2Id }],
-      },
-      {
-        AND: [{ player1Id: player2Id }, { player2Id: player1Id }],
-      },
-    ],
+  let whereCondition: any = {
+    deletedAt: null,
   };
+
+  if (player1Id && player2Id) {
+    whereCondition = {
+      ...whereCondition,
+      OR: [
+        { AND: [{ player1Id }, { player2Id }] },
+        { AND: [{ player1Id: player2Id }, { player2Id: player1Id }] },
+      ],
+    };
+  } else if (player1Id) {
+    whereCondition = {
+      ...whereCondition,
+      OR: [{ player1Id }, { player2Id: player1Id }],
+    };
+  } else if (player2Id) {
+    whereCondition = {
+      ...whereCondition,
+      OR: [{ player1Id: player2Id }, { player2Id }],
+    };
+  }
 
   try {
     const matches = await prisma.match.findMany({
