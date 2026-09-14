@@ -1,9 +1,0 @@
-
-.selected {
-    display: flex;
-    align-items: center;
-}
-
-.multi-value-custom:nth-last-child(2){
-    display: none;
-}

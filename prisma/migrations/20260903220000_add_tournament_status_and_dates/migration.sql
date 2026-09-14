@@ -1,0 +1,7 @@
+-- CreateEnum
+CREATE TYPE "TournamentStatus" AS ENUM ('IN_PROGRESS', 'FINISHED', 'CANCELLED');
+
+-- AlterTable
+ALTER TABLE "Tournament" ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "finishedAt" TIMESTAMP(3),
+ADD COLUMN     "status" "TournamentStatus" NOT NULL DEFAULT 'IN_PROGRESS';
