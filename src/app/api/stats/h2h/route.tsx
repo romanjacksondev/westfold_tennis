@@ -1,8 +1,10 @@
 import { prisma } from '@/utils/prisma';
 import { countTournamentsByPlayer, createH2H } from '@/utils/utils';
-import { NextResponse } from 'next/server';
+import { connection, NextResponse } from 'next/server';
 
 export async function GET() {
+  await connection();
+
   try {
     const [matches, tournaments] = await Promise.all([
       prisma.match.findMany({

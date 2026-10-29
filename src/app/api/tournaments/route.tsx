@@ -1,7 +1,9 @@
 import { prisma } from '@/utils/prisma';
-import { NextResponse } from 'next/server';
+import { connection, NextResponse } from 'next/server';
 
 export async function GET() {
+  await connection();
+
   try {
     const tournaments = await prisma.tournament.findMany({
       orderBy: [

@@ -1,18 +1,18 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
-import pluginReact from "eslint-plugin-react";
+import { defineConfig, globalIgnores } from 'eslint/config';
+import nextTs from 'eslint-config-next/typescript';
+import nextVitals from 'eslint-config-next/core-web-vitals';
 
-
-export default [
-    { files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
-    { languageOptions: { globals: globals.browser } },
-    pluginJs.configs.recommended,
-    ...tseslint.configs.recommended,
-    pluginReact.configs.flat.recommended,
-    {
-        rules: {
-            'react/react-in-jsx-scope': 'off', // Desactiva la regla que requiere 'React' en el ámbito
-        }
-    }
-];
+export default defineConfig([
+  ...nextVitals,
+  ...nextTs,
+  globalIgnores([
+    '.next/**',
+    'out/**',
+    'build/**',
+    'coverage/**',
+    'node_modules/**',
+    'next-env.d.ts',
+    '.flowbite-react/**',
+    'prisma/generated/**',
+  ]),
+]);

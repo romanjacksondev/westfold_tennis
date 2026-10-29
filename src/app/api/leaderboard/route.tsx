@@ -1,6 +1,6 @@
 import { prisma } from '@/utils/prisma';
 import { calculatePlayerPoints } from '@/utils/utils';
-import { NextRequest, NextResponse } from 'next/server';
+import { connection, NextRequest, NextResponse } from 'next/server';
 
 async function getTournaments(initialDate: Date, endDate: Date) {
   const tournaments = await prisma.tournament.findMany({
@@ -73,6 +73,8 @@ function getDateRange(rankingMode: string | null, now: Date): { initialDate: Dat
 }
 
 export async function GET(req: NextRequest) {
+  await connection();
+
   try {
     const now = new Date();
     const rankingMode = req.nextUrl.searchParams.get('rankingMode');
