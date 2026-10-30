@@ -628,11 +628,17 @@ body {
 .lb-row { display: flex; align-items: center; gap: 14px; width: 100%; padding: 12px 14px; border: 0; border-radius: 10px; background: transparent; text-align: left; cursor: pointer; transition: background .15s; font: 14px var(--font-sans); color: #18231f; }
 .lb-row:hover { background: #f5f8f5; }
 .lb-row-pos { width: 26px; color: #d66e52; font-weight: 700; text-align: center; }
-.lb-row-main { display: flex; flex: 1; flex-direction: column; gap: 6px; min-width: 0; }
+.lb-row-main { display: flex; flex: 1; align-items: center; gap: 10px; min-width: 0; }
 .lb-row-name { font-weight: 600; }
-.lb-row-bar { display: block; height: 5px; border-radius: 999px; background: #eef2ef; overflow: hidden; }
-.lb-row-bar span { display: block; height: 100%; border-radius: 999px; background: #31745d; }
-.lb-row-tournaments { color: #68756f; font-size: 12px; }
+.lb-row-record { display: flex; flex-direction: column; align-items: flex-end; min-width: 56px; font-weight: 600; line-height: 1.2; }
+.lb-row-record small { color: #68756f; font-size: 11px; font-weight: 500; }
+.lb-form { display: inline-flex; gap: 4px; }
+.lb-form span { width: 9px; height: 9px; border-radius: 50%; }
+.lb-form .win { background: #31745d; }
+.lb-form .loss { background: #d66e52; }
+.lb-legend { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; margin: 16px 0 0; color: #68756f; font-size: 12px; text-align: center; }
+.lb-titles { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; background: #fff3cf; color: #8a6d1a; font: 700 12px var(--font-sans); }
+.lb-titles svg { width: 12px; height: 12px; }
 .lb-row-points { min-width: 74px; text-align: right; font-weight: 700; color: #183b32; }
 .lb-row-chevron { color: #87928c; transition: transform .15s; }
 .lb-row-chevron.open { transform: rotate(180deg); }
@@ -657,7 +663,7 @@ body {
   .lb-podium { grid-template-columns: 1fr; }
   .lb-podium-1 { order: -1; }
   .lb-podium-slot { flex-direction: row; flex-wrap: wrap; justify-content: center; }
-  .lb-row-tournaments { display: none; }
+  .lb-form { display: none; }
   .lb-breakdown { margin-left: 14px; }
   .lb-skeleton-podium { grid-template-columns: 1fr; }
   .lb-skeleton-podium span { height: 90px; }

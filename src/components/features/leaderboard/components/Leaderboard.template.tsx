@@ -7,6 +7,7 @@ export type RankingMode = 'year' | 'calendar';
 export type LeaderboardEntry = {
   key: string;
   nickname?: string | null;
+  record: { wins: number; losses: number; titles: number; form: ('W' | 'L')[] };
   value: {
     points: number;
     breakdown: { tournament: string; points: number }[];
@@ -57,6 +58,24 @@ const Avatar = ({ entry, size }: { entry: LeaderboardEntry; size: 'lg' | 'md' | 
   );
 };
 
+const winRate = (entry: LeaderboardEntry) => {
+  const total = entry.record.wins + entry.record.losses;
+  return total > 0 ? Math.round((entry.record.wins / total) * 100) : 0;
+};
+
+const Form = ({ results }: { results: ('W' | 'L')[] }) => (
+  <span
+    className="lb-form"
+    role="img"
+    aria-label={`Últimos partidos: ${results.join(' ')}`}
+    title="Últimos 5 partidos"
+  >
+    {results.map((result, index) => (
+      <span key={index} className={result === 'W' ? 'win' : 'loss'} />
+    ))}
+  </span>
+);
+
 const PODIUM_ORDER = [1, 0, 2];
 const PODIUM_LABELS = ['1º', '2º', '3º'];
 
@@ -74,7 +93,15 @@ const Podium = ({ entries, periodLabel }: { entries: LeaderboardEntry[]; periodL
           <Avatar entry={entry} size={position === 0 ? 'lg' : 'md'} />
           <strong className="lb-podium-name">{entry.key}</strong>
           <span className="lb-podium-points">{entry.value.points} pts</span>
-          <span className="lb-podium-meta">{entry.value.breakdown.length} torneos</span>
+          <span className="lb-podium-meta">
+            {entry.record.wins}-{entry.record.losses} · {winRate(entry)}% victorias
+          </span>
+          {entry.record.titles > 0 && (
+            <span className="lb-titles">
+              <LuTrophy /> {entry.record.titles} {entry.record.titles === 1 ? 'título' : 'títulos'}
+            </span>
+          )}
+          <Form results={entry.record.form} />
         </div>
       );
     })}
@@ -84,12 +111,10 @@ const Podium = ({ entries, periodLabel }: { entries: LeaderboardEntry[]; periodL
 const RankingList = ({
   entries,
   offset,
-  maxPoints,
   rankingMode,
 }: {
   entries: LeaderboardEntry[];
   offset: number;
-  maxPoints: number;
   rankingMode: RankingMode;
 }) => {
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -99,7 +124,6 @@ const RankingList = ({
     <ul className="lb-list">
       {entries.map((entry, index) => {
         const isExpanded = expanded === entry.key;
-        const width = maxPoints > 0 ? Math.max(4, (entry.value.points / maxPoints) * 100) : 0;
         return (
           <Fragment key={entry.key}>
             <li>
@@ -113,11 +137,17 @@ const RankingList = ({
                 <Avatar entry={entry} size="sm" />
                 <span className="lb-row-main">
                   <span className="lb-row-name">{entry.key}</span>
-                  <span className="lb-row-bar">
-                    <span style={{ width: `${width}%` }} />
-                  </span>
+                  {entry.record.titles > 0 && (
+                    <span className="lb-titles">
+                      <LuTrophy /> {entry.record.titles}
+                    </span>
+                  )}
                 </span>
-                <span className="lb-row-tournaments">{entry.value.breakdown.length} torneos</span>
+                <Form results={entry.record.form} />
+                <span className="lb-row-record">
+                  {entry.record.wins}-{entry.record.losses}
+                  <small>{winRate(entry)}%</small>
+                </span>
                 <span className="lb-row-points">{entry.value.points} pts</span>
                 <LuChevronDown className={`lb-row-chevron ${isExpanded ? 'open' : ''}`} />
               </button>
@@ -166,7 +196,6 @@ const LeaderboardTemplate = ({
   const [gender, setGender] = useState<GenderTab>('male');
   const entries = leaderboard[gender];
   const rest = entries.slice(3);
-  const maxPoints = entries[0]?.value.points ?? 0;
   const periodLabel = rankingMode === 'year' ? 'Últimos 12 meses' : 'Año calendario';
 
   return (
@@ -228,14 +257,17 @@ const LeaderboardTemplate = ({
         ) : (
           <>
             <Podium entries={entries} periodLabel={periodLabel} />
-            {rest.length > 0 && (
-              <RankingList
-                entries={rest}
-                offset={3}
-                maxPoints={maxPoints}
-                rankingMode={rankingMode}
-              />
-            )}
+            {rest.length > 0 && <RankingList entries={rest} offset={3} rankingMode={rankingMode} />}
+            <p className="lb-legend">
+              <span className="lb-form">
+                <span className="win" />
+              </span>
+              victoria
+              <span className="lb-form">
+                <span className="loss" />
+              </span>
+              derrota · Forma: últimos 5 partidos · Récord: ganados-perdidos y % de victorias
+            </p>
           </>
         )}
       </section>
