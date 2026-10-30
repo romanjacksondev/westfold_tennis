@@ -88,6 +88,7 @@ model TournamentCategory {
   name                     String
   tournaments              Tournament[]
   tournamentCategoryPoints TournamentCategoryPoints[]
+  pointsPerMatchWin        Int                        @default(0)
   deletedAt                DateTime?
 }
 
@@ -118,7 +119,16 @@ model Match {
   player2Id    String
   player2      Player      @relation("Player2", fields: [player2Id], references: [id])
   sets         Set[]
+  stage        MatchStage?
   deletedAt    DateTime?
+}
+
+enum MatchStage {
+  GROUP
+  ROUND_OF_16
+  QUARTERFINAL
+  SEMIFINAL
+  FINAL
 }
 
 model Set {

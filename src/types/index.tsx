@@ -3,6 +3,8 @@ export interface Stat {
   name: string;
   matchesWon: number;
   matchesLost: number;
+  setsWon: number;
+  setsLost: number;
   gamesWon: number;
   gamesLost: number;
 }

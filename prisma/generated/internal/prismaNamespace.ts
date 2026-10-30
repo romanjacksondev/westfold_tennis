@@ -16,10 +16,10 @@
  */
 
 import * as runtime from "@prisma/client/runtime/client"
-import type * as Prisma from "../models"
-import { type PrismaClient } from "./class"
+import type * as Prisma from "../models.ts"
+import { type PrismaClient } from "./class.ts"
 
-export type * from '../models'
+export type * from '../models.ts'
 
 export type DMMF = typeof runtime.DMMF
 
@@ -1340,6 +1340,7 @@ export type PlayerScalarFieldEnum = (typeof PlayerScalarFieldEnum)[keyof typeof 
 export const TournamentCategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  pointsPerMatchWin: 'pointsPerMatchWin',
   deletedAt: 'deletedAt'
 } as const
 
@@ -1372,6 +1373,7 @@ export const MatchScalarFieldEnum = {
   tournamentId: 'tournamentId',
   player1Id: 'player1Id',
   player2Id: 'player2Id',
+  stage: 'stage',
   deletedAt: 'deletedAt'
 } as const
 
@@ -1512,6 +1514,20 @@ export type EnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
  * Reference to a field of type 'Gender[]'
  */
 export type ListEnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender[]'>
+    
+
+
+/**
+ * Reference to a field of type 'MatchStage'
+ */
+export type EnumMatchStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MatchStage'>
+    
+
+
+/**
+ * Reference to a field of type 'MatchStage[]'
+ */
+export type ListEnumMatchStageFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MatchStage[]'>
     
 
 

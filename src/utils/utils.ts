@@ -1,5 +1,6 @@
 import { format } from 'date-fns';
-import { TournamentCategory, Tournament, Stat, PointsBreakdown } from '@/types';
+import { Tournament, Stat, PointsBreakdown } from '@/types';
+import { calculateTournamentPoints, compareStandings, createHeadToHead } from '@/utils/scoring';
 
 // Formats a set's real score, e.g. "6-4" or "7(7)-6(5)" when it was decided by tiebreak.
 export const formatSetScore = (
@@ -19,6 +20,7 @@ export interface MatchSetGame {
 }
 
 export interface MatchSet {
+  winnerId?: string | null;
   games: MatchSetGame[];
 }
 
@@ -50,6 +52,8 @@ export const calculatePlayerStats = (matches: MatchWithDetails[] | any[]): Stat[
         matchesWon: 0,
         matchesLost: 0,
         gamesWon: 0,
+        setsWon: 0,
+        setsLost: 0,
         gamesLost: 0,
       };
     }
@@ -61,6 +65,8 @@ export const calculatePlayerStats = (matches: MatchWithDetails[] | any[]): Stat[
         matchesWon: 0,
         matchesLost: 0,
         gamesWon: 0,
+        setsWon: 0,
+        setsLost: 0,
         gamesLost: 0,
       };
     }
@@ -77,6 +83,12 @@ export const calculatePlayerStats = (matches: MatchWithDetails[] | any[]): Stat[
     }
 
     (sets || []).forEach((set: MatchSet) => {
+      const setWinnerId = set.winnerId;
+      if (setWinnerId && (setWinnerId === player1Id || setWinnerId === player2Id)) {
+        const setLoserId = setWinnerId === player1Id ? player2Id : player1Id;
+        playerStats[setWinnerId].setsWon += 1;
+        playerStats[setLoserId].setsLost += 1;
+      }
       (set.games || []).forEach((game: MatchSetGame) => {
         const { winnerId: gameWinnerId } = game;
         if (!gameWinnerId) return;
@@ -91,6 +103,8 @@ export const calculatePlayerStats = (matches: MatchWithDetails[] | any[]): Stat[
             matchesWon: 0,
             matchesLost: 0,
             gamesWon: 0,
+            setsWon: 0,
+            setsLost: 0,
             gamesLost: 0,
           };
         }
@@ -107,6 +121,8 @@ export const calculatePlayerStats = (matches: MatchWithDetails[] | any[]): Stat[
             matchesWon: 0,
             matchesLost: 0,
             gamesWon: 0,
+            setsWon: 0,
+            setsLost: 0,
             gamesLost: 0,
           };
         }
@@ -118,61 +134,30 @@ export const calculatePlayerStats = (matches: MatchWithDetails[] | any[]): Stat[
   // Convierte el objeto playerStats en un array
   const statsArray: Stat[] = Object.values(playerStats);
 
-  // Ordena el array por cantidad de partidos ganados, diferencia de juegos y juegos ganados
-  statsArray.sort((a, b) => {
-    if (b.matchesWon !== a.matchesWon) {
-      return b.matchesWon - a.matchesWon;
-    }
-    const diffA = a.gamesWon - a.gamesLost;
-    const diffB = b.gamesWon - b.gamesLost;
-    if (diffB !== diffA) {
-      return diffB - diffA;
-    }
-    return b.gamesWon - a.gamesWon;
-  });
+  // Ordena por partidos ganados, sets, games y, si sigue el empate, el resultado entre ambos
+  const headToHead = createHeadToHead(matches || []);
+  statsArray.sort((a, b) => compareStandings(a, b, headToHead));
 
   return statsArray;
 };
 
 // ─── Tournament Points ─────────────────────────────────────────────────────
 
-// Función para obtener los puntos para una posición
-export const getPointsForPosition = (
-  tournamentCategory: TournamentCategory | null | undefined,
-  position: number,
-): number => {
-  if (!tournamentCategory?.tournamentCategoryPoints) return 0;
-  const pointEntry = tournamentCategory.tournamentCategoryPoints.find(
-    (entry) => position >= entry.initial_position && position <= entry.final_position,
-  );
-  return pointEntry ? pointEntry.points : 0;
-};
-
-// Función para calcular puntos totales por jugador
+// Suma los puntos de cada jugador según el tipo de torneo (solo torneos finalizados)
 export const calculatePlayerPoints = (
   tournaments: (Tournament | any)[],
 ): Record<string, PointsBreakdown> => {
   const playerPoints: Record<string, PointsBreakdown> = {};
-  for (let indexFor = 0; indexFor < (tournaments || []).length; indexFor++) {
-    const tournament = tournaments[indexFor];
+  for (const tournament of tournaments || []) {
     if (!tournament) continue;
 
-    const positions = calculatePlayerStats(tournament.matches || []);
-    positions.forEach((position, index) => {
-      const points = getPointsForPosition(tournament.tournamentCategory, index + 1);
-
-      if (!playerPoints[position.name]) {
-        playerPoints[position.name] = {
-          points: 0,
-          breakdown: [],
-        };
+    for (const { name, points } of calculateTournamentPoints(tournament)) {
+      if (!playerPoints[name]) {
+        playerPoints[name] = { points: 0, breakdown: [] };
       }
-      playerPoints[position.name].points += points;
-      playerPoints[position.name].breakdown.push({
-        points,
-        tournament: tournament.name,
-      });
-    });
+      playerPoints[name].points += points;
+      playerPoints[name].breakdown.push({ points, tournament: tournament.name });
+    }
   }
   return playerPoints;
 };

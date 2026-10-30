@@ -20,9 +20,11 @@ async function getTournaments(initialDate: Date, endDate: Date) {
     },
     include: {
       champion: { select: { name: true } },
+      tournamentType: { select: { name: true } },
       tournamentCategory: {
         select: {
           name: true,
+          pointsPerMatchWin: true,
           tournamentCategoryPoints: {
             select: {
               initial_position: true,

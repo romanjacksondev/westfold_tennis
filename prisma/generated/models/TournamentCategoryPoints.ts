@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.ts"
+import type * as Prisma from "../internal/prismaNamespace.ts"
 
 /**
  * Model TournamentCategoryPoints
@@ -413,14 +413,6 @@ export type TournamentCategoryPointsUncheckedUpdateManyWithoutTournamentCategory
   update?: Prisma.TournamentCategoryPointsUpdateWithWhereUniqueWithoutTournamentCategoryInput | Prisma.TournamentCategoryPointsUpdateWithWhereUniqueWithoutTournamentCategoryInput[]
   updateMany?: Prisma.TournamentCategoryPointsUpdateManyWithWhereWithoutTournamentCategoryInput | Prisma.TournamentCategoryPointsUpdateManyWithWhereWithoutTournamentCategoryInput[]
   deleteMany?: Prisma.TournamentCategoryPointsScalarWhereInput | Prisma.TournamentCategoryPointsScalarWhereInput[]
-}
-
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
 }
 
 export type TournamentCategoryPointsCreateWithoutTournamentCategoryInput = {

@@ -9,8 +9,8 @@
  * 🟢 You can import this file directly.
  */
 import type * as runtime from "@prisma/client/runtime/client"
-import type * as $Enums from "../enums"
-import type * as Prisma from "../internal/prismaNamespace"
+import type * as $Enums from "../enums.ts"
+import type * as Prisma from "../internal/prismaNamespace.ts"
 
 /**
  * Model TournamentCategory
@@ -20,45 +20,69 @@ export type TournamentCategoryModel = runtime.Types.Result.DefaultSelection<Pris
 
 export type AggregateTournamentCategory = {
   _count: TournamentCategoryCountAggregateOutputType | null
+  _avg: TournamentCategoryAvgAggregateOutputType | null
+  _sum: TournamentCategorySumAggregateOutputType | null
   _min: TournamentCategoryMinAggregateOutputType | null
   _max: TournamentCategoryMaxAggregateOutputType | null
+}
+
+export type TournamentCategoryAvgAggregateOutputType = {
+  pointsPerMatchWin: number | null
+}
+
+export type TournamentCategorySumAggregateOutputType = {
+  pointsPerMatchWin: number | null
 }
 
 export type TournamentCategoryMinAggregateOutputType = {
   id: string | null
   name: string | null
+  pointsPerMatchWin: number | null
   deletedAt: Date | null
 }
 
 export type TournamentCategoryMaxAggregateOutputType = {
   id: string | null
   name: string | null
+  pointsPerMatchWin: number | null
   deletedAt: Date | null
 }
 
 export type TournamentCategoryCountAggregateOutputType = {
   id: number
   name: number
+  pointsPerMatchWin: number
   deletedAt: number
   _all: number
 }
 
 
+export type TournamentCategoryAvgAggregateInputType = {
+  pointsPerMatchWin?: true
+}
+
+export type TournamentCategorySumAggregateInputType = {
+  pointsPerMatchWin?: true
+}
+
 export type TournamentCategoryMinAggregateInputType = {
   id?: true
   name?: true
+  pointsPerMatchWin?: true
   deletedAt?: true
 }
 
 export type TournamentCategoryMaxAggregateInputType = {
   id?: true
   name?: true
+  pointsPerMatchWin?: true
   deletedAt?: true
 }
 
 export type TournamentCategoryCountAggregateInputType = {
   id?: true
   name?: true
+  pointsPerMatchWin?: true
   deletedAt?: true
   _all?: true
 }
@@ -101,6 +125,18 @@ export type TournamentCategoryAggregateArgs<ExtArgs extends runtime.Types.Extens
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: TournamentCategoryAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: TournamentCategorySumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: TournamentCategoryMinAggregateInputType
@@ -131,6 +167,8 @@ export type TournamentCategoryGroupByArgs<ExtArgs extends runtime.Types.Extensio
   take?: number
   skip?: number
   _count?: TournamentCategoryCountAggregateInputType | true
+  _avg?: TournamentCategoryAvgAggregateInputType
+  _sum?: TournamentCategorySumAggregateInputType
   _min?: TournamentCategoryMinAggregateInputType
   _max?: TournamentCategoryMaxAggregateInputType
 }
@@ -138,8 +176,11 @@ export type TournamentCategoryGroupByArgs<ExtArgs extends runtime.Types.Extensio
 export type TournamentCategoryGroupByOutputType = {
   id: string
   name: string
+  pointsPerMatchWin: number
   deletedAt: Date | null
   _count: TournamentCategoryCountAggregateOutputType | null
+  _avg: TournamentCategoryAvgAggregateOutputType | null
+  _sum: TournamentCategorySumAggregateOutputType | null
   _min: TournamentCategoryMinAggregateOutputType | null
   _max: TournamentCategoryMaxAggregateOutputType | null
 }
@@ -165,6 +206,7 @@ export type TournamentCategoryWhereInput = {
   NOT?: Prisma.TournamentCategoryWhereInput | Prisma.TournamentCategoryWhereInput[]
   id?: Prisma.StringFilter<"TournamentCategory"> | string
   name?: Prisma.StringFilter<"TournamentCategory"> | string
+  pointsPerMatchWin?: Prisma.IntFilter<"TournamentCategory"> | number
   deletedAt?: Prisma.DateTimeNullableFilter<"TournamentCategory"> | Date | string | null
   tournaments?: Prisma.TournamentListRelationFilter
   tournamentCategoryPoints?: Prisma.TournamentCategoryPointsListRelationFilter
@@ -173,6 +215,7 @@ export type TournamentCategoryWhereInput = {
 export type TournamentCategoryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  pointsPerMatchWin?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   tournaments?: Prisma.TournamentOrderByRelationAggregateInput
   tournamentCategoryPoints?: Prisma.TournamentCategoryPointsOrderByRelationAggregateInput
@@ -184,6 +227,7 @@ export type TournamentCategoryWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.TournamentCategoryWhereInput[]
   NOT?: Prisma.TournamentCategoryWhereInput | Prisma.TournamentCategoryWhereInput[]
   name?: Prisma.StringFilter<"TournamentCategory"> | string
+  pointsPerMatchWin?: Prisma.IntFilter<"TournamentCategory"> | number
   deletedAt?: Prisma.DateTimeNullableFilter<"TournamentCategory"> | Date | string | null
   tournaments?: Prisma.TournamentListRelationFilter
   tournamentCategoryPoints?: Prisma.TournamentCategoryPointsListRelationFilter
@@ -192,10 +236,13 @@ export type TournamentCategoryWhereUniqueInput = Prisma.AtLeast<{
 export type TournamentCategoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  pointsPerMatchWin?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.TournamentCategoryCountOrderByAggregateInput
+  _avg?: Prisma.TournamentCategoryAvgOrderByAggregateInput
   _max?: Prisma.TournamentCategoryMaxOrderByAggregateInput
   _min?: Prisma.TournamentCategoryMinOrderByAggregateInput
+  _sum?: Prisma.TournamentCategorySumOrderByAggregateInput
 }
 
 export type TournamentCategoryScalarWhereWithAggregatesInput = {
@@ -204,12 +251,14 @@ export type TournamentCategoryScalarWhereWithAggregatesInput = {
   NOT?: Prisma.TournamentCategoryScalarWhereWithAggregatesInput | Prisma.TournamentCategoryScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"TournamentCategory"> | string
   name?: Prisma.StringWithAggregatesFilter<"TournamentCategory"> | string
+  pointsPerMatchWin?: Prisma.IntWithAggregatesFilter<"TournamentCategory"> | number
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"TournamentCategory"> | Date | string | null
 }
 
 export type TournamentCategoryCreateInput = {
   id?: string
   name: string
+  pointsPerMatchWin?: number
   deletedAt?: Date | string | null
   tournaments?: Prisma.TournamentCreateNestedManyWithoutTournamentCategoryInput
   tournamentCategoryPoints?: Prisma.TournamentCategoryPointsCreateNestedManyWithoutTournamentCategoryInput
@@ -218,6 +267,7 @@ export type TournamentCategoryCreateInput = {
 export type TournamentCategoryUncheckedCreateInput = {
   id?: string
   name: string
+  pointsPerMatchWin?: number
   deletedAt?: Date | string | null
   tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutTournamentCategoryInput
   tournamentCategoryPoints?: Prisma.TournamentCategoryPointsUncheckedCreateNestedManyWithoutTournamentCategoryInput
@@ -226,6 +276,7 @@ export type TournamentCategoryUncheckedCreateInput = {
 export type TournamentCategoryUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  pointsPerMatchWin?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tournaments?: Prisma.TournamentUpdateManyWithoutTournamentCategoryNestedInput
   tournamentCategoryPoints?: Prisma.TournamentCategoryPointsUpdateManyWithoutTournamentCategoryNestedInput
@@ -234,6 +285,7 @@ export type TournamentCategoryUpdateInput = {
 export type TournamentCategoryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  pointsPerMatchWin?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutTournamentCategoryNestedInput
   tournamentCategoryPoints?: Prisma.TournamentCategoryPointsUncheckedUpdateManyWithoutTournamentCategoryNestedInput
@@ -242,18 +294,21 @@ export type TournamentCategoryUncheckedUpdateInput = {
 export type TournamentCategoryCreateManyInput = {
   id?: string
   name: string
+  pointsPerMatchWin?: number
   deletedAt?: Date | string | null
 }
 
 export type TournamentCategoryUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  pointsPerMatchWin?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type TournamentCategoryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  pointsPerMatchWin?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -265,19 +320,30 @@ export type TournamentCategoryScalarRelationFilter = {
 export type TournamentCategoryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  pointsPerMatchWin?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+}
+
+export type TournamentCategoryAvgOrderByAggregateInput = {
+  pointsPerMatchWin?: Prisma.SortOrder
 }
 
 export type TournamentCategoryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  pointsPerMatchWin?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
 }
 
 export type TournamentCategoryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  pointsPerMatchWin?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+}
+
+export type TournamentCategorySumOrderByAggregateInput = {
+  pointsPerMatchWin?: Prisma.SortOrder
 }
 
 export type TournamentCategoryCreateNestedOneWithoutTournamentsInput = {
@@ -292,6 +358,14 @@ export type TournamentCategoryUpdateOneRequiredWithoutTournamentsNestedInput = {
   upsert?: Prisma.TournamentCategoryUpsertWithoutTournamentsInput
   connect?: Prisma.TournamentCategoryWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.TournamentCategoryUpdateToOneWithWhereWithoutTournamentsInput, Prisma.TournamentCategoryUpdateWithoutTournamentsInput>, Prisma.TournamentCategoryUncheckedUpdateWithoutTournamentsInput>
+}
+
+export type IntFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type TournamentCategoryCreateNestedOneWithoutTournamentCategoryPointsInput = {
@@ -311,6 +385,7 @@ export type TournamentCategoryUpdateOneRequiredWithoutTournamentCategoryPointsNe
 export type TournamentCategoryCreateWithoutTournamentsInput = {
   id?: string
   name: string
+  pointsPerMatchWin?: number
   deletedAt?: Date | string | null
   tournamentCategoryPoints?: Prisma.TournamentCategoryPointsCreateNestedManyWithoutTournamentCategoryInput
 }
@@ -318,6 +393,7 @@ export type TournamentCategoryCreateWithoutTournamentsInput = {
 export type TournamentCategoryUncheckedCreateWithoutTournamentsInput = {
   id?: string
   name: string
+  pointsPerMatchWin?: number
   deletedAt?: Date | string | null
   tournamentCategoryPoints?: Prisma.TournamentCategoryPointsUncheckedCreateNestedManyWithoutTournamentCategoryInput
 }
@@ -341,6 +417,7 @@ export type TournamentCategoryUpdateToOneWithWhereWithoutTournamentsInput = {
 export type TournamentCategoryUpdateWithoutTournamentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  pointsPerMatchWin?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tournamentCategoryPoints?: Prisma.TournamentCategoryPointsUpdateManyWithoutTournamentCategoryNestedInput
 }
@@ -348,6 +425,7 @@ export type TournamentCategoryUpdateWithoutTournamentsInput = {
 export type TournamentCategoryUncheckedUpdateWithoutTournamentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  pointsPerMatchWin?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tournamentCategoryPoints?: Prisma.TournamentCategoryPointsUncheckedUpdateManyWithoutTournamentCategoryNestedInput
 }
@@ -355,6 +433,7 @@ export type TournamentCategoryUncheckedUpdateWithoutTournamentsInput = {
 export type TournamentCategoryCreateWithoutTournamentCategoryPointsInput = {
   id?: string
   name: string
+  pointsPerMatchWin?: number
   deletedAt?: Date | string | null
   tournaments?: Prisma.TournamentCreateNestedManyWithoutTournamentCategoryInput
 }
@@ -362,6 +441,7 @@ export type TournamentCategoryCreateWithoutTournamentCategoryPointsInput = {
 export type TournamentCategoryUncheckedCreateWithoutTournamentCategoryPointsInput = {
   id?: string
   name: string
+  pointsPerMatchWin?: number
   deletedAt?: Date | string | null
   tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutTournamentCategoryInput
 }
@@ -385,6 +465,7 @@ export type TournamentCategoryUpdateToOneWithWhereWithoutTournamentCategoryPoint
 export type TournamentCategoryUpdateWithoutTournamentCategoryPointsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  pointsPerMatchWin?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tournaments?: Prisma.TournamentUpdateManyWithoutTournamentCategoryNestedInput
 }
@@ -392,6 +473,7 @@ export type TournamentCategoryUpdateWithoutTournamentCategoryPointsInput = {
 export type TournamentCategoryUncheckedUpdateWithoutTournamentCategoryPointsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  pointsPerMatchWin?: Prisma.IntFieldUpdateOperationsInput | number
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutTournamentCategoryNestedInput
 }
@@ -439,6 +521,7 @@ export type TournamentCategoryCountOutputTypeCountTournamentCategoryPointsArgs<E
 export type TournamentCategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  pointsPerMatchWin?: boolean
   deletedAt?: boolean
   tournaments?: boolean | Prisma.TournamentCategory$tournamentsArgs<ExtArgs>
   tournamentCategoryPoints?: boolean | Prisma.TournamentCategory$tournamentCategoryPointsArgs<ExtArgs>
@@ -448,22 +531,25 @@ export type TournamentCategorySelect<ExtArgs extends runtime.Types.Extensions.In
 export type TournamentCategorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  pointsPerMatchWin?: boolean
   deletedAt?: boolean
 }, ExtArgs["result"]["tournamentCategory"]>
 
 export type TournamentCategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  pointsPerMatchWin?: boolean
   deletedAt?: boolean
 }, ExtArgs["result"]["tournamentCategory"]>
 
 export type TournamentCategorySelectScalar = {
   id?: boolean
   name?: boolean
+  pointsPerMatchWin?: boolean
   deletedAt?: boolean
 }
 
-export type TournamentCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "deletedAt", ExtArgs["result"]["tournamentCategory"]>
+export type TournamentCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "pointsPerMatchWin" | "deletedAt", ExtArgs["result"]["tournamentCategory"]>
 export type TournamentCategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tournaments?: boolean | Prisma.TournamentCategory$tournamentsArgs<ExtArgs>
   tournamentCategoryPoints?: boolean | Prisma.TournamentCategory$tournamentCategoryPointsArgs<ExtArgs>
@@ -481,6 +567,7 @@ export type $TournamentCategoryPayload<ExtArgs extends runtime.Types.Extensions.
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     name: string
+    pointsPerMatchWin: number
     deletedAt: Date | null
   }, ExtArgs["result"]["tournamentCategory"]>
   composites: {}
@@ -909,6 +996,7 @@ export interface Prisma__TournamentCategoryClient<T, Null = never, ExtArgs exten
 export interface TournamentCategoryFieldRefs {
   readonly id: Prisma.FieldRef<"TournamentCategory", 'String'>
   readonly name: Prisma.FieldRef<"TournamentCategory", 'String'>
+  readonly pointsPerMatchWin: Prisma.FieldRef<"TournamentCategory", 'Int'>
   readonly deletedAt: Prisma.FieldRef<"TournamentCategory", 'DateTime'>
 }
     

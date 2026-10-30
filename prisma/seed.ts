@@ -124,11 +124,10 @@ async function main() {
   // TournamentCategory
   await prisma.tournamentCategory.createMany({
     data: [
-      { id: 'cm0qw9bgc0000vrlwjpboyw9y', name: 'Master 1000' },
-      { id: 'cm0qwclkq0005vrlwh9f41qqp', name: 'Humolabs Grand Prix' },
-      { id: 'cm0qwclkr0006vrlwrlwb9olj', name: 'Grand Slam' },
-      { id: 'cm0qwclkr0007vrlwur23q9zi', name: 'ATP 250' },
-      { id: 'cm0qwclkr0008vrlwu3y61kg2', name: 'ATP 500' },
+      { id: 'cm0qw9bgc0000vrlwjpboyw9y', name: 'Master 1000', pointsPerMatchWin: 100 },
+      { id: 'cm0qwclkr0006vrlwrlwb9olj', name: 'Grand Slam', pointsPerMatchWin: 200 },
+      { id: 'cm0qwclkr0007vrlwur23q9zi', name: 'ATP 250', pointsPerMatchWin: 25 },
+      { id: 'cm0qwclkr0008vrlwu3y61kg2', name: 'ATP 500', pointsPerMatchWin: 50 },
     ],
     skipDuplicates: true,
   });
@@ -247,13 +246,6 @@ async function main() {
         final_position: 8,
         points: 50,
         tournamentCategoryId: 'cm0qwclkr0007vrlwur23q9zi',
-      },
-      {
-        id: 'cm0sgobu00008vo1j9sdrzc9h',
-        initial_position: 1,
-        final_position: 1,
-        points: 5000,
-        tournamentCategoryId: 'cm0qwclkq0005vrlwh9f41qqp',
       },
     ],
     skipDuplicates: true,
@@ -5028,6 +5020,10 @@ async function main() {
     skipDuplicates: true,
   });
 
+  // The tournaments of the original data were all played as round robins.
+  const roundRobin = await prisma.tournamentType.findUniqueOrThrow({ where: { name: 'Round Robin' } });
+  await prisma.tournament.updateMany({ where: { tournamentTypeId: null }, data: { tournamentTypeId: roundRobin.id } });
+
   await seedDemoLeaderboard();
 }
 
@@ -5081,15 +5077,30 @@ function demoOrder(ids: string[], tournamentIndex: number) {
   return order;
 }
 
+type DemoStage = 'GROUP' | 'ROUND_OF_16' | 'QUARTERFINAL' | 'SEMIFINAL' | 'FINAL';
+type DemoKind = 'Round Robin' | 'Round Robin + Playoffs' | 'Playoffs';
+const DEMO_KINDS: DemoKind[] = ['Round Robin', 'Round Robin + Playoffs', 'Playoffs'];
+
 async function seedDemoLeaderboard() {
   await prisma.player.createMany({
     data: DEMO_NEW_PLAYERS.map((player) => ({ ...player, phone: '555000' })),
     skipDuplicates: true,
   });
 
-  const matches: { id: string; winnerId: string; tournamentId: string; player1Id: string; player2Id: string }[] = [];
+  const types = await prisma.tournamentType.findMany({ where: { name: { in: DEMO_KINDS } } });
+  const typeIdByName = new Map(types.map((type) => [type.name, type.id]));
+
+  const matches: { id: string; winnerId: string; tournamentId: string; player1Id: string; player2Id: string; stage: DemoStage }[] = [];
   const sets: { id: string; winnerId: string; matchId: string }[] = [];
   const games: { id: string; winnerId: string; setId: string }[] = [];
+
+  const addMatch = (matchId: string, tournamentId: string, winnerId: string, loserId: string, stage: DemoStage, loserGames: number) => {
+    const setId = `${matchId}-s1`;
+    matches.push({ id: matchId, winnerId, tournamentId, player1Id: winnerId, player2Id: loserId, stage });
+    sets.push({ id: setId, winnerId, matchId });
+    for (let g = 0; g < 6; g++) games.push({ id: `${setId}-w${g}`, winnerId, setId });
+    for (let g = 0; g < loserGames; g++) games.push({ id: `${setId}-l${g}`, winnerId: loserId, setId });
+  };
 
   const groups = [
     { key: 'male', label: 'Masculino', ids: DEMO_MALE_IDS },
@@ -5102,14 +5113,24 @@ async function seedDemoLeaderboard() {
       date.setUTCHours(0, 0, 0, 0);
       date.setUTCDate(date.getUTCDate() - DEMO_TOURNAMENT_OFFSETS_DAYS[t] - (group.key === 'female' ? 3 : 0));
 
+      // Two tournaments of each format per group; the female group starts one format later.
+      const kind = DEMO_KINDS[(Math.floor(t / 2) + (group.key === 'female' ? 1 : 0)) % DEMO_KINDS.length];
       const order = demoOrder(group.ids, t);
+      // In the later tournaments the second best player wins the final.
+      const upset = t >= 4;
+      const finalWinner = upset ? order[1] : order[0];
+      const finalLoser = upset ? order[0] : order[1];
+      const hasPlayoffs = kind !== 'Round Robin';
+
       const tournamentId = `demo-tournament-${group.key}-${t + 1}`;
       const data = {
-        name: `Demo ${group.label} ${t + 1}`,
+        name: `Demo ${group.label} ${t + 1} (${kind})`,
         venueId: DEMO_VENUE_ID,
         surfaceId: DEMO_SURFACE_ID,
         tournamentCategoryId: DEMO_CATEGORIES[t % DEMO_CATEGORIES.length],
-        championId: order[0],
+        tournamentTypeId: typeIdByName.get(kind),
+        qualifiers: kind === 'Round Robin + Playoffs' ? 4 : null,
+        championId: hasPlayoffs ? finalWinner : order[0],
         date,
         finishedAt: date,
         status: 'FINISHED' as const,
@@ -5118,21 +5139,39 @@ async function seedDemoLeaderboard() {
       // Upsert so dates are refreshed relative to the day the seed runs.
       await prisma.tournament.upsert({ where: { id: tournamentId }, create: { id: tournamentId, ...data }, update: data });
 
-      // Round robin: the better ranked player always wins.
-      for (let i = 0; i < order.length; i++) {
-        for (let j = i + 1; j < order.length; j++) {
-          const matchId = `demo-match-${group.key}-${t + 1}-${i}-${j}`;
-          const setId = `${matchId}-s1`;
-          matches.push({ id: matchId, winnerId: order[i], tournamentId, player1Id: order[i], player2Id: order[j] });
-          sets.push({ id: setId, winnerId: order[i], matchId });
-          const loserGames = (i + j) % 5;
-          for (let g = 0; g < 6; g++) games.push({ id: `${setId}-w${g}`, winnerId: order[i], setId });
-          for (let g = 0; g < loserGames; g++) games.push({ id: `${setId}-l${g}`, winnerId: order[j], setId });
+      const prefix = `demo-match-${group.key}-${t + 1}`;
+
+      // Round robin stage: the better ranked player always wins.
+      if (kind !== 'Playoffs') {
+        for (let i = 0; i < order.length; i++) {
+          for (let j = i + 1; j < order.length; j++) {
+            addMatch(`${prefix}-${i}-${j}`, tournamentId, order[i], order[j], 'GROUP', (i + j) % 5);
+          }
         }
+      }
+
+      if (kind === 'Round Robin + Playoffs') {
+        // The 4 best of the group stage: 1st vs 4th and 2nd vs 3rd, then the final.
+        addMatch(`${prefix}-sf1`, tournamentId, order[0], order[3], 'SEMIFINAL', 2);
+        addMatch(`${prefix}-sf2`, tournamentId, order[1], order[2], 'SEMIFINAL', 3);
+        addMatch(`${prefix}-final`, tournamentId, finalWinner, finalLoser, 'FINAL', 4);
+      }
+
+      if (kind === 'Playoffs') {
+        // 6 players: the top 2 get a bye to the semifinals.
+        addMatch(`${prefix}-qf1`, tournamentId, order[2], order[5], 'QUARTERFINAL', 1);
+        addMatch(`${prefix}-qf2`, tournamentId, order[3], order[4], 'QUARTERFINAL', 2);
+        addMatch(`${prefix}-sf1`, tournamentId, order[0], order[3], 'SEMIFINAL', 2);
+        addMatch(`${prefix}-sf2`, tournamentId, order[1], order[2], 'SEMIFINAL', 3);
+        addMatch(`${prefix}-final`, tournamentId, finalWinner, finalLoser, 'FINAL', 4);
       }
     }
   }
 
+  // Demo matches are rebuilt on every run so formats and stages stay in sync with this file.
+  await prisma.game.deleteMany({ where: { id: { startsWith: 'demo-match-' } } });
+  await prisma.set.deleteMany({ where: { id: { startsWith: 'demo-match-' } } });
+  await prisma.match.deleteMany({ where: { id: { startsWith: 'demo-match-' } } });
   await prisma.match.createMany({ data: matches, skipDuplicates: true });
   await prisma.set.createMany({ data: sets, skipDuplicates: true });
   await prisma.game.createMany({ data: games, skipDuplicates: true });

@@ -11,6 +11,8 @@ type MatchSet = {
   tiebreakPlayer2Points?: number | string | null;
 };
 
+const MATCH_STAGES = ['GROUP', 'ROUND_OF_16', 'QUARTERFINAL', 'SEMIFINAL', 'FINAL'];
+
 function toScore(value: number | string | null | undefined) {
   const score = Number(value);
   return Number.isInteger(score) && score >= 0 ? score : null;
@@ -26,6 +28,11 @@ export async function POST(request: NextRequest) {
 
     if (!body.idPlayer1 || !body.idPlayer2 || !body.tournamentId || !body.winner || !Array.isArray(sets) || sets.length === 0) {
       return NextResponse.json({ message: 'Datos incompletos' }, { status: 400 });
+    }
+
+    const stage = body.stage ?? null;
+    if (stage !== null && !MATCH_STAGES.includes(stage)) {
+      return NextResponse.json({ message: 'La fase del partido es inválida' }, { status: 400 });
     }
 
     const setData = sets.map((set) => {
@@ -63,6 +70,7 @@ export async function POST(request: NextRequest) {
         player1: { connect: { id: body.idPlayer1 } },
         player2: { connect: { id: body.idPlayer2 } },
         winner: { connect: { id: body.winner } },
+        stage,
         sets: { create: setData },
       },
     });

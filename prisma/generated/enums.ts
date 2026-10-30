@@ -27,6 +27,17 @@ export const TournamentStatus = {
 export type TournamentStatus = (typeof TournamentStatus)[keyof typeof TournamentStatus]
 
 
+export const MatchStage = {
+  GROUP: 'GROUP',
+  ROUND_OF_16: 'ROUND_OF_16',
+  QUARTERFINAL: 'QUARTERFINAL',
+  SEMIFINAL: 'SEMIFINAL',
+  FINAL: 'FINAL'
+} as const
+
+export type MatchStage = (typeof MatchStage)[keyof typeof MatchStage]
+
+
 export const UserRole = {
   USER: 'USER',
   ADMIN: 'ADMIN'

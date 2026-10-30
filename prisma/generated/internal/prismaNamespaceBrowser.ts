@@ -17,8 +17,8 @@
 
 import * as runtime from "@prisma/client/runtime/index-browser"
 
-export type * from '../models'
-export type * from './prismaNamespace'
+export type * from '../models.ts'
+export type * from './prismaNamespace.ts'
 
 export const Decimal = runtime.Decimal
 
@@ -140,6 +140,7 @@ export type PlayerScalarFieldEnum = (typeof PlayerScalarFieldEnum)[keyof typeof 
 export const TournamentCategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  pointsPerMatchWin: 'pointsPerMatchWin',
   deletedAt: 'deletedAt'
 } as const
 
@@ -172,6 +173,7 @@ export const MatchScalarFieldEnum = {
   tournamentId: 'tournamentId',
   player1Id: 'player1Id',
   player2Id: 'player2Id',
+  stage: 'stage',
   deletedAt: 'deletedAt'
 } as const
 

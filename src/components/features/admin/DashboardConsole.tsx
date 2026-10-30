@@ -86,6 +86,7 @@ export default function DashboardConsole() {
   const [showTournamentTypeInfo, setShowTournamentTypeInfo] = useState(false);
   const [prepTournament, setPrepTournament] = useState<RecordItem | null>(null);
   const [matchSets, setMatchSets] = useState<MatchSetForm[]>([emptyMatchSet()]);
+  const [matchStage, setMatchStage] = useState('');
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
   const isSimple = resource !== 'tournaments' && resource !== 'matches';
   const newTournamentForm = () => ({ name: '', date: todayInputValue(), venueId: options.venues.find((venue) => venue.name === 'Kauri Club')?.id ?? '', surfaceId: options.surfaces.find((surface) => surface.name === 'Polvo de Ladrillo')?.id ?? '', role: 'USER' });
@@ -128,6 +129,7 @@ export default function DashboardConsole() {
     setEditing(null);
     setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER', gender: 'MALE' });
     setMatchSets([emptyMatchSet()]);
+    setMatchStage('');
     setMessage(null);
     load();
     if (resource === 'tournaments' || resource === 'matches' || resource === 'users' || resource === 'players') {
@@ -158,6 +160,9 @@ export default function DashboardConsole() {
 
   const visibleItems = useMemo(() => items.filter((item) => JSON.stringify(item).toLowerCase().includes(query.toLowerCase())), [items, query]);
   const relationOptions: Record<string, RecordItem[]> = { venueId: options.venues, surfaceId: options.surfaces, championId: options.players, tournamentCategoryId: options.categories, tournamentTypeId: options.types, tournamentId: options.tournaments, player1Id: options.players, player2Id: options.players, winnerId: options.players, playerId: options.players, userId: options.users };
+  const matchTournamentType = options.tournaments.find((tournament) => tournament.id === form.tournamentId)?.tournamentType as { name?: string } | null | undefined;
+  const matchHasPlayoffs = /playoff/i.test(matchTournamentType?.name ?? '');
+  const matchStageOptions = [['GROUP', 'Fase de grupos'], ['ROUND_OF_16', 'Octavos de final'], ['QUARTERFINAL', 'Cuartos de final'], ['SEMIFINAL', 'Semifinal'], ['FINAL', 'Final']];
   const selectedTournamentTypeName = options.types.find((t) => t.id === form.tournamentTypeId)?.name ?? '';
   const isRoundRobinPlusPlayoffs = String(selectedTournamentTypeName).trim().toLowerCase() === 'round robin + playoffs';
   const fields = isSimple ? simpleFields[resource as Exclude<Resource, 'tournaments' | 'matches'>] : resource === 'tournaments' ? ['name', 'date', 'venueId', 'surfaceId', 'tournamentCategoryId', 'tournamentTypeId', 'drawSize', ...(isRoundRobinPlusPlayoffs ? ['qualifiers'] : []), ...(editing ? ['championId'] : [])] : resource === 'matches' && !editing ? ['tournamentId', 'player1Id', 'player2Id'] : ['tournamentId', 'player1Id', 'player2Id', 'winnerId'];
@@ -168,6 +173,7 @@ export default function DashboardConsole() {
     setEditing(null);
     setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER', gender: 'MALE' });
     setMatchSets([emptyMatchSet()]);
+    setMatchStage('');
     setSelectedPlayerIds([]);
     setModalError(null);
     setIsFormModalOpen(true);
@@ -218,6 +224,7 @@ export default function DashboardConsole() {
     setPrepTournament(null);
     setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER', gender: 'MALE' });
     setMatchSets([emptyMatchSet()]);
+    setMatchStage('');
     setSelectedPlayerIds([]);
     setModalError(null);
   }
@@ -236,6 +243,10 @@ export default function DashboardConsole() {
     if (resource === 'matches' && !editing) {
       if (form.player1Id === form.player2Id) {
         setModalError('Jugador 1 y Jugador 2 deben ser distintos.');
+        return;
+      }
+      if (matchHasPlayoffs && !matchStage) {
+        setModalError('Elegí la fase del partido.');
         return;
       }
       const invalidSet = matchSets.find((set) => {
@@ -269,7 +280,7 @@ export default function DashboardConsole() {
         await requestJson('/api/add-match', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idPlayer1: form.player1Id, idPlayer2: form.player2Id, tournamentId: form.tournamentId, winner, sets }),
+          body: JSON.stringify({ idPlayer1: form.player1Id, idPlayer2: form.player2Id, tournamentId: form.tournamentId, winner, sets, stage: matchHasPlayoffs ? matchStage : null }),
         });
         setMessage({ type: 'success', text: 'Partido creado correctamente' });
         closeFormModal();
@@ -699,6 +710,20 @@ export default function DashboardConsole() {
                       )}
                     </div>
                   </div>
+                )}
+
+                {resource === 'matches' && !editing && matchHasPlayoffs && (
+                  <label className="field">
+                    <span>
+                      Fase <b aria-hidden="true"> *</b>
+                    </span>
+                    <select required value={matchStage} onChange={(event) => setMatchStage(event.target.value)}>
+                      <option value="">Seleccionar fase...</option>
+                      {matchStageOptions.map(([value, label]) => (
+                        <option key={value} value={value}>{label}</option>
+                      ))}
+                    </select>
+                  </label>
                 )}
 
                 {resource === 'matches' && !editing && (
