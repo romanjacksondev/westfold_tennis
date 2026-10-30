@@ -35,11 +35,15 @@ async function getTournaments(initialDate: Date, endDate: Date) {
           player1: {
             select: {
               name: true,
+              gender: true,
+              nickname: true,
             },
           },
           player2: {
             select: {
               name: true,
+              gender: true,
+              nickname: true,
             },
           },
           sets: {
@@ -83,11 +87,27 @@ export async function GET(req: NextRequest) {
     const tournaments = await getTournaments(initialDate, endDate);
     const playerPoints = calculatePlayerPoints(tournaments);
 
-    const entries = Object.entries(playerPoints);
-    entries.sort((a, b) => b[1].points - a[1].points);
-    const sortedArray = entries.map(([key, value]) => ({ key, value }));
+    const genderByName = new Map<string, 'MALE' | 'FEMALE'>();
+    const nicknameByName = new Map<string, string | null>();
+    for (const tournament of tournaments) {
+      for (const match of tournament.matches) {
+        genderByName.set(match.player1.name, match.player1.gender);
+        genderByName.set(match.player2.name, match.player2.gender);
+        nicknameByName.set(match.player1.name, match.player1.nickname);
+        nicknameByName.set(match.player2.name, match.player2.nickname);
+      }
+    }
 
-    return NextResponse.json(sortedArray, { status: 200 });
+    const toRanking = (gender: 'MALE' | 'FEMALE') =>
+      Object.entries(playerPoints)
+        .filter(([name]) => genderByName.get(name) === gender)
+        .sort((a, b) => b[1].points - a[1].points)
+        .map(([key, value]) => ({ key, nickname: nicknameByName.get(key) ?? null, value }));
+
+    return NextResponse.json(
+      { male: toRanking('MALE'), female: toRanking('FEMALE') },
+      { status: 200 },
+    );
   } catch (e) {
     console.error('Error in /api/leaderboard:', e);
     return NextResponse.json({ error: 'Error calculating leaderboard' }, { status: 500 });

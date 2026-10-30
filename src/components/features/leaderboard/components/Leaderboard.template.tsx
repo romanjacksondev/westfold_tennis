@@ -1,32 +1,160 @@
 'use client';
 import { Fragment, useState } from 'react';
-import { Spinner } from 'flowbite-react';
-import {
-  LuCalendar,
-  LuChevronDown,
-  LuChevronUp,
-  LuClock,
-  LuInfo,
-  LuTrophy,
-} from 'react-icons/lu';
+import { LuChevronDown, LuMedal, LuTrophy } from 'react-icons/lu';
 
 export type RankingMode = 'year' | 'calendar';
 
 export type LeaderboardEntry = {
   key: string;
+  nickname?: string | null;
   value: {
     points: number;
     breakdown: { tournament: string; points: number }[];
   };
 };
 
+export type LeaderboardData = {
+  male: LeaderboardEntry[];
+  female: LeaderboardEntry[];
+};
+
+type GenderTab = 'male' | 'female';
+
 interface LeaderboardTemplateProps {
-  leaderboard: LeaderboardEntry[];
+  leaderboard: LeaderboardData;
   rankingMode: RankingMode;
   setRankingMode: (mode: RankingMode) => void;
   loading: boolean;
   error: boolean;
 }
+
+const GENDER_OPTIONS: { value: GenderTab; label: string }[] = [
+  { value: 'male', label: 'Hombres' },
+  { value: 'female', label: 'Mujeres' },
+];
+
+const getInitials = (name: string) =>
+  name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join('');
+
+const Avatar = ({ entry, size }: { entry: LeaderboardEntry; size: 'lg' | 'md' | 'sm' }) => {
+  const [failed, setFailed] = useState(false);
+  const src = entry.nickname ? `/img/avatar/${entry.nickname}.jpeg` : null;
+
+  return (
+    <span className={`lb-avatar lb-avatar-${size}`}>
+      {src && !failed ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={src} alt="" onError={() => setFailed(true)} />
+      ) : (
+        getInitials(entry.key)
+      )}
+    </span>
+  );
+};
+
+const PODIUM_ORDER = [1, 0, 2];
+const PODIUM_LABELS = ['1º', '2º', '3º'];
+
+const Podium = ({ entries, periodLabel }: { entries: LeaderboardEntry[]; periodLabel: string }) => (
+  <div className="lb-podium" aria-label={`Podio ${periodLabel}`}>
+    {PODIUM_ORDER.map((position) => {
+      const entry = entries[position];
+      if (!entry) return <div key={position} className="lb-podium-slot lb-podium-empty" />;
+      return (
+        <div key={entry.key} className={`lb-podium-slot lb-podium-${position + 1}`}>
+          <span className="lb-podium-medal">
+            {position === 0 ? <LuTrophy /> : <LuMedal />}
+            {PODIUM_LABELS[position]}
+          </span>
+          <Avatar entry={entry} size={position === 0 ? 'lg' : 'md'} />
+          <strong className="lb-podium-name">{entry.key}</strong>
+          <span className="lb-podium-points">{entry.value.points} pts</span>
+          <span className="lb-podium-meta">{entry.value.breakdown.length} torneos</span>
+        </div>
+      );
+    })}
+  </div>
+);
+
+const RankingList = ({
+  entries,
+  offset,
+  maxPoints,
+  rankingMode,
+}: {
+  entries: LeaderboardEntry[];
+  offset: number;
+  maxPoints: number;
+  rankingMode: RankingMode;
+}) => {
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const breakdownLabel = rankingMode === 'year' ? 'los últimos 12 meses' : 'el año calendario';
+
+  return (
+    <ul className="lb-list">
+      {entries.map((entry, index) => {
+        const isExpanded = expanded === entry.key;
+        const width = maxPoints > 0 ? Math.max(4, (entry.value.points / maxPoints) * 100) : 0;
+        return (
+          <Fragment key={entry.key}>
+            <li>
+              <button
+                type="button"
+                className="lb-row"
+                aria-expanded={isExpanded}
+                onClick={() => setExpanded(isExpanded ? null : entry.key)}
+              >
+                <span className="lb-row-pos">{offset + index + 1}</span>
+                <Avatar entry={entry} size="sm" />
+                <span className="lb-row-main">
+                  <span className="lb-row-name">{entry.key}</span>
+                  <span className="lb-row-bar">
+                    <span style={{ width: `${width}%` }} />
+                  </span>
+                </span>
+                <span className="lb-row-tournaments">{entry.value.breakdown.length} torneos</span>
+                <span className="lb-row-points">{entry.value.points} pts</span>
+                <LuChevronDown className={`lb-row-chevron ${isExpanded ? 'open' : ''}`} />
+              </button>
+              {isExpanded && (
+                <div className="lb-breakdown">
+                  <p>
+                    Torneos computados en {breakdownLabel} ({entry.value.breakdown.length})
+                  </p>
+                  <div className="lb-chips">
+                    {entry.value.breakdown.map((item, itemIdx) => (
+                      <span key={`${item.tournament}-${itemIdx}`} className="lb-chip">
+                        {item.tournament} <b>+{item.points}</b>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </li>
+          </Fragment>
+        );
+      })}
+    </ul>
+  );
+};
+
+const Skeleton = () => (
+  <div className="lb-skeleton" aria-label="Cargando ranking..." role="status">
+    <div className="lb-skeleton-podium">
+      <span />
+      <span />
+      <span />
+    </div>
+    {[0, 1, 2].map((i) => (
+      <span key={i} className="lb-skeleton-row" />
+    ))}
+  </div>
+);
 
 const LeaderboardTemplate = ({
   leaderboard,
@@ -35,291 +163,80 @@ const LeaderboardTemplate = ({
   loading,
   error,
 }: LeaderboardTemplateProps) => {
-  const [expandedPlayer, setExpandedPlayer] = useState<string | null>(null);
-
-  const toggleExpand = (playerName: string) => {
-    setExpandedPlayer((prev) => (prev === playerName ? null : playerName));
-  };
-
-  const getPosBadgeClass = (index: number) => {
-    if (index === 0) return 'leaderboard-pos-badge leaderboard-pos-1';
-    if (index === 1) return 'leaderboard-pos-badge leaderboard-pos-2';
-    if (index === 2) return 'leaderboard-pos-badge leaderboard-pos-3';
-    return 'leaderboard-pos-badge leaderboard-pos-default';
-  };
+  const [gender, setGender] = useState<GenderTab>('male');
+  const entries = leaderboard[gender];
+  const rest = entries.slice(3);
+  const maxPoints = entries[0]?.value.points ?? 0;
+  const periodLabel = rankingMode === 'year' ? 'Últimos 12 meses' : 'Año calendario';
 
   return (
     <main className="leaderboard-page">
-      <header className="leaderboard-header">
-        <div>
-          <p className="eyebrow">Clasificación oficial</p>
-          <h1>Ranking</h1>
-          <p className="muted">Rendimiento y puntuación de los jugadores del circuito.</p>
-        </div>
-        <div className="status-pill">
-          <span />
-          {rankingMode === 'calendar' ? 'Año calendario (1/1 - 31/12)' : 'Últimos 12 meses'}
-        </div>
+      <header className="lb-header">
+        <p className="eyebrow">Clasificación oficial</p>
+        <h1>Ranking</h1>
+        <p className="muted">Rendimiento y puntuación de los jugadores del circuito.</p>
       </header>
 
-      {/* Tabs para alternar entre una tabla y la otra */}
-      <div className="leaderboard-tabs-container">
-        <div className="leaderboard-tabs" role="tablist" aria-label="Selector de tipo de ranking">
+      <div className="lb-controls">
+        <div className="lb-segmented" role="tablist" aria-label="Categoría">
+          {GENDER_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              role="tab"
+              aria-selected={gender === option.value}
+              className={gender === option.value ? 'active' : ''}
+              onClick={() => setGender(option.value)}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+        <div className="lb-period" role="tablist" aria-label="Período">
           <button
             type="button"
             role="tab"
             aria-selected={rankingMode === 'year'}
-            className={`leaderboard-tab-btn ${rankingMode === 'year' ? 'active' : ''}`}
-            onClick={() => {
-              setRankingMode('year');
-              setExpandedPlayer(null);
-            }}
+            className={rankingMode === 'year' ? 'active' : ''}
+            onClick={() => setRankingMode('year')}
           >
-            <LuClock className="w-4 h-4 shrink-0" />
-            <span>Últimos 12 meses</span>
+            12 meses
           </button>
           <button
             type="button"
             role="tab"
             aria-selected={rankingMode === 'calendar'}
-            className={`leaderboard-tab-btn ${rankingMode === 'calendar' ? 'active' : ''}`}
-            onClick={() => {
-              setRankingMode('calendar');
-              setExpandedPlayer(null);
-            }}
+            className={rankingMode === 'calendar' ? 'active' : ''}
+            onClick={() => setRankingMode('calendar')}
+            title="Del 1 de enero al 31 de diciembre"
           >
-            <LuCalendar className="w-4 h-4 shrink-0" />
-            <span>Año calendario (1/1 al 31/12)</span>
+            Año calendario
           </button>
         </div>
-
-        <p className="text-xs text-[#68756f] flex items-center justify-center gap-1.5 text-center">
-          <LuInfo className="w-3.5 h-3.5 shrink-0 text-[#31745d]" />
-          {rankingMode === 'year'
-            ? 'Ventana móvil acumulada de los últimos 365 días.'
-            : 'Puntos obtenidos exclusivamente dentro del año calendario en curso.'}
-        </p>
       </div>
 
-      <section className="leaderboard-panel">
-        <div className="panel-heading mb-4">
-          <div>
-            <p className="eyebrow">Posiciones</p>
-            <h2>
-              {rankingMode === 'year'
-                ? 'Ranking del Último Año'
-                : 'Ranking del Año Calendario'}
-            </h2>
-            <p className="text-sm text-[#68756f]">
-              {rankingMode === 'year'
-                ? 'Posiciones de los jugadores según los puntos acumulados en los últimos 12 meses.'
-                : 'Puntos obtenidos durante el año calendario actual (1 de enero al 31 de diciembre).'}
-            </p>
-          </div>
-        </div>
-
+      <section className="lb-content" key={`${gender}-${rankingMode}`}>
         {loading ? (
-          <div className="flex justify-center items-center py-16">
-            <Spinner size="xl" aria-label="Cargando ranking..." />
-          </div>
+          <Skeleton />
         ) : error ? (
-          <div className="empty-state py-12 text-center text-[#87928c]">
-            No se pudo cargar la información del ranking para este período.
-          </div>
-        ) : leaderboard.length === 0 ? (
-          <div className="empty-state py-12 text-center text-[#87928c]">
-            No hay torneos finalizados ni puntos registrados para este período.
-          </div>
-        ) : rankingMode === 'year' ? (
-          /* TABLA 1: ÚLTIMO AÑO (ROLLING 12 MESES) */
-          <div className="leaderboard-table-wrap">
-            <table
-              className="leaderboard-table"
-              aria-label="Tabla de posiciones de los últimos 12 meses"
-            >
-              <thead>
-                <tr>
-                  <th style={{ width: '80px' }}>Pos.</th>
-                  <th>Jugador</th>
-                  <th style={{ textAlign: 'right' }}>Torneos jugados</th>
-                  <th style={{ textAlign: 'right' }}>Puntos (12 meses)</th>
-                  <th style={{ width: '60px', textAlign: 'center' }}>Detalle</th>
-                </tr>
-              </thead>
-              <tbody>
-                {leaderboard.map((player, index) => {
-                  const isExpanded = expandedPlayer === player.key;
-                  return (
-                    <Fragment key={`year-${player.key}`}>
-                      <tr
-                        className="leaderboard-row-interactive"
-                        onClick={() => toggleExpand(player.key)}
-                        title="Clic para ver desglose de torneos"
-                      >
-                        <td className="leaderboard-position">
-                          <span className={getPosBadgeClass(index)}>
-                            {index === 0 ? (
-                              <LuTrophy className="w-3.5 h-3.5" />
-                            ) : (
-                              index + 1
-                            )}
-                          </span>
-                        </td>
-                        <td className="leaderboard-player font-semibold text-[#18231f]">
-                          {player.key}
-                        </td>
-                        <td style={{ textAlign: 'right' }}>
-                          <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#eef2ef] text-[#45534d]">
-                            {player.value.breakdown.length} torneos
-                          </span>
-                        </td>
-                        <td
-                          className="leaderboard-points"
-                          style={{ textAlign: 'right' }}
-                        >
-                          {player.value.points} pts
-                        </td>
-                        <td style={{ textAlign: 'center' }}>
-                          <button
-                            type="button"
-                            className="p-1 rounded text-[#68756f] hover:text-[#183b32]"
-                            aria-label={`Ver torneos de ${player.key}`}
-                          >
-                            {isExpanded ? (
-                              <LuChevronUp className="w-4 h-4" />
-                            ) : (
-                              <LuChevronDown className="w-4 h-4" />
-                            )}
-                          </button>
-                        </td>
-                      </tr>
-                      {isExpanded && (
-                        <tr className="leaderboard-breakdown-row">
-                          <td colSpan={5}>
-                            <div className="leaderboard-breakdown-box">
-                              <p className="text-xs font-bold text-[#45534d] uppercase tracking-wider mb-2">
-                                Torneos computados en los últimos 12 meses ({player.value.breakdown.length})
-                              </p>
-                              <div className="leaderboard-breakdown-grid">
-                                {player.value.breakdown.map((item, itemIdx) => (
-                                  <div
-                                    key={`b-year-${item.tournament}-${itemIdx}`}
-                                    className="leaderboard-breakdown-item"
-                                  >
-                                    <span className="font-medium text-[#18231f]">
-                                      {item.tournament}
-                                    </span>
-                                    <span className="font-bold text-[#31745d]">
-                                      +{item.points} pts
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </Fragment>
-                  );
-                })}
-              </tbody>
-            </table>
+          <div className="lb-empty">No se pudo cargar la información del ranking.</div>
+        ) : entries.length === 0 ? (
+          <div className="lb-empty">
+            <LuTrophy />
+            <span>Todavía no hay puntos registrados para este período.</span>
           </div>
         ) : (
-          /* TABLA 2: AÑO CALENDARIO (1/1 AL 31/12) */
-          <div className="leaderboard-table-wrap">
-            <table
-              className="leaderboard-table"
-              aria-label="Tabla de posiciones del año calendario"
-            >
-              <thead>
-                <tr>
-                  <th style={{ width: '80px' }}>Pos.</th>
-                  <th>Jugador</th>
-                  <th style={{ textAlign: 'right' }}>Torneos jugados</th>
-                  <th style={{ textAlign: 'right' }}>Puntos (Año calendario)</th>
-                  <th style={{ width: '60px', textAlign: 'center' }}>Detalle</th>
-                </tr>
-              </thead>
-              <tbody>
-                {leaderboard.map((player, index) => {
-                  const isExpanded = expandedPlayer === player.key;
-                  return (
-                    <Fragment key={`cal-${player.key}`}>
-                      <tr
-                        className="leaderboard-row-interactive"
-                        onClick={() => toggleExpand(player.key)}
-                        title="Clic para ver desglose de torneos"
-                      >
-                        <td className="leaderboard-position">
-                          <span className={getPosBadgeClass(index)}>
-                            {index === 0 ? (
-                              <LuTrophy className="w-3.5 h-3.5" />
-                            ) : (
-                              index + 1
-                            )}
-                          </span>
-                        </td>
-                        <td className="leaderboard-player font-semibold text-[#18231f]">
-                          {player.key}
-                        </td>
-                        <td style={{ textAlign: 'right' }}>
-                          <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[#eef2ef] text-[#45534d]">
-                            {player.value.breakdown.length} torneos
-                          </span>
-                        </td>
-                        <td
-                          className="leaderboard-points"
-                          style={{ textAlign: 'right' }}
-                        >
-                          {player.value.points} pts
-                        </td>
-                        <td style={{ textAlign: 'center' }}>
-                          <button
-                            type="button"
-                            className="p-1 rounded text-[#68756f] hover:text-[#183b32]"
-                            aria-label={`Ver torneos de ${player.key}`}
-                          >
-                            {isExpanded ? (
-                              <LuChevronUp className="w-4 h-4" />
-                            ) : (
-                              <LuChevronDown className="w-4 h-4" />
-                            )}
-                          </button>
-                        </td>
-                      </tr>
-                      {isExpanded && (
-                        <tr className="leaderboard-breakdown-row">
-                          <td colSpan={5}>
-                            <div className="leaderboard-breakdown-box">
-                              <p className="text-xs font-bold text-[#45534d] uppercase tracking-wider mb-2">
-                                Torneos computados en el año calendario ({player.value.breakdown.length})
-                              </p>
-                              <div className="leaderboard-breakdown-grid">
-                                {player.value.breakdown.map((item, itemIdx) => (
-                                  <div
-                                    key={`b-cal-${item.tournament}-${itemIdx}`}
-                                    className="leaderboard-breakdown-item"
-                                  >
-                                    <span className="font-medium text-[#18231f]">
-                                      {item.tournament}
-                                    </span>
-                                    <span className="font-bold text-[#31745d]">
-                                      +{item.points} pts
-                                    </span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </Fragment>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <>
+            <Podium entries={entries} periodLabel={periodLabel} />
+            {rest.length > 0 && (
+              <RankingList
+                entries={rest}
+                offset={3}
+                maxPoints={maxPoints}
+                rankingMode={rankingMode}
+              />
+            )}
+          </>
         )}
       </section>
     </main>

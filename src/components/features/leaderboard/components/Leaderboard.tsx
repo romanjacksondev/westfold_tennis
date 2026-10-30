@@ -1,10 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
-import LeaderboardTemplate, { type LeaderboardEntry, type RankingMode } from './Leaderboard.template';
+import LeaderboardTemplate, { type LeaderboardData, type RankingMode } from './Leaderboard.template';
 
 const Leaderboard = () => {
   const [rankingMode, setRankingMode] = useState<RankingMode>('year');
-  const [cache, setCache] = useState<Partial<Record<RankingMode, LeaderboardEntry[]>>>({});
+  const [cache, setCache] = useState<Partial<Record<RankingMode, LeaderboardData>>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
@@ -28,7 +28,10 @@ const Leaderboard = () => {
         if (!isCancelled) {
           setCache((prev) => ({
             ...prev,
-            [rankingMode]: Array.isArray(data) ? (data as LeaderboardEntry[]) : [],
+            [rankingMode]: {
+              male: Array.isArray(data?.male) ? data.male : [],
+              female: Array.isArray(data?.female) ? data.female : [],
+            },
           }));
           setLoading(false);
         }
@@ -46,7 +49,7 @@ const Leaderboard = () => {
     };
   }, [rankingMode]);
 
-  const currentLeaderboard = cache[rankingMode] ?? [];
+  const currentLeaderboard = cache[rankingMode] ?? { male: [], female: [] };
 
   return (
     <LeaderboardTemplate

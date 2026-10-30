@@ -33,6 +33,11 @@ model Tournament {
   deletedAt            DateTime?
 }
 
+enum Gender {
+  MALE
+  FEMALE
+}
+
 enum TournamentStatus {
   PREPARATION
   IN_PROGRESS
@@ -61,6 +66,7 @@ model Player {
   name           String
   nickname       String?
   lastname       String?
+  gender         Gender
   mail           String?
   phone          String?
   games          Game[]

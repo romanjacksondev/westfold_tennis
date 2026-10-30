@@ -1,6 +1,7 @@
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSyncExternalStore } from 'react';
 import { IconType } from 'react-icons';
 import {
   LuChartBar,
@@ -64,9 +65,15 @@ const SidebarTemplate = ({ handleClose }: SidebarInterface) => {
   ];
 
   const { data: session, status } = useSession();
+  // False during SSR and hydration so the first client render matches the server HTML.
+  const hydrated = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
   const userPlayerId = session?.user?.playerId;
   const items: SidebarItem[] =
-    status === 'loading'
+    !hydrated || status === 'loading'
       ? []
       : session
         ? [

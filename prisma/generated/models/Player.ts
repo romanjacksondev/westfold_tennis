@@ -29,6 +29,7 @@ export type PlayerMinAggregateOutputType = {
   name: string | null
   nickname: string | null
   lastname: string | null
+  gender: $Enums.Gender | null
   mail: string | null
   phone: string | null
   deletedAt: Date | null
@@ -40,6 +41,7 @@ export type PlayerMaxAggregateOutputType = {
   name: string | null
   nickname: string | null
   lastname: string | null
+  gender: $Enums.Gender | null
   mail: string | null
   phone: string | null
   deletedAt: Date | null
@@ -51,6 +53,7 @@ export type PlayerCountAggregateOutputType = {
   name: number
   nickname: number
   lastname: number
+  gender: number
   mail: number
   phone: number
   deletedAt: number
@@ -64,6 +67,7 @@ export type PlayerMinAggregateInputType = {
   name?: true
   nickname?: true
   lastname?: true
+  gender?: true
   mail?: true
   phone?: true
   deletedAt?: true
@@ -75,6 +79,7 @@ export type PlayerMaxAggregateInputType = {
   name?: true
   nickname?: true
   lastname?: true
+  gender?: true
   mail?: true
   phone?: true
   deletedAt?: true
@@ -86,6 +91,7 @@ export type PlayerCountAggregateInputType = {
   name?: true
   nickname?: true
   lastname?: true
+  gender?: true
   mail?: true
   phone?: true
   deletedAt?: true
@@ -170,6 +176,7 @@ export type PlayerGroupByOutputType = {
   name: string
   nickname: string | null
   lastname: string | null
+  gender: $Enums.Gender
   mail: string | null
   phone: string | null
   deletedAt: Date | null
@@ -202,6 +209,7 @@ export type PlayerWhereInput = {
   name?: Prisma.StringFilter<"Player"> | string
   nickname?: Prisma.StringNullableFilter<"Player"> | string | null
   lastname?: Prisma.StringNullableFilter<"Player"> | string | null
+  gender?: Prisma.EnumGenderFilter<"Player"> | $Enums.Gender
   mail?: Prisma.StringNullableFilter<"Player"> | string | null
   phone?: Prisma.StringNullableFilter<"Player"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Player"> | Date | string | null
@@ -221,6 +229,7 @@ export type PlayerOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   nickname?: Prisma.SortOrderInput | Prisma.SortOrder
   lastname?: Prisma.SortOrderInput | Prisma.SortOrder
+  gender?: Prisma.SortOrder
   mail?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -244,6 +253,7 @@ export type PlayerWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"Player"> | string
   nickname?: Prisma.StringNullableFilter<"Player"> | string | null
   lastname?: Prisma.StringNullableFilter<"Player"> | string | null
+  gender?: Prisma.EnumGenderFilter<"Player"> | $Enums.Gender
   mail?: Prisma.StringNullableFilter<"Player"> | string | null
   phone?: Prisma.StringNullableFilter<"Player"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Player"> | Date | string | null
@@ -262,6 +272,7 @@ export type PlayerOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   nickname?: Prisma.SortOrderInput | Prisma.SortOrder
   lastname?: Prisma.SortOrderInput | Prisma.SortOrder
+  gender?: Prisma.SortOrder
   mail?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -279,6 +290,7 @@ export type PlayerScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"Player"> | string
   nickname?: Prisma.StringNullableWithAggregatesFilter<"Player"> | string | null
   lastname?: Prisma.StringNullableWithAggregatesFilter<"Player"> | string | null
+  gender?: Prisma.EnumGenderWithAggregatesFilter<"Player"> | $Enums.Gender
   mail?: Prisma.StringNullableWithAggregatesFilter<"Player"> | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"Player"> | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Player"> | Date | string | null
@@ -290,6 +302,7 @@ export type PlayerCreateInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -308,6 +321,7 @@ export type PlayerUncheckedCreateInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -326,6 +340,7 @@ export type PlayerUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -344,6 +359,7 @@ export type PlayerUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -362,6 +378,7 @@ export type PlayerCreateManyInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -373,6 +390,7 @@ export type PlayerUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -383,6 +401,7 @@ export type PlayerUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -409,6 +428,7 @@ export type PlayerCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   nickname?: Prisma.SortOrder
   lastname?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
   mail?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -420,6 +440,7 @@ export type PlayerMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   nickname?: Prisma.SortOrder
   lastname?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
   mail?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -431,6 +452,7 @@ export type PlayerMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   nickname?: Prisma.SortOrder
   lastname?: Prisma.SortOrder
+  gender?: Prisma.SortOrder
   mail?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -494,6 +516,10 @@ export type PlayerUncheckedUpdateManyWithoutTournamentsNestedInput = {
   update?: Prisma.PlayerUpdateWithWhereUniqueWithoutTournamentsInput | Prisma.PlayerUpdateWithWhereUniqueWithoutTournamentsInput[]
   updateMany?: Prisma.PlayerUpdateManyWithWhereWithoutTournamentsInput | Prisma.PlayerUpdateManyWithWhereWithoutTournamentsInput[]
   deleteMany?: Prisma.PlayerScalarWhereInput | Prisma.PlayerScalarWhereInput[]
+}
+
+export type EnumGenderFieldUpdateOperationsInput = {
+  set?: $Enums.Gender
 }
 
 export type PlayerCreateNestedOneWithoutWinnerMatchesInput = {
@@ -603,6 +629,7 @@ export type PlayerCreateWithoutWonTournamentsInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -620,6 +647,7 @@ export type PlayerUncheckedCreateWithoutWonTournamentsInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -642,6 +670,7 @@ export type PlayerCreateWithoutTournamentsInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -659,6 +688,7 @@ export type PlayerUncheckedCreateWithoutTournamentsInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -692,6 +722,7 @@ export type PlayerUpdateWithoutWonTournamentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -709,6 +740,7 @@ export type PlayerUncheckedUpdateWithoutWonTournamentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -745,6 +777,7 @@ export type PlayerScalarWhereInput = {
   name?: Prisma.StringFilter<"Player"> | string
   nickname?: Prisma.StringNullableFilter<"Player"> | string | null
   lastname?: Prisma.StringNullableFilter<"Player"> | string | null
+  gender?: Prisma.EnumGenderFilter<"Player"> | $Enums.Gender
   mail?: Prisma.StringNullableFilter<"Player"> | string | null
   phone?: Prisma.StringNullableFilter<"Player"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Player"> | Date | string | null
@@ -756,6 +789,7 @@ export type PlayerCreateWithoutWinnerMatchesInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -773,6 +807,7 @@ export type PlayerUncheckedCreateWithoutWinnerMatchesInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -795,6 +830,7 @@ export type PlayerCreateWithoutPlayer1MatchesInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -812,6 +848,7 @@ export type PlayerUncheckedCreateWithoutPlayer1MatchesInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -834,6 +871,7 @@ export type PlayerCreateWithoutPlayer2MatchesInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -851,6 +889,7 @@ export type PlayerUncheckedCreateWithoutPlayer2MatchesInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -884,6 +923,7 @@ export type PlayerUpdateWithoutWinnerMatchesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -901,6 +941,7 @@ export type PlayerUncheckedUpdateWithoutWinnerMatchesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -929,6 +970,7 @@ export type PlayerUpdateWithoutPlayer1MatchesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -946,6 +988,7 @@ export type PlayerUncheckedUpdateWithoutPlayer1MatchesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -974,6 +1017,7 @@ export type PlayerUpdateWithoutPlayer2MatchesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -991,6 +1035,7 @@ export type PlayerUncheckedUpdateWithoutPlayer2MatchesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1008,6 +1053,7 @@ export type PlayerCreateWithoutSetsInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -1025,6 +1071,7 @@ export type PlayerUncheckedCreateWithoutSetsInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -1058,6 +1105,7 @@ export type PlayerUpdateWithoutSetsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1075,6 +1123,7 @@ export type PlayerUncheckedUpdateWithoutSetsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1092,6 +1141,7 @@ export type PlayerCreateWithoutGamesInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -1109,6 +1159,7 @@ export type PlayerUncheckedCreateWithoutGamesInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -1142,6 +1193,7 @@ export type PlayerUpdateWithoutGamesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1159,6 +1211,7 @@ export type PlayerUncheckedUpdateWithoutGamesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1176,6 +1229,7 @@ export type PlayerCreateWithoutUserInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -1193,6 +1247,7 @@ export type PlayerUncheckedCreateWithoutUserInput = {
   name: string
   nickname?: string | null
   lastname?: string | null
+  gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
   deletedAt?: Date | string | null
@@ -1226,6 +1281,7 @@ export type PlayerUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1243,6 +1299,7 @@ export type PlayerUncheckedUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1260,6 +1317,7 @@ export type PlayerUpdateWithoutTournamentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1277,6 +1335,7 @@ export type PlayerUncheckedUpdateWithoutTournamentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1294,6 +1353,7 @@ export type PlayerUncheckedUpdateManyWithoutTournamentsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1390,6 +1450,7 @@ export type PlayerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name?: boolean
   nickname?: boolean
   lastname?: boolean
+  gender?: boolean
   mail?: boolean
   phone?: boolean
   deletedAt?: boolean
@@ -1410,6 +1471,7 @@ export type PlayerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   name?: boolean
   nickname?: boolean
   lastname?: boolean
+  gender?: boolean
   mail?: boolean
   phone?: boolean
   deletedAt?: boolean
@@ -1422,6 +1484,7 @@ export type PlayerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   name?: boolean
   nickname?: boolean
   lastname?: boolean
+  gender?: boolean
   mail?: boolean
   phone?: boolean
   deletedAt?: boolean
@@ -1434,13 +1497,14 @@ export type PlayerSelectScalar = {
   name?: boolean
   nickname?: boolean
   lastname?: boolean
+  gender?: boolean
   mail?: boolean
   phone?: boolean
   deletedAt?: boolean
   userId?: boolean
 }
 
-export type PlayerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "nickname" | "lastname" | "mail" | "phone" | "deletedAt" | "userId", ExtArgs["result"]["player"]>
+export type PlayerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "nickname" | "lastname" | "gender" | "mail" | "phone" | "deletedAt" | "userId", ExtArgs["result"]["player"]>
 export type PlayerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   games?: boolean | Prisma.Player$gamesArgs<ExtArgs>
   sets?: boolean | Prisma.Player$setsArgs<ExtArgs>
@@ -1476,6 +1540,7 @@ export type $PlayerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     name: string
     nickname: string | null
     lastname: string | null
+    gender: $Enums.Gender
     mail: string | null
     phone: string | null
     deletedAt: Date | null
@@ -1915,6 +1980,7 @@ export interface PlayerFieldRefs {
   readonly name: Prisma.FieldRef<"Player", 'String'>
   readonly nickname: Prisma.FieldRef<"Player", 'String'>
   readonly lastname: Prisma.FieldRef<"Player", 'String'>
+  readonly gender: Prisma.FieldRef<"Player", 'Gender'>
   readonly mail: Prisma.FieldRef<"Player", 'String'>
   readonly phone: Prisma.FieldRef<"Player", 'String'>
   readonly deletedAt: Prisma.FieldRef<"Player", 'DateTime'>

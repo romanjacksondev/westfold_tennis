@@ -2,6 +2,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import 'dotenv/config';
 import { env } from 'prisma/config';
 import { PrismaClient } from './generated/client';
+import type { Gender } from './generated/client';
 
 const adapter = new PrismaPg({ connectionString: env('DATABASE_URL') });
 const prisma = new PrismaClient({ adapter });
@@ -263,6 +264,7 @@ async function main() {
         id: 'cm0qzigha0001wrtos5fhqyb6',
         name: 'Roman',
         lastname: 'Jackson',
+        gender: 'MALE',
         mail: 'roman@example.com',
         nickname: 'Topspin',
         phone: '123987',
@@ -271,6 +273,7 @@ async function main() {
         id: 'cm0sd8l1q001ywrtoeoi30h1n',
         name: 'Fernando',
         lastname: 'Miguel',
+        gender: 'MALE',
         mail: 'fernando@example.com',
         nickname: 'Rofer',
         phone: '283762',
@@ -279,6 +282,7 @@ async function main() {
         id: 'cm0r674pj0004wrtoz34ggp0q',
         name: 'Alejandro',
         lastname: 'Valencia',
+        gender: 'MALE',
         mail: 'alejandro@example.com',
         nickname: 'El Comandante',
         phone: '236876',
@@ -287,6 +291,7 @@ async function main() {
         id: 'cm0sd8wy8001zwrtorr66qea9',
         name: 'Rodolfo',
         lastname: 'Rodriguez',
+        gender: 'MALE',
         mail: 'rodolfo@example.com',
         nickname: 'Fettel',
         phone: '9878123',
@@ -5022,6 +5027,115 @@ async function main() {
     ],
     skipDuplicates: true,
   });
+
+  await seedDemoLeaderboard();
+}
+
+type DemoPlayer = { id: string; name: string; lastname: string; nickname: string; gender: Gender; mail: string };
+
+const DEMO_VENUE_ID = 'cm0qv1a620000j11d9xy8jkhu';
+const DEMO_SURFACE_ID = 'cm0qwm6ms000ivrlw8agewmcl';
+const DEMO_CATEGORIES = [
+  'cm0qwclkr0007vrlwur23q9zi', // ATP 250
+  'cm0qwclkr0008vrlwu3y61kg2', // ATP 500
+  'cm0qw9bgc0000vrlwjpboyw9y', // Master 1000
+];
+
+// Existing seed players, ordered from strongest to weakest for the demo results.
+const DEMO_MALE_IDS = [
+  'cm0r674pj0004wrtoz34ggp0q',
+  'cm0sd8l1q001ywrtoeoi30h1n',
+  'cm0qzigha0001wrtos5fhqyb6',
+  'cm0sd8wy8001zwrtorr66qea9',
+  'demo-player-male-matias',
+  'demo-player-male-lucas',
+];
+const DEMO_FEMALE_IDS = [
+  'demo-player-female-sofia',
+  'demo-player-female-valentina',
+  'demo-player-female-camila',
+  'demo-player-female-lucia',
+  'demo-player-female-martina',
+  'demo-player-female-julieta',
+];
+
+const DEMO_NEW_PLAYERS: DemoPlayer[] = [
+  { id: 'demo-player-male-matias', name: 'Matías', lastname: 'Fernández', nickname: 'Mati', gender: 'MALE', mail: 'matias.demo@example.com' },
+  { id: 'demo-player-male-lucas', name: 'Lucas', lastname: 'Gómez', nickname: 'Luki', gender: 'MALE', mail: 'lucas.demo@example.com' },
+  { id: 'demo-player-female-sofia', name: 'Sofía', lastname: 'Martínez', nickname: 'Sofi', gender: 'FEMALE', mail: 'sofia.demo@example.com' },
+  { id: 'demo-player-female-valentina', name: 'Valentina', lastname: 'López', nickname: 'Vale', gender: 'FEMALE', mail: 'valentina.demo@example.com' },
+  { id: 'demo-player-female-camila', name: 'Camila', lastname: 'Torres', nickname: 'Cami', gender: 'FEMALE', mail: 'camila.demo@example.com' },
+  { id: 'demo-player-female-lucia', name: 'Lucía', lastname: 'Romero', nickname: 'Lu', gender: 'FEMALE', mail: 'lucia.demo@example.com' },
+  { id: 'demo-player-female-martina', name: 'Martina', lastname: 'Díaz', nickname: 'Marti', gender: 'FEMALE', mail: 'martina.demo@example.com' },
+  { id: 'demo-player-female-julieta', name: 'Julieta', lastname: 'Ramos', nickname: 'Juli', gender: 'FEMALE', mail: 'julieta.demo@example.com' },
+];
+
+// Days before "now" for each demo tournament, so the data always falls inside the ranking windows.
+const DEMO_TOURNAMENT_OFFSETS_DAYS = [10, 40, 80, 130, 200, 320];
+
+// Rotates the strength order a little per tournament so the ranking is not identical in each one.
+function demoOrder(ids: string[], tournamentIndex: number) {
+  const order = [...ids];
+  const swap = tournamentIndex % (order.length - 1);
+  [order[swap], order[swap + 1]] = [order[swap + 1], order[swap]];
+  return order;
+}
+
+async function seedDemoLeaderboard() {
+  await prisma.player.createMany({
+    data: DEMO_NEW_PLAYERS.map((player) => ({ ...player, phone: '555000' })),
+    skipDuplicates: true,
+  });
+
+  const matches: { id: string; winnerId: string; tournamentId: string; player1Id: string; player2Id: string }[] = [];
+  const sets: { id: string; winnerId: string; matchId: string }[] = [];
+  const games: { id: string; winnerId: string; setId: string }[] = [];
+
+  const groups = [
+    { key: 'male', label: 'Masculino', ids: DEMO_MALE_IDS },
+    { key: 'female', label: 'Femenino', ids: DEMO_FEMALE_IDS },
+  ];
+
+  for (const group of groups) {
+    for (let t = 0; t < DEMO_TOURNAMENT_OFFSETS_DAYS.length; t++) {
+      const date = new Date();
+      date.setUTCHours(0, 0, 0, 0);
+      date.setUTCDate(date.getUTCDate() - DEMO_TOURNAMENT_OFFSETS_DAYS[t] - (group.key === 'female' ? 3 : 0));
+
+      const order = demoOrder(group.ids, t);
+      const tournamentId = `demo-tournament-${group.key}-${t + 1}`;
+      const data = {
+        name: `Demo ${group.label} ${t + 1}`,
+        venueId: DEMO_VENUE_ID,
+        surfaceId: DEMO_SURFACE_ID,
+        tournamentCategoryId: DEMO_CATEGORIES[t % DEMO_CATEGORIES.length],
+        championId: order[0],
+        date,
+        finishedAt: date,
+        status: 'FINISHED' as const,
+        deletedAt: null,
+      };
+      // Upsert so dates are refreshed relative to the day the seed runs.
+      await prisma.tournament.upsert({ where: { id: tournamentId }, create: { id: tournamentId, ...data }, update: data });
+
+      // Round robin: the better ranked player always wins.
+      for (let i = 0; i < order.length; i++) {
+        for (let j = i + 1; j < order.length; j++) {
+          const matchId = `demo-match-${group.key}-${t + 1}-${i}-${j}`;
+          const setId = `${matchId}-s1`;
+          matches.push({ id: matchId, winnerId: order[i], tournamentId, player1Id: order[i], player2Id: order[j] });
+          sets.push({ id: setId, winnerId: order[i], matchId });
+          const loserGames = (i + j) % 5;
+          for (let g = 0; g < 6; g++) games.push({ id: `${setId}-w${g}`, winnerId: order[i], setId });
+          for (let g = 0; g < loserGames; g++) games.push({ id: `${setId}-l${g}`, winnerId: order[j], setId });
+        }
+      }
+    }
+  }
+
+  await prisma.match.createMany({ data: matches, skipDuplicates: true });
+  await prisma.set.createMany({ data: sets, skipDuplicates: true });
+  await prisma.game.createMany({ data: games, skipDuplicates: true });
 }
 
 main()

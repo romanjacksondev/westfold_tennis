@@ -125,6 +125,7 @@ export const PlayerScalarFieldEnum = {
   name: 'name',
   nickname: 'nickname',
   lastname: 'lastname',
+  gender: 'gender',
   mail: 'mail',
   phone: 'phone',
   deletedAt: 'deletedAt',

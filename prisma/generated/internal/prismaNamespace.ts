@@ -1325,6 +1325,7 @@ export const PlayerScalarFieldEnum = {
   name: 'name',
   nickname: 'nickname',
   lastname: 'lastname',
+  gender: 'gender',
   mail: 'mail',
   phone: 'phone',
   deletedAt: 'deletedAt',
@@ -1495,6 +1496,20 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Gender'
+ */
+export type EnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender'>
+    
+
+
+/**
+ * Reference to a field of type 'Gender[]'
+ */
+export type ListEnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender[]'>
     
 
 

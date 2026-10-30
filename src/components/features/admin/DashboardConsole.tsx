@@ -34,7 +34,7 @@ const resourceInfo: Record<Resource, { singular: string; plural: string; newBtn:
 };
 
 const simpleFields: Record<Exclude<Resource, 'tournaments' | 'matches'>, string[]> = {
-  players: ['name', 'nickname', 'lastname', 'mail', 'phone', 'userId'],
+  players: ['name', 'nickname', 'lastname', 'gender', 'mail', 'phone', 'userId'],
   venues: ['name', 'phone', 'address'],
   surfaces: ['name'],
   'tournament-types': ['name'],
@@ -42,7 +42,7 @@ const simpleFields: Record<Exclude<Resource, 'tournaments' | 'matches'>, string[
   users: ['name', 'email', 'role', 'password', 'playerId'],
 };
 
-const labels: Record<string, string> = { name: 'Nombre', nickname: 'Apodo', lastname: 'Apellido', mail: 'Email de contacto', email: 'Email de acceso', phone: 'Teléfono', address: 'Dirección', date: 'Fecha', venueId: 'Sede', surfaceId: 'Superficie', championId: 'Campeón', tournamentCategoryId: 'Categoría', tournamentTypeId: 'Tipo', tournamentId: 'Torneo', player1Id: 'Jugador 1', player2Id: 'Jugador 2', winnerId: 'Ganador', role: 'Rol', password: 'Contraseña', status: 'Estado', drawSize: 'Tamaño del cuadro', qualifiers: 'Clasificados a playoffs', userId: 'Cuenta de usuario', playerId: 'Perfil de jugador' };
+const labels: Record<string, string> = { name: 'Nombre', nickname: 'Apodo', lastname: 'Apellido', mail: 'Email de contacto', email: 'Email de acceso', phone: 'Teléfono', address: 'Dirección', date: 'Fecha', venueId: 'Sede', surfaceId: 'Superficie', championId: 'Campeón', tournamentCategoryId: 'Categoría', tournamentTypeId: 'Tipo', tournamentId: 'Torneo', player1Id: 'Jugador 1', player2Id: 'Jugador 2', winnerId: 'Ganador', role: 'Rol', gender: 'Género', password: 'Contraseña', status: 'Estado', drawSize: 'Tamaño del cuadro', qualifiers: 'Clasificados a playoffs', userId: 'Cuenta de usuario', playerId: 'Perfil de jugador' };
 const tournamentStatusLabels: Record<string, string> = { PREPARATION: 'En preparación', IN_PROGRESS: 'En curso', FINISHED: 'Terminado', CANCELLED: 'Cancelado' };
 const tournamentTypeInfo: Record<string, { description: string; rounds: string[] }> = {
   'Round Robin': { description: 'Todos los jugadores se enfrentan entre sí. La tabla final define las posiciones.', rounds: ['Jugador 1 vs Jugador 2', 'Jugador 1 vs Jugador 3', 'Tabla de posiciones'] },
@@ -73,7 +73,7 @@ export default function DashboardConsole() {
   const [resource, setResource] = useState<Resource>('tournaments');
   const [items, setItems] = useState<RecordItem[]>([]);
   const [editing, setEditing] = useState<RecordItem | null>(null);
-  const [form, setForm] = useState<Record<string, string>>({ name: '', role: 'USER' });
+  const [form, setForm] = useState<Record<string, string>>({ name: '', role: 'USER', gender: 'MALE' });
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [unifying, setUnifying] = useState(false);
@@ -125,7 +125,7 @@ export default function DashboardConsole() {
     setIsFormModalOpen(false);
     setModalError(null);
     setEditing(null);
-    setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER' });
+    setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER', gender: 'MALE' });
     setMatchSets([emptyMatchSet()]);
     setMessage(null);
     load();
@@ -165,7 +165,7 @@ export default function DashboardConsole() {
 
   function openCreateModal() {
     setEditing(null);
-    setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER' });
+    setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER', gender: 'MALE' });
     setMatchSets([emptyMatchSet()]);
     setSelectedPlayerIds([]);
     setModalError(null);
@@ -215,7 +215,7 @@ export default function DashboardConsole() {
   function resetForm() {
     setEditing(null);
     setPrepTournament(null);
-    setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER' });
+    setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER', gender: 'MALE' });
     setMatchSets([emptyMatchSet()]);
     setSelectedPlayerIds([]);
     setModalError(null);
@@ -544,7 +544,16 @@ export default function DashboardConsole() {
                         </button>
                       )}
                     </span>
-                    {field === 'role' ? (
+                    {field === 'gender' ? (
+                      <select
+                        required
+                        value={form[field] ?? 'MALE'}
+                        onChange={(event) => setForm((current) => ({ ...current, [field]: event.target.value }))}
+                      >
+                        <option value="MALE">Hombre</option>
+                        <option value="FEMALE">Mujer</option>
+                      </select>
+                    ) : field === 'role' ? (
                       <select
                         required
                         value={form[field] ?? 'USER'}
