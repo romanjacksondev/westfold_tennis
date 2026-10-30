@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { LuArrowRightLeft, LuHistory, LuSwords, LuUsers } from 'react-icons/lu';
 
 export interface H2HRecord {
@@ -8,16 +8,38 @@ export interface H2HRecord {
   lost: Record<string, number>;
 }
 
+const MAX_MATRIX_PLAYERS = 5;
+
 interface H2HProps {
   h2h?: Record<string, H2HRecord>;
   onNavigateToHistory?: (player1Name: string, player2Name: string) => void;
+  currentPlayerName?: string | null;
 }
 
-const H2H = ({ h2h = {}, onNavigateToHistory }: H2HProps) => {
+const H2H = ({ h2h = {}, onNavigateToHistory, currentPlayerName }: H2HProps) => {
   const jugadores = Object.keys(h2h).sort();
 
   const [playerA, setPlayerA] = useState<string>(() => jugadores[0] || '');
   const [playerB, setPlayerB] = useState<string>(() => (jugadores.length > 1 ? jugadores[1] : jugadores[0] || ''));
+  const [matrixPicks, setMatrixPicks] = useState<string[] | null>(null);
+
+  // El jugador con sesión iniciada siempre está en la tabla; el resto, por defecto, son los que más partidos disputaron.
+  const pinnedPlayer = currentPlayerName && jugadores.includes(currentPlayerName) ? currentPlayerName : null;
+  const defaultMatrixPlayers = useMemo(() => {
+    const played = (name: string) =>
+      Object.values(h2h[name]?.won ?? {}).reduce((sum, n) => sum + n, 0) + Object.values(h2h[name]?.lost ?? {}).reduce((sum, n) => sum + n, 0);
+    return [...jugadores]
+      .filter((name) => name !== pinnedPlayer)
+      .sort((a, b) => played(b) - played(a) || a.localeCompare(b))
+      .slice(0, MAX_MATRIX_PLAYERS - (pinnedPlayer ? 1 : 0));
+  }, [h2h, jugadores, pinnedPlayer]);
+  const pickedOthers = (matrixPicks ?? defaultMatrixPlayers).filter((name) => name !== pinnedPlayer);
+  const matrixPlayers = [...(pinnedPlayer ? [pinnedPlayer] : []), ...jugadores.filter((name) => pickedOthers.includes(name))];
+  const toggleMatrixPlayer = (name: string) => {
+    if (name === pinnedPlayer) return;
+    if (pickedOthers.includes(name)) setMatrixPicks(pickedOthers.filter((n) => n !== name));
+    else if (matrixPlayers.length < MAX_MATRIX_PLAYERS) setMatrixPicks([...pickedOthers, name]);
+  };
 
   if (!h2h || jugadores.length === 0) {
     return (
@@ -156,20 +178,48 @@ const H2H = ({ h2h = {}, onNavigateToHistory }: H2HProps) => {
       <div className="stats-matrix-wrap">
         <div className="stats-matrix-header">
           <div>
-            <p className="eyebrow">Matriz Histórica</p>
-            <h3 className="stats-matrix-title">Frente a Frente Completo</h3>
+            <p className="eyebrow">Todos contra todos</p>
+            <h3 className="stats-matrix-title">Resultados entre jugadores</h3>
           </div>
           <span className="stats-matrix-hint">
-            Haz clic en cualquier celda para cargar el enfrentamiento en el comparador.
+            Victorias y derrotas de cada jugador (fila) contra cada rival (columna). Haz clic en una celda para compararlos arriba.
           </span>
         </div>
+
+        <div className="stats-matrix-picker" role="group" aria-label="Jugadores de la tabla">
+          <span className="stats-matrix-picker-label">
+            Jugadores en la tabla ({matrixPlayers.length}/{MAX_MATRIX_PLAYERS})
+          </span>
+          {jugadores.map((name) => {
+            const selected = matrixPlayers.includes(name);
+            const isPinned = name === pinnedPlayer;
+            const full = !selected && matrixPlayers.length >= MAX_MATRIX_PLAYERS;
+            return (
+              <button
+                key={name}
+                type="button"
+                className={`stats-matrix-chip ${selected ? 'is-selected' : ''}`}
+                aria-pressed={selected}
+                disabled={full || isPinned}
+                title={isPinned ? 'Tu jugador siempre aparece en la tabla' : full ? `Máximo ${MAX_MATRIX_PLAYERS} jugadores: quita uno para agregar otro` : undefined}
+                onClick={() => toggleMatrixPlayer(name)}
+              >
+                {name}{isPinned ? ' (vos)' : ''}
+              </button>
+            );
+          })}
+        </div>
+
+        {matrixPlayers.length < 2 ? (
+          <p className="stats-matrix-empty">Elige al menos 2 jugadores para ver la tabla.</p>
+        ) : (
 
         <div className="table-responsive-wrapper">
           <table className="stats-matrix-table">
             <thead>
               <tr>
                 <th className="stats-matrix-corner">Jugador</th>
-                {jugadores.map((col) => (
+                {matrixPlayers.map((col) => (
                   <th key={col} className={`stats-matrix-col-header ${col === activeB ? 'is-active-col' : ''}`}>
                     {col}
                   </th>
@@ -177,12 +227,12 @@ const H2H = ({ h2h = {}, onNavigateToHistory }: H2HProps) => {
               </tr>
             </thead>
             <tbody>
-              {jugadores.map((row) => (
+              {matrixPlayers.map((row) => (
                 <tr key={row} className={row === activeA ? 'is-active-row' : ''}>
                   <td className="stats-matrix-row-header">
                     <strong>{row}</strong>
                   </td>
-                  {jugadores.map((col) => {
+                  {matrixPlayers.map((col) => {
                     if (row === col) {
                       return (
                         <td key={col} className="stats-matrix-cell-same">
@@ -217,6 +267,7 @@ const H2H = ({ h2h = {}, onNavigateToHistory }: H2HProps) => {
             </tbody>
           </table>
         </div>
+        )}
       </div>
     </div>
   );

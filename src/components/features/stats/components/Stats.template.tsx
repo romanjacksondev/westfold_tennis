@@ -15,6 +15,7 @@ interface StatsTemplateProps {
   championships?: PlayerChampionships[];
   matches?: MatchSummaryItem[];
   players?: { id: string; name: string }[];
+  currentPlayerName?: string | null;
   loading?: boolean;
   error?: boolean;
 }
@@ -24,6 +25,7 @@ const StatsTemplate = ({
   championships = [],
   matches = [],
   players = [],
+  currentPlayerName = null,
   loading = false,
   error = false,
 }: StatsTemplateProps) => {
@@ -109,7 +111,7 @@ const StatsTemplate = ({
         ) : (
           <>
             {activeTab === 'h2h' && (
-              <H2H h2h={h2h} onNavigateToHistory={handleNavigateToHistory} />
+              <H2H h2h={h2h} onNavigateToHistory={handleNavigateToHistory} currentPlayerName={currentPlayerName} />
             )}
             {activeTab === 'championships' && (
               <ChampionshipsTemplate championships={championships} />

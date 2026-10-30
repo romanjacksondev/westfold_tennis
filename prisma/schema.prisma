@@ -69,6 +69,8 @@ model Player {
   gender         Gender
   mail           String?
   phone          String?
+  photoUrl       String?
+  photoThumbUrl  String?
   games          Game[]
   sets           Set[]
   tournaments    Tournament[] @relation("participations")

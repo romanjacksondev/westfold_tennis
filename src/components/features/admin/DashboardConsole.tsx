@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import SiteFooter from '@/components/features/SiteFooter';
 import TournamentTypeVisual from '@/components/features/admin/TournamentTypeVisual';
 import TournamentPreparationModal from '@/components/features/admin/TournamentPreparationModal';
+import PlayerPhotoEditor from '@/components/ui/PlayerPhoto/PlayerPhotoEditor';
 
 type Resource = 'tournaments' | 'tournament-types' | 'tournament-categories' | 'players' | 'surfaces' | 'venues' | 'matches' | 'users';
 type RecordItem = { id: string; name?: string; [key: string]: unknown };
@@ -515,6 +516,19 @@ export default function DashboardConsole() {
               )}
 
               <form onSubmit={submit}>
+                {resource === 'players' && editing && (
+                  <PlayerPhotoEditor
+                    key={editing.id}
+                    playerId={editing.id}
+                    name={String(editing.name ?? '')}
+                    photoUrl={(editing.photoUrl as string | null) ?? null}
+                    photoThumbUrl={(editing.photoThumbUrl as string | null) ?? null}
+                    onChanged={(paths) => {
+                      setEditing({ ...editing, ...paths });
+                      load();
+                    }}
+                  />
+                )}
                 {fields.map((field) => (
                   <label key={field} className="field">
                     <span>

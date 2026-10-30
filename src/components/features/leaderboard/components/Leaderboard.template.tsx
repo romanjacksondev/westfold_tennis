@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 import { Fragment, useState } from 'react';
 import { LuChevronDown, LuMedal, LuTrophy } from 'react-icons/lu';
 
@@ -6,7 +7,7 @@ export type RankingMode = 'year' | 'calendar';
 
 export type LeaderboardEntry = {
   key: string;
-  nickname?: string | null;
+  photo?: string | null;
   record: { wins: number; losses: number; titles: number; form: ('W' | 'L')[] };
   value: {
     points: number;
@@ -44,7 +45,7 @@ const getInitials = (name: string) =>
 
 const Avatar = ({ entry, size }: { entry: LeaderboardEntry; size: 'lg' | 'md' | 'sm' }) => {
   const [failed, setFailed] = useState(false);
-  const src = entry.nickname ? `/img/avatar/${entry.nickname}.jpeg` : null;
+  const src = entry.photo ?? null;
 
   return (
     <span className={`lb-avatar lb-avatar-${size}`}>
@@ -266,7 +267,8 @@ const LeaderboardTemplate = ({
               <span className="lb-form">
                 <span className="loss" />
               </span>
-              derrota · Forma: últimos 5 partidos · Récord: ganados-perdidos y % de victorias
+              derrota · Forma: últimos 5 partidos · Récord: ganados-perdidos y % de victorias ·{' '}
+              <Link href="/information">¿Cómo se calculan los puntos?</Link>
             </p>
           </>
         )}

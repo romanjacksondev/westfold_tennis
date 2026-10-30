@@ -125,6 +125,8 @@ export async function PATCH(request: NextRequest, context: Context) {
       return NextResponse.json({ data: updated, message: 'Usuario actualizado correctamente' });
     }
     if (resource === 'players') {
+      delete data.photoUrl;
+      delete data.photoThumbUrl;
       if ('userId' in data) {
         const newUserId = data.userId ? String(data.userId).trim() : null;
         delete data.userId;

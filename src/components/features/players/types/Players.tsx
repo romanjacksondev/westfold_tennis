@@ -8,7 +8,8 @@ export type TennisPlayerProps = {
   points?: number;
   winLossRatio?: string;
   grandSlams?: number;
-  imageUrl: string;
+  photoUrl?: string | null;
+  photoThumbUrl?: string | null;
   stats?: {
     matchesWon: number;
     matchesLost: number;

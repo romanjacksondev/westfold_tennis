@@ -58,7 +58,7 @@ const SidebarTemplate = ({ handleClose }: SidebarInterface) => {
       path: '/draws',
     },
     {
-      label: 'Informacion General',
+      label: 'Reglas y puntuación',
       icon: LuInfo,
       path: '/information',
     },

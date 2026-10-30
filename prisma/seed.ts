@@ -11,9 +11,9 @@ async function main() {
     data: [
       {
         id: 'cm0vic8im00002ngmgi99lmrm',
-        name: 'test',
-        email: 'asdasd@asdas.com',
-        password: '$2b$10$f.i.R3tKlsqPiG2OizMEg.ClxTAs6Ob1X8.U5QNjAFBxIf43ZCogS',
+        name: 'Admin',
+        email: 'admin@admin.com',
+        password: '$2b$10$iqrI997B5CqM1.vW8DSMt.j9paNRP.6WILZNHNbtBfJ0TUXhT7bMa',
         role: 'ADMIN',
       },
       {
@@ -27,7 +27,7 @@ async function main() {
     skipDuplicates: true,
   });
   await prisma.user.update({
-    where: { email: 'asdasd@asdas.com' },
+    where: { email: 'admin@admin.com' },
     data: { role: 'ADMIN', isActive: true },
   });
   if (process.env.ADMIN_EMAIL) {

@@ -13,7 +13,7 @@ export async function GET(_request: Request, context: RouteContext) {
   try {
     const player = await prisma.player.findFirst({
       where: { id, deletedAt: null },
-      select: { id: true, name: true, lastname: true, nickname: true, mail: true, phone: true },
+      select: { id: true, name: true, lastname: true, nickname: true, mail: true, phone: true, photoUrl: true, photoThumbUrl: true },
     });
     if (!player) return NextResponse.json({ message: 'Jugador no encontrado' }, { status: 404 });
 

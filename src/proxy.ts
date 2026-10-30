@@ -1,11 +1,15 @@
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
-const publicPaths = ['/', '/leaderboard', '/api/leaderboard', '/auth/signin', '/privacy', '/terms'];
+const publicPaths = ['/', '/leaderboard', '/api/leaderboard', '/information', '/auth/signin', '/privacy', '/terms'];
+
+// Las fotos se leen sin login (ranking público); subir o borrar sigue exigiendo sesión.
+const isPublicPhotoRead = (request: NextRequest) =>
+  request.method === 'GET' && /^\/api\/players\/[^/]+\/photo$/.test(request.nextUrl.pathname);
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  if (publicPaths.includes(pathname) || pathname.startsWith('/api/auth') || pathname.startsWith('/_next') || pathname.includes('.')) {
+  if (publicPaths.includes(pathname) || isPublicPhotoRead(request) || pathname.startsWith('/api/auth') || pathname.startsWith('/_next') || pathname.includes('.')) {
     return NextResponse.next();
   }
 

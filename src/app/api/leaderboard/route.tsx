@@ -1,4 +1,5 @@
 import { prisma } from '@/utils/prisma';
+import { getPlayerPhoto } from '@/utils/player-photo';
 import { calculatePlayerPoints } from '@/utils/utils';
 import { connection, NextRequest, NextResponse } from 'next/server';
 
@@ -36,15 +37,19 @@ async function getTournaments(initialDate: Date, endDate: Date) {
           player1: {
             select: {
               name: true,
+              id: true,
               gender: true,
-              nickname: true,
+              photoUrl: true,
+              photoThumbUrl: true,
             },
           },
           player2: {
             select: {
               name: true,
+              id: true,
               gender: true,
-              nickname: true,
+              photoUrl: true,
+              photoThumbUrl: true,
             },
           },
           sets: {
@@ -89,13 +94,13 @@ export async function GET(req: NextRequest) {
     const playerPoints = calculatePlayerPoints(tournaments);
 
     const genderByName = new Map<string, 'MALE' | 'FEMALE'>();
-    const nicknameByName = new Map<string, string | null>();
+    const photoByName = new Map<string, string | null>();
     for (const tournament of tournaments) {
       for (const match of tournament.matches) {
         genderByName.set(match.player1.name, match.player1.gender);
         genderByName.set(match.player2.name, match.player2.gender);
-        nicknameByName.set(match.player1.name, match.player1.nickname);
-        nicknameByName.set(match.player2.name, match.player2.nickname);
+        photoByName.set(match.player1.name, getPlayerPhoto(match.player1, 'thumb'));
+        photoByName.set(match.player2.name, getPlayerPhoto(match.player2, 'thumb'));
       }
     }
 
@@ -136,7 +141,7 @@ export async function GET(req: NextRequest) {
           const { wins, losses, titles, form } = statsFor(key);
           return {
             key,
-            nickname: nicknameByName.get(key) ?? null,
+            photo: photoByName.get(key) ?? null,
             value,
             record: { wins, losses, titles, form: form.slice(-5) },
           };

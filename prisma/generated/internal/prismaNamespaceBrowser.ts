@@ -128,6 +128,8 @@ export const PlayerScalarFieldEnum = {
   gender: 'gender',
   mail: 'mail',
   phone: 'phone',
+  photoUrl: 'photoUrl',
+  photoThumbUrl: 'photoThumbUrl',
   deletedAt: 'deletedAt',
   userId: 'userId'
 } as const

@@ -92,6 +92,8 @@ export async function POST(request: NextRequest, context: Context) {
     }
 
     if (resource === 'players') {
+      delete data.photoUrl;
+      delete data.photoThumbUrl;
       const userId = data.userId ? String(data.userId).trim() : null;
       delete data.userId;
       if (userId) {

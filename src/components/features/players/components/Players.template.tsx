@@ -1,4 +1,5 @@
 import CardComponent from '@/components/ui/Card/Card.template';
+import { getPlayerPhoto } from '@/utils/player-photo';
 import { TennisPlayerProps } from '../types/Players';
 
 const PlayersTemplate = ({ players }: { players: TennisPlayerProps[] }) => {
@@ -29,7 +30,7 @@ const PlayersTemplate = ({ players }: { players: TennisPlayerProps[] }) => {
                 id={player.id}
                 name={player.name}
                 lastname={player.lastname}
-                imageUrl={`/img/avatar/${player.nickname.replace(' ', '').toLowerCase()}.jpeg`}
+                imageUrl={getPlayerPhoto(player, 'thumb')}
                 nickname={player.nickname}
                 stats={player.stats}
               />

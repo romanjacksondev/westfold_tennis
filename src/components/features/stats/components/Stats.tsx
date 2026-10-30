@@ -1,5 +1,6 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { MatchSummaryItem, PlayerChampionships } from '@/utils/utils';
 import { H2HRecord } from './H2H';
@@ -58,12 +59,16 @@ const Stats = () => {
     };
   }, []);
 
+  const { data: session } = useSession();
+  const currentPlayerName = players.find((player) => player.id === session?.user?.playerId)?.name ?? null;
+
   return (
     <StatsTemplate
       h2h={h2h}
       championships={championships}
       matches={matches}
       players={players}
+      currentPlayerName={currentPlayerName}
       loading={loading}
       error={error}
     />

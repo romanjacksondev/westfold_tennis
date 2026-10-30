@@ -32,6 +32,8 @@ export type PlayerMinAggregateOutputType = {
   gender: $Enums.Gender | null
   mail: string | null
   phone: string | null
+  photoUrl: string | null
+  photoThumbUrl: string | null
   deletedAt: Date | null
   userId: string | null
 }
@@ -44,6 +46,8 @@ export type PlayerMaxAggregateOutputType = {
   gender: $Enums.Gender | null
   mail: string | null
   phone: string | null
+  photoUrl: string | null
+  photoThumbUrl: string | null
   deletedAt: Date | null
   userId: string | null
 }
@@ -56,6 +60,8 @@ export type PlayerCountAggregateOutputType = {
   gender: number
   mail: number
   phone: number
+  photoUrl: number
+  photoThumbUrl: number
   deletedAt: number
   userId: number
   _all: number
@@ -70,6 +76,8 @@ export type PlayerMinAggregateInputType = {
   gender?: true
   mail?: true
   phone?: true
+  photoUrl?: true
+  photoThumbUrl?: true
   deletedAt?: true
   userId?: true
 }
@@ -82,6 +90,8 @@ export type PlayerMaxAggregateInputType = {
   gender?: true
   mail?: true
   phone?: true
+  photoUrl?: true
+  photoThumbUrl?: true
   deletedAt?: true
   userId?: true
 }
@@ -94,6 +104,8 @@ export type PlayerCountAggregateInputType = {
   gender?: true
   mail?: true
   phone?: true
+  photoUrl?: true
+  photoThumbUrl?: true
   deletedAt?: true
   userId?: true
   _all?: true
@@ -179,6 +191,8 @@ export type PlayerGroupByOutputType = {
   gender: $Enums.Gender
   mail: string | null
   phone: string | null
+  photoUrl: string | null
+  photoThumbUrl: string | null
   deletedAt: Date | null
   userId: string | null
   _count: PlayerCountAggregateOutputType | null
@@ -212,6 +226,8 @@ export type PlayerWhereInput = {
   gender?: Prisma.EnumGenderFilter<"Player"> | $Enums.Gender
   mail?: Prisma.StringNullableFilter<"Player"> | string | null
   phone?: Prisma.StringNullableFilter<"Player"> | string | null
+  photoUrl?: Prisma.StringNullableFilter<"Player"> | string | null
+  photoThumbUrl?: Prisma.StringNullableFilter<"Player"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Player"> | Date | string | null
   userId?: Prisma.StringNullableFilter<"Player"> | string | null
   games?: Prisma.GameListRelationFilter
@@ -232,6 +248,8 @@ export type PlayerOrderByWithRelationInput = {
   gender?: Prisma.SortOrder
   mail?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  photoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  photoThumbUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   games?: Prisma.GameOrderByRelationAggregateInput
@@ -256,6 +274,8 @@ export type PlayerWhereUniqueInput = Prisma.AtLeast<{
   gender?: Prisma.EnumGenderFilter<"Player"> | $Enums.Gender
   mail?: Prisma.StringNullableFilter<"Player"> | string | null
   phone?: Prisma.StringNullableFilter<"Player"> | string | null
+  photoUrl?: Prisma.StringNullableFilter<"Player"> | string | null
+  photoThumbUrl?: Prisma.StringNullableFilter<"Player"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Player"> | Date | string | null
   games?: Prisma.GameListRelationFilter
   sets?: Prisma.SetListRelationFilter
@@ -275,6 +295,8 @@ export type PlayerOrderByWithAggregationInput = {
   gender?: Prisma.SortOrder
   mail?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  photoUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  photoThumbUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.PlayerCountOrderByAggregateInput
@@ -293,6 +315,8 @@ export type PlayerScalarWhereWithAggregatesInput = {
   gender?: Prisma.EnumGenderWithAggregatesFilter<"Player"> | $Enums.Gender
   mail?: Prisma.StringNullableWithAggregatesFilter<"Player"> | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"Player"> | string | null
+  photoUrl?: Prisma.StringNullableWithAggregatesFilter<"Player"> | string | null
+  photoThumbUrl?: Prisma.StringNullableWithAggregatesFilter<"Player"> | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Player"> | Date | string | null
   userId?: Prisma.StringNullableWithAggregatesFilter<"Player"> | string | null
 }
@@ -305,6 +329,8 @@ export type PlayerCreateInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   games?: Prisma.GameCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetCreateNestedManyWithoutWinnerInput
@@ -324,6 +350,8 @@ export type PlayerUncheckedCreateInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
@@ -343,6 +371,8 @@ export type PlayerUpdateInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   games?: Prisma.GameUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUpdateManyWithoutWinnerNestedInput
@@ -362,6 +392,8 @@ export type PlayerUncheckedUpdateInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
@@ -381,6 +413,8 @@ export type PlayerCreateManyInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
 }
@@ -393,6 +427,8 @@ export type PlayerUpdateManyMutationInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
@@ -404,6 +440,8 @@ export type PlayerUncheckedUpdateManyInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -431,6 +469,8 @@ export type PlayerCountOrderByAggregateInput = {
   gender?: Prisma.SortOrder
   mail?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
+  photoThumbUrl?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
@@ -443,6 +483,8 @@ export type PlayerMaxOrderByAggregateInput = {
   gender?: Prisma.SortOrder
   mail?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
+  photoThumbUrl?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
@@ -455,6 +497,8 @@ export type PlayerMinOrderByAggregateInput = {
   gender?: Prisma.SortOrder
   mail?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  photoUrl?: Prisma.SortOrder
+  photoThumbUrl?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
@@ -632,6 +676,8 @@ export type PlayerCreateWithoutWonTournamentsInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   games?: Prisma.GameCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetCreateNestedManyWithoutWinnerInput
@@ -650,6 +696,8 @@ export type PlayerUncheckedCreateWithoutWonTournamentsInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
@@ -673,6 +721,8 @@ export type PlayerCreateWithoutTournamentsInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   games?: Prisma.GameCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetCreateNestedManyWithoutWinnerInput
@@ -691,6 +741,8 @@ export type PlayerUncheckedCreateWithoutTournamentsInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
@@ -725,6 +777,8 @@ export type PlayerUpdateWithoutWonTournamentsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   games?: Prisma.GameUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUpdateManyWithoutWinnerNestedInput
@@ -743,6 +797,8 @@ export type PlayerUncheckedUpdateWithoutWonTournamentsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
@@ -780,6 +836,8 @@ export type PlayerScalarWhereInput = {
   gender?: Prisma.EnumGenderFilter<"Player"> | $Enums.Gender
   mail?: Prisma.StringNullableFilter<"Player"> | string | null
   phone?: Prisma.StringNullableFilter<"Player"> | string | null
+  photoUrl?: Prisma.StringNullableFilter<"Player"> | string | null
+  photoThumbUrl?: Prisma.StringNullableFilter<"Player"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Player"> | Date | string | null
   userId?: Prisma.StringNullableFilter<"Player"> | string | null
 }
@@ -792,6 +850,8 @@ export type PlayerCreateWithoutWinnerMatchesInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   games?: Prisma.GameCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetCreateNestedManyWithoutWinnerInput
@@ -810,6 +870,8 @@ export type PlayerUncheckedCreateWithoutWinnerMatchesInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
@@ -833,6 +895,8 @@ export type PlayerCreateWithoutPlayer1MatchesInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   games?: Prisma.GameCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetCreateNestedManyWithoutWinnerInput
@@ -851,6 +915,8 @@ export type PlayerUncheckedCreateWithoutPlayer1MatchesInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
@@ -874,6 +940,8 @@ export type PlayerCreateWithoutPlayer2MatchesInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   games?: Prisma.GameCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetCreateNestedManyWithoutWinnerInput
@@ -892,6 +960,8 @@ export type PlayerUncheckedCreateWithoutPlayer2MatchesInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
@@ -926,6 +996,8 @@ export type PlayerUpdateWithoutWinnerMatchesInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   games?: Prisma.GameUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUpdateManyWithoutWinnerNestedInput
@@ -944,6 +1016,8 @@ export type PlayerUncheckedUpdateWithoutWinnerMatchesInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
@@ -973,6 +1047,8 @@ export type PlayerUpdateWithoutPlayer1MatchesInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   games?: Prisma.GameUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUpdateManyWithoutWinnerNestedInput
@@ -991,6 +1067,8 @@ export type PlayerUncheckedUpdateWithoutPlayer1MatchesInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1020,6 +1098,8 @@ export type PlayerUpdateWithoutPlayer2MatchesInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   games?: Prisma.GameUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUpdateManyWithoutWinnerNestedInput
@@ -1038,6 +1118,8 @@ export type PlayerUncheckedUpdateWithoutPlayer2MatchesInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1056,6 +1138,8 @@ export type PlayerCreateWithoutSetsInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   games?: Prisma.GameCreateNestedManyWithoutWinnerInput
   tournaments?: Prisma.TournamentCreateNestedManyWithoutPlayersInput
@@ -1074,6 +1158,8 @@ export type PlayerUncheckedCreateWithoutSetsInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
@@ -1108,6 +1194,8 @@ export type PlayerUpdateWithoutSetsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   games?: Prisma.GameUpdateManyWithoutWinnerNestedInput
   tournaments?: Prisma.TournamentUpdateManyWithoutPlayersNestedInput
@@ -1126,6 +1214,8 @@ export type PlayerUncheckedUpdateWithoutSetsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1144,6 +1234,8 @@ export type PlayerCreateWithoutGamesInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   sets?: Prisma.SetCreateNestedManyWithoutWinnerInput
   tournaments?: Prisma.TournamentCreateNestedManyWithoutPlayersInput
@@ -1162,6 +1254,8 @@ export type PlayerUncheckedCreateWithoutGamesInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutWinnerInput
@@ -1196,6 +1290,8 @@ export type PlayerUpdateWithoutGamesInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   sets?: Prisma.SetUpdateManyWithoutWinnerNestedInput
   tournaments?: Prisma.TournamentUpdateManyWithoutPlayersNestedInput
@@ -1214,6 +1310,8 @@ export type PlayerUncheckedUpdateWithoutGamesInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sets?: Prisma.SetUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1232,6 +1330,8 @@ export type PlayerCreateWithoutUserInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   games?: Prisma.GameCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetCreateNestedManyWithoutWinnerInput
@@ -1250,6 +1350,8 @@ export type PlayerUncheckedCreateWithoutUserInput = {
   gender: $Enums.Gender
   mail?: string | null
   phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutWinnerInput
@@ -1284,6 +1386,8 @@ export type PlayerUpdateWithoutUserInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   games?: Prisma.GameUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUpdateManyWithoutWinnerNestedInput
@@ -1302,6 +1406,8 @@ export type PlayerUncheckedUpdateWithoutUserInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1320,6 +1426,8 @@ export type PlayerUpdateWithoutTournamentsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   games?: Prisma.GameUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUpdateManyWithoutWinnerNestedInput
@@ -1338,6 +1446,8 @@ export type PlayerUncheckedUpdateWithoutTournamentsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
@@ -1356,6 +1466,8 @@ export type PlayerUncheckedUpdateManyWithoutTournamentsInput = {
   gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
   mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
@@ -1453,6 +1565,8 @@ export type PlayerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   gender?: boolean
   mail?: boolean
   phone?: boolean
+  photoUrl?: boolean
+  photoThumbUrl?: boolean
   deletedAt?: boolean
   userId?: boolean
   games?: boolean | Prisma.Player$gamesArgs<ExtArgs>
@@ -1474,6 +1588,8 @@ export type PlayerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   gender?: boolean
   mail?: boolean
   phone?: boolean
+  photoUrl?: boolean
+  photoThumbUrl?: boolean
   deletedAt?: boolean
   userId?: boolean
   user?: boolean | Prisma.Player$userArgs<ExtArgs>
@@ -1487,6 +1603,8 @@ export type PlayerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   gender?: boolean
   mail?: boolean
   phone?: boolean
+  photoUrl?: boolean
+  photoThumbUrl?: boolean
   deletedAt?: boolean
   userId?: boolean
   user?: boolean | Prisma.Player$userArgs<ExtArgs>
@@ -1500,11 +1618,13 @@ export type PlayerSelectScalar = {
   gender?: boolean
   mail?: boolean
   phone?: boolean
+  photoUrl?: boolean
+  photoThumbUrl?: boolean
   deletedAt?: boolean
   userId?: boolean
 }
 
-export type PlayerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "nickname" | "lastname" | "gender" | "mail" | "phone" | "deletedAt" | "userId", ExtArgs["result"]["player"]>
+export type PlayerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "nickname" | "lastname" | "gender" | "mail" | "phone" | "photoUrl" | "photoThumbUrl" | "deletedAt" | "userId", ExtArgs["result"]["player"]>
 export type PlayerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   games?: boolean | Prisma.Player$gamesArgs<ExtArgs>
   sets?: boolean | Prisma.Player$setsArgs<ExtArgs>
@@ -1543,6 +1663,8 @@ export type $PlayerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     gender: $Enums.Gender
     mail: string | null
     phone: string | null
+    photoUrl: string | null
+    photoThumbUrl: string | null
     deletedAt: Date | null
     userId: string | null
   }, ExtArgs["result"]["player"]>
@@ -1983,6 +2105,8 @@ export interface PlayerFieldRefs {
   readonly gender: Prisma.FieldRef<"Player", 'Gender'>
   readonly mail: Prisma.FieldRef<"Player", 'String'>
   readonly phone: Prisma.FieldRef<"Player", 'String'>
+  readonly photoUrl: Prisma.FieldRef<"Player", 'String'>
+  readonly photoThumbUrl: Prisma.FieldRef<"Player", 'String'>
   readonly deletedAt: Prisma.FieldRef<"Player", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Player", 'String'>
 }
