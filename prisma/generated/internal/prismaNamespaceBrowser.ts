@@ -55,6 +55,8 @@ export const ModelName = {
   Surface: 'Surface',
   Venue: 'Venue',
   Player: 'Player',
+  Level: 'Level',
+  PlayerLevelHistory: 'PlayerLevelHistory',
   TournamentCategory: 'TournamentCategory',
   TournamentType: 'TournamentType',
   TournamentCategoryPoints: 'TournamentCategoryPoints',
@@ -94,6 +96,7 @@ export const TournamentScalarFieldEnum = {
   tournamentTypeId: 'tournamentTypeId',
   drawSize: 'drawSize',
   qualifiers: 'qualifiers',
+  levelId: 'levelId',
   deletedAt: 'deletedAt'
 } as const
 
@@ -131,10 +134,32 @@ export const PlayerScalarFieldEnum = {
   photoUrl: 'photoUrl',
   photoThumbUrl: 'photoThumbUrl',
   deletedAt: 'deletedAt',
-  userId: 'userId'
+  userId: 'userId',
+  levelId: 'levelId'
 } as const
 
 export type PlayerScalarFieldEnum = (typeof PlayerScalarFieldEnum)[keyof typeof PlayerScalarFieldEnum]
+
+
+export const LevelScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order',
+  deletedAt: 'deletedAt'
+} as const
+
+export type LevelScalarFieldEnum = (typeof LevelScalarFieldEnum)[keyof typeof LevelScalarFieldEnum]
+
+
+export const PlayerLevelHistoryScalarFieldEnum = {
+  id: 'id',
+  playerId: 'playerId',
+  levelId: 'levelId',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type PlayerLevelHistoryScalarFieldEnum = (typeof PlayerLevelHistoryScalarFieldEnum)[keyof typeof PlayerLevelHistoryScalarFieldEnum]
 
 
 export const TournamentCategoryScalarFieldEnum = {

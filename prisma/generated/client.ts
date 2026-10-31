@@ -62,6 +62,16 @@ export type Venue = Prisma.VenueModel
  */
 export type Player = Prisma.PlayerModel
 /**
+ * Model Level
+ * 
+ */
+export type Level = Prisma.LevelModel
+/**
+ * Model PlayerLevelHistory
+ * 
+ */
+export type PlayerLevelHistory = Prisma.PlayerLevelHistoryModel
+/**
  * Model TournamentCategory
  * 
  */

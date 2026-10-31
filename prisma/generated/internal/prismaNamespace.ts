@@ -401,6 +401,8 @@ export const ModelName = {
   Surface: 'Surface',
   Venue: 'Venue',
   Player: 'Player',
+  Level: 'Level',
+  PlayerLevelHistory: 'PlayerLevelHistory',
   TournamentCategory: 'TournamentCategory',
   TournamentType: 'TournamentType',
   TournamentCategoryPoints: 'TournamentCategoryPoints',
@@ -423,7 +425,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "tournament" | "surface" | "venue" | "player" | "tournamentCategory" | "tournamentType" | "tournamentCategoryPoints" | "match" | "set" | "game" | "user"
+    modelProps: "tournament" | "surface" | "venue" | "player" | "level" | "playerLevelHistory" | "tournamentCategory" | "tournamentType" | "tournamentCategoryPoints" | "match" | "set" | "game" | "user"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -720,6 +722,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.PlayerCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.PlayerCountAggregateOutputType> | number
+        }
+      }
+    }
+    Level: {
+      payload: Prisma.$LevelPayload<ExtArgs>
+      fields: Prisma.LevelFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LevelFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LevelPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LevelFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LevelPayload>
+        }
+        findFirst: {
+          args: Prisma.LevelFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LevelPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LevelFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LevelPayload>
+        }
+        findMany: {
+          args: Prisma.LevelFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LevelPayload>[]
+        }
+        create: {
+          args: Prisma.LevelCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LevelPayload>
+        }
+        createMany: {
+          args: Prisma.LevelCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LevelCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LevelPayload>[]
+        }
+        delete: {
+          args: Prisma.LevelDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LevelPayload>
+        }
+        update: {
+          args: Prisma.LevelUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LevelPayload>
+        }
+        deleteMany: {
+          args: Prisma.LevelDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LevelUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LevelUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LevelPayload>[]
+        }
+        upsert: {
+          args: Prisma.LevelUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LevelPayload>
+        }
+        aggregate: {
+          args: Prisma.LevelAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLevel>
+        }
+        groupBy: {
+          args: Prisma.LevelGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LevelGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LevelCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LevelCountAggregateOutputType> | number
+        }
+      }
+    }
+    PlayerLevelHistory: {
+      payload: Prisma.$PlayerLevelHistoryPayload<ExtArgs>
+      fields: Prisma.PlayerLevelHistoryFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PlayerLevelHistoryFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlayerLevelHistoryPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PlayerLevelHistoryFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlayerLevelHistoryPayload>
+        }
+        findFirst: {
+          args: Prisma.PlayerLevelHistoryFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlayerLevelHistoryPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PlayerLevelHistoryFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlayerLevelHistoryPayload>
+        }
+        findMany: {
+          args: Prisma.PlayerLevelHistoryFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlayerLevelHistoryPayload>[]
+        }
+        create: {
+          args: Prisma.PlayerLevelHistoryCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlayerLevelHistoryPayload>
+        }
+        createMany: {
+          args: Prisma.PlayerLevelHistoryCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PlayerLevelHistoryCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlayerLevelHistoryPayload>[]
+        }
+        delete: {
+          args: Prisma.PlayerLevelHistoryDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlayerLevelHistoryPayload>
+        }
+        update: {
+          args: Prisma.PlayerLevelHistoryUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlayerLevelHistoryPayload>
+        }
+        deleteMany: {
+          args: Prisma.PlayerLevelHistoryDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PlayerLevelHistoryUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PlayerLevelHistoryUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlayerLevelHistoryPayload>[]
+        }
+        upsert: {
+          args: Prisma.PlayerLevelHistoryUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PlayerLevelHistoryPayload>
+        }
+        aggregate: {
+          args: Prisma.PlayerLevelHistoryAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePlayerLevelHistory>
+        }
+        groupBy: {
+          args: Prisma.PlayerLevelHistoryGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PlayerLevelHistoryGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PlayerLevelHistoryCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PlayerLevelHistoryCountAggregateOutputType> | number
         }
       }
     }
@@ -1294,6 +1444,7 @@ export const TournamentScalarFieldEnum = {
   tournamentTypeId: 'tournamentTypeId',
   drawSize: 'drawSize',
   qualifiers: 'qualifiers',
+  levelId: 'levelId',
   deletedAt: 'deletedAt'
 } as const
 
@@ -1331,10 +1482,32 @@ export const PlayerScalarFieldEnum = {
   photoUrl: 'photoUrl',
   photoThumbUrl: 'photoThumbUrl',
   deletedAt: 'deletedAt',
-  userId: 'userId'
+  userId: 'userId',
+  levelId: 'levelId'
 } as const
 
 export type PlayerScalarFieldEnum = (typeof PlayerScalarFieldEnum)[keyof typeof PlayerScalarFieldEnum]
+
+
+export const LevelScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  order: 'order',
+  deletedAt: 'deletedAt'
+} as const
+
+export type LevelScalarFieldEnum = (typeof LevelScalarFieldEnum)[keyof typeof LevelScalarFieldEnum]
+
+
+export const PlayerLevelHistoryScalarFieldEnum = {
+  id: 'id',
+  playerId: 'playerId',
+  levelId: 'levelId',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type PlayerLevelHistoryScalarFieldEnum = (typeof PlayerLevelHistoryScalarFieldEnum)[keyof typeof PlayerLevelHistoryScalarFieldEnum]
 
 
 export const TournamentCategoryScalarFieldEnum = {
@@ -1720,6 +1893,8 @@ export type GlobalOmitConfig = {
   surface?: Prisma.SurfaceOmit
   venue?: Prisma.VenueOmit
   player?: Prisma.PlayerOmit
+  level?: Prisma.LevelOmit
+  playerLevelHistory?: Prisma.PlayerLevelHistoryOmit
   tournamentCategory?: Prisma.TournamentCategoryOmit
   tournamentType?: Prisma.TournamentTypeOmit
   tournamentCategoryPoints?: Prisma.TournamentCategoryPointsOmit

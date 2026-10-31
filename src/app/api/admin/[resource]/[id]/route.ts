@@ -12,6 +12,7 @@ const models = {
   tournaments: 'tournament',
   matches: 'match',
   users: 'user',
+  levels: 'level',
 } as const;
 
 type Context = { params: Promise<{ resource: string; id: string }> };
@@ -127,6 +128,17 @@ export async function PATCH(request: NextRequest, context: Context) {
     if (resource === 'players') {
       delete data.photoUrl;
       delete data.photoThumbUrl;
+      if ('levelId' in data || 'levelReason' in data) {
+        const newLevelId = data.levelId ? String(data.levelId) : null;
+        const reason = typeof data.levelReason === 'string' ? data.levelReason.trim() || null : null;
+        delete data.levelId;
+        delete data.levelReason;
+        const currentPlayer = await prisma.player.findUnique({ where: { id }, select: { levelId: true } });
+        if ((currentPlayer?.levelId ?? null) !== newLevelId) {
+          data.level = newLevelId ? { connect: { id: newLevelId } } : { disconnect: true };
+          data.levelHistory = { create: { levelId: newLevelId, reason } };
+        }
+      }
       if ('userId' in data) {
         const newUserId = data.userId ? String(data.userId).trim() : null;
         delete data.userId;
@@ -146,10 +158,13 @@ export async function PATCH(request: NextRequest, context: Context) {
         }
       }
     }
+    if (resource === 'levels' && 'order' in data) data.order = Number(data.order);
     if (data.date) data.date = new Date(data.date);
     if (resource === 'tournaments') {
       const currentTournament = await prisma.tournament.findUnique({ where: { id }, select: { status: true } });
-      if (currentTournament?.status === 'FINISHED') {
+      // The level is only a label, so it can still be assigned once the tournament is finished.
+      const onlyLevel = Object.keys(data).every((key) => key === 'levelId');
+      if (currentTournament?.status === 'FINISHED' && !onlyLevel) {
         return NextResponse.json({ message: 'Los torneos terminados no pueden ser editados' }, { status: 400 });
       }
       // Handle drawSize / qualifiers as nullable integers
@@ -165,9 +180,15 @@ export async function PATCH(request: NextRequest, context: Context) {
         data.players = { set: playerIds.map((pid: string) => ({ id: pid })) };
         delete data.playerIds;
       }
+      if ('levelId' in data) {
+        const levelValue = data.levelId;
+        delete data.levelId;
+        data.level = levelValue ? { connect: { id: levelValue } } : { disconnect: true };
+      }
       const relations = ['venueId', 'surfaceId', 'championId', 'tournamentCategoryId', 'tournamentTypeId'] as const;
       const championValue = data.championId;
       for (const relation of relations) {
+        if (!(relation in data)) continue;
         const value = data[relation];
         delete data[relation];
         if (relation === 'championId') {

@@ -12,6 +12,7 @@ const models = {
   tournaments: 'tournament',
   matches: 'match',
   users: 'user',
+  levels: 'level',
 } as const;
 
 type Resource = keyof typeof models;
@@ -35,15 +36,15 @@ export async function GET(_request: NextRequest, context: Context) {
   try {
     const model = (prisma as any)[models[resource]];
     const include = resource === 'tournaments'
-      ? { venue: { select: { name: true } }, surface: { select: { name: true } }, champion: { select: { name: true } }, tournamentCategory: { select: { name: true } }, tournamentType: { select: { name: true } }, players: { select: { id: true, name: true } } }
+      ? { venue: { select: { name: true } }, surface: { select: { name: true } }, champion: { select: { name: true } }, tournamentCategory: { select: { name: true } }, tournamentType: { select: { name: true } }, level: { select: { id: true, name: true } }, players: { select: { id: true, name: true } } }
       : resource === 'matches'
         ? { player1: { select: { name: true } }, player2: { select: { name: true } }, winner: { select: { name: true } }, sets: { include: { games: true } } }
         : resource === 'players'
-          ? { user: { select: { id: true, email: true, role: true, isActive: true } } }
+          ? { user: { select: { id: true, email: true, role: true, isActive: true } }, level: { select: { id: true, name: true } } }
           : undefined;
     const data = resource === 'users'
       ? await model.findMany({ where: { deletedAt: null }, orderBy: { email: 'asc' }, select: { id: true, name: true, email: true, role: true, isActive: true, player: { select: { id: true, name: true, lastname: true, nickname: true } } } })
-      : await model.findMany({ where: { deletedAt: null }, ...(resource === 'tournaments' ? { orderBy: { date: 'desc' } } : resource === 'matches' ? {} : { orderBy: { name: 'asc' } }), ...(include ? { include } : {}) });
+      : await model.findMany({ where: { deletedAt: null }, ...(resource === 'tournaments' ? { orderBy: { date: 'desc' } } : resource === 'matches' ? {} : resource === 'levels' ? { orderBy: { order: 'desc' } } : { orderBy: { name: 'asc' } }), ...(include ? { include } : {}) });
     return NextResponse.json(data);
   } catch (error) {
     return errorResponse(error);
@@ -96,6 +97,14 @@ export async function POST(request: NextRequest, context: Context) {
       delete data.photoThumbUrl;
       const userId = data.userId ? String(data.userId).trim() : null;
       delete data.userId;
+      const levelId = data.levelId ? String(data.levelId) : null;
+      const levelReason = typeof data.levelReason === 'string' ? data.levelReason.trim() || null : null;
+      delete data.levelId;
+      delete data.levelReason;
+      if (levelId) {
+        data.level = { connect: { id: levelId } };
+        data.levelHistory = { create: { levelId, reason: levelReason ?? 'Nivel inicial' } };
+      }
       if (userId) {
         const existingPlayer = await prisma.player.findFirst({ where: { userId, deletedAt: null } });
         if (existingPlayer) {
@@ -106,7 +115,7 @@ export async function POST(request: NextRequest, context: Context) {
     }
 
     if (resource === 'tournaments') {
-      const { venueId, surfaceId, championId, tournamentCategoryId, tournamentTypeId, playerIds, drawSize, qualifiers, date, role, status, finishedAt, createdAt, ...fields } = data;
+      const { venueId, surfaceId, levelId, championId, tournamentCategoryId, tournamentTypeId, playerIds, drawSize, qualifiers, date, role, status, finishedAt, createdAt, ...fields } = data;
       Object.assign(data, {
         ...fields,
         date: date ? new Date(date) : new Date(),
@@ -116,12 +125,14 @@ export async function POST(request: NextRequest, context: Context) {
         qualifiers: qualifiers !== undefined && qualifiers !== '' ? Number(qualifiers) : null,
         venue: { connect: { id: venueId } },
         surface: { connect: { id: surfaceId } },
+        level: levelId ? { connect: { id: levelId } } : undefined,
         champion: championId ? { connect: { id: championId } } : undefined,
         tournamentCategory: { connect: { id: tournamentCategoryId } },
         tournamentType: tournamentTypeId ? { connect: { id: tournamentTypeId } } : undefined,
         players: Array.isArray(playerIds) ? { connect: playerIds.map((id: string) => ({ id })) } : undefined,
       });
       delete data.venueId;
+      delete data.levelId;
       delete data.surfaceId;
       delete data.championId;
       delete data.tournamentCategoryId;
@@ -131,6 +142,8 @@ export async function POST(request: NextRequest, context: Context) {
       delete data.qualifiers;
       delete data.role;
     }
+
+    if (resource === 'levels') data.order = Number(data.order);
 
     if (resource === 'matches') {
       const { tournamentId, player1Id, player2Id, winnerId } = data;

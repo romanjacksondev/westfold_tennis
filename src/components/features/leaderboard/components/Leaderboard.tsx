@@ -4,14 +4,16 @@ import LeaderboardTemplate, { type LeaderboardData, type RankingMode } from './L
 
 const Leaderboard = () => {
   const [rankingMode, setRankingMode] = useState<RankingMode>('year');
-  const [cache, setCache] = useState<Partial<Record<RankingMode, LeaderboardData>>>({});
+  const [level, setLevel] = useState('all');
+  const [cache, setCache] = useState<Record<string, LeaderboardData>>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     let isCancelled = false;
+    const cacheKey = `${rankingMode}|${level}`;
 
-    if (cache[rankingMode]) {
+    if (cache[cacheKey]) {
       setLoading(false);
       return;
     }
@@ -19,7 +21,7 @@ const Leaderboard = () => {
     setLoading(true);
     setError(false);
 
-    fetch(`/api/leaderboard?rankingMode=${rankingMode}`)
+    fetch(`/api/leaderboard?rankingMode=${rankingMode}&level=${encodeURIComponent(level)}`)
       .then((res) => {
         if (!res.ok) throw new Error('No se pudo cargar el leaderboard');
         return res.json();
@@ -28,9 +30,11 @@ const Leaderboard = () => {
         if (!isCancelled) {
           setCache((prev) => ({
             ...prev,
-            [rankingMode]: {
+            [cacheKey]: {
               male: Array.isArray(data?.male) ? data.male : [],
               female: Array.isArray(data?.female) ? data.female : [],
+              levels: Array.isArray(data?.levels) ? data.levels : [],
+              hasTournamentsWithoutLevel: Boolean(data?.hasTournamentsWithoutLevel),
             },
           }));
           setLoading(false);
@@ -47,14 +51,21 @@ const Leaderboard = () => {
     return () => {
       isCancelled = true;
     };
-  }, [rankingMode]);
+  }, [rankingMode, level]);
 
-  const currentLeaderboard = cache[rankingMode] ?? { male: [], female: [] };
+  const empty: LeaderboardData = { male: [], female: [], levels: [], hasTournamentsWithoutLevel: false };
+  const currentLeaderboard = cache[`${rankingMode}|${level}`] ?? empty;
+  // Keep the level options visible while another selection is loading.
+  const levelSource = Object.values(cache)[0] ?? empty;
 
   return (
     <LeaderboardTemplate
       leaderboard={currentLeaderboard}
       rankingMode={rankingMode}
+      level={level}
+      setLevel={setLevel}
+      levels={levelSource.levels}
+      hasTournamentsWithoutLevel={levelSource.hasTournamentsWithoutLevel}
       loading={loading}
       error={error}
       setRankingMode={setRankingMode}

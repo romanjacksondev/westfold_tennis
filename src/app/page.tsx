@@ -1,9 +1,5 @@
-export default function Home() {
-  return (
-    <main className="welcome-page">
-      <div className="welcome-content">
-        <h1>Welcome!</h1>
-      </div>
-    </main>
-  );
+import Home from '@/components/features/home/Home';
+
+export default function HomePage() {
+  return <Home />;
 }

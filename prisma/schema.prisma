@@ -30,6 +30,8 @@ model Tournament {
   players              Player[]           @relation("participations")
   drawSize             Int?
   qualifiers           Int?
+  levelId              String?
+  level                Level?             @relation(fields: [levelId], references: [id])
   deletedAt            DateTime?
 }
 
@@ -81,6 +83,32 @@ model Player {
   deletedAt      DateTime?
   userId         String?  @unique
   user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  levelId        String?
+  level          Level?   @relation(fields: [levelId], references: [id])
+  levelHistory   PlayerLevelHistory[]
+}
+
+// Niveles ordenados de menor a mayor (`order`); son una referencia orientativa, no una restricción.
+model Level {
+  id         String   @id @default(cuid())
+  name       String   @unique
+  order      Int
+  players    Player[]
+  tournaments Tournament[]
+  history    PlayerLevelHistory[]
+  deletedAt  DateTime?
+}
+
+model PlayerLevelHistory {
+  id        String   @id @default(cuid())
+  playerId  String
+  player    Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  levelId   String?
+  level     Level?   @relation(fields: [levelId], references: [id])
+  reason    String?
+  createdAt DateTime @default(now())
+
+  @@index([playerId, createdAt])
 }
 
 model TournamentCategory {

@@ -18,6 +18,8 @@ export type LeaderboardEntry = {
 export type LeaderboardData = {
   male: LeaderboardEntry[];
   female: LeaderboardEntry[];
+  levels: { id: string; name: string; order: number }[];
+  hasTournamentsWithoutLevel: boolean;
 };
 
 type GenderTab = 'male' | 'female';
@@ -26,6 +28,10 @@ interface LeaderboardTemplateProps {
   leaderboard: LeaderboardData;
   rankingMode: RankingMode;
   setRankingMode: (mode: RankingMode) => void;
+  level: string;
+  setLevel: (level: string) => void;
+  levels: LeaderboardData['levels'];
+  hasTournamentsWithoutLevel: boolean;
   loading: boolean;
   error: boolean;
 }
@@ -191,6 +197,10 @@ const LeaderboardTemplate = ({
   leaderboard,
   rankingMode,
   setRankingMode,
+  level,
+  setLevel,
+  levels,
+  hasTournamentsWithoutLevel,
   loading,
   error,
 }: LeaderboardTemplateProps) => {
@@ -245,7 +255,28 @@ const LeaderboardTemplate = ({
         </div>
       </div>
 
-      <section className="lb-content" key={`${gender}-${rankingMode}`}>
+      {(levels.length > 0 || hasTournamentsWithoutLevel) && (
+        <div className="lb-levels" role="tablist" aria-label="Nivel">
+          {[
+            { id: 'all', name: 'Todos' },
+            ...levels,
+            ...(hasTournamentsWithoutLevel ? [{ id: 'none', name: 'Sin nivel' }] : []),
+          ].map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              role="tab"
+              aria-selected={level === option.id}
+              className={level === option.id ? 'active' : ''}
+              onClick={() => setLevel(option.id)}
+            >
+              {option.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <section className="lb-content" key={`${gender}-${rankingMode}-${level}`}>
         {loading ? (
           <Skeleton />
         ) : error ? (

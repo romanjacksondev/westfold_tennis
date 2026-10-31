@@ -320,6 +320,7 @@ export interface MatchSummarySet {
 export interface MatchSummaryItem {
   id?: string;
   winnerId: string | null;
+  stage?: string | null;
   tournamentName?: string | null;
   player1Name?: { id?: string; name?: string } | null;
   player2Name?: { id?: string; name?: string } | null;
@@ -345,6 +346,7 @@ export const createMatchSummary = (matchesList: any[]): MatchSummaryItem[] => {
     const matchData: MatchSummaryItem = {
       id: match.id ?? undefined,
       winnerId: match.winnerId ?? null,
+      stage: match.stage ?? null,
       tournamentName: match.tournament?.name ?? '',
       player1Name: match.player1 ?? null,
       player2Name: match.player2 ?? null,

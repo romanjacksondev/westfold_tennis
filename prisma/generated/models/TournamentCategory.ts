@@ -360,14 +360,6 @@ export type TournamentCategoryUpdateOneRequiredWithoutTournamentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TournamentCategoryUpdateToOneWithWhereWithoutTournamentsInput, Prisma.TournamentCategoryUpdateWithoutTournamentsInput>, Prisma.TournamentCategoryUncheckedUpdateWithoutTournamentsInput>
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type TournamentCategoryCreateNestedOneWithoutTournamentCategoryPointsInput = {
   create?: Prisma.XOR<Prisma.TournamentCategoryCreateWithoutTournamentCategoryPointsInput, Prisma.TournamentCategoryUncheckedCreateWithoutTournamentCategoryPointsInput>
   connectOrCreate?: Prisma.TournamentCategoryCreateOrConnectWithoutTournamentCategoryPointsInput

@@ -15,6 +15,7 @@ export async function GET() {
         champion: {
           select: { name: true },
         },
+        level: { select: { name: true } },
         surface: {
           select: { name: true },
         },

@@ -1,5 +1,6 @@
 import { prisma } from '@/utils/prisma';
 import { formatSetScore } from '@/utils/utils';
+import { getPlayerLevelInfo } from '@/lib/player-level';
 import { NextResponse } from 'next/server';
 
 type RouteContext = { params: Promise<{ id: string }> };
@@ -80,8 +81,11 @@ export async function GET(_request: Request, context: RouteContext) {
     const opponentStats = Array.from(opponents.values()).map((item) => ({ ...item, percentage: percentage(item.won, item.played) })).sort((a, b) => b.won - a.won || b.played - a.played);
     const lossesAgainst = [...opponentStats].sort((a, b) => b.lost - a.lost || b.played - a.played);
 
+    const level = await getPlayerLevelInfo(id);
+
     return NextResponse.json({
       player,
+      level,
       summary: { matches: { ...matchStats, percentage: percentage(matchStats.won, matchStats.played) }, sets: { ...setStats, percentage: percentage(setStats.won, setStats.played) }, games: { ...gameStats, difference: gameStats.won - gameStats.lost, percentage: percentage(gameStats.won, gameStats.played) }, titles },
       surfaces: { all: surfaceStats, bestByPercentage: surfaceStats[0] ?? null, bestByWins: [...surfaceStats].sort((a, b) => b.won - a.won || b.percentage - a.percentage)[0] ?? null },
       opponents: { mostWins: opponentStats.slice(0, 5), mostLosses: lossesAgainst.slice(0, 5) },

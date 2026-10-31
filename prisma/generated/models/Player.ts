@@ -36,6 +36,7 @@ export type PlayerMinAggregateOutputType = {
   photoThumbUrl: string | null
   deletedAt: Date | null
   userId: string | null
+  levelId: string | null
 }
 
 export type PlayerMaxAggregateOutputType = {
@@ -50,6 +51,7 @@ export type PlayerMaxAggregateOutputType = {
   photoThumbUrl: string | null
   deletedAt: Date | null
   userId: string | null
+  levelId: string | null
 }
 
 export type PlayerCountAggregateOutputType = {
@@ -64,6 +66,7 @@ export type PlayerCountAggregateOutputType = {
   photoThumbUrl: number
   deletedAt: number
   userId: number
+  levelId: number
   _all: number
 }
 
@@ -80,6 +83,7 @@ export type PlayerMinAggregateInputType = {
   photoThumbUrl?: true
   deletedAt?: true
   userId?: true
+  levelId?: true
 }
 
 export type PlayerMaxAggregateInputType = {
@@ -94,6 +98,7 @@ export type PlayerMaxAggregateInputType = {
   photoThumbUrl?: true
   deletedAt?: true
   userId?: true
+  levelId?: true
 }
 
 export type PlayerCountAggregateInputType = {
@@ -108,6 +113,7 @@ export type PlayerCountAggregateInputType = {
   photoThumbUrl?: true
   deletedAt?: true
   userId?: true
+  levelId?: true
   _all?: true
 }
 
@@ -195,6 +201,7 @@ export type PlayerGroupByOutputType = {
   photoThumbUrl: string | null
   deletedAt: Date | null
   userId: string | null
+  levelId: string | null
   _count: PlayerCountAggregateOutputType | null
   _min: PlayerMinAggregateOutputType | null
   _max: PlayerMaxAggregateOutputType | null
@@ -230,6 +237,7 @@ export type PlayerWhereInput = {
   photoThumbUrl?: Prisma.StringNullableFilter<"Player"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Player"> | Date | string | null
   userId?: Prisma.StringNullableFilter<"Player"> | string | null
+  levelId?: Prisma.StringNullableFilter<"Player"> | string | null
   games?: Prisma.GameListRelationFilter
   sets?: Prisma.SetListRelationFilter
   tournaments?: Prisma.TournamentListRelationFilter
@@ -238,6 +246,8 @@ export type PlayerWhereInput = {
   player2Matches?: Prisma.MatchListRelationFilter
   wonTournaments?: Prisma.TournamentListRelationFilter
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  level?: Prisma.XOR<Prisma.LevelNullableScalarRelationFilter, Prisma.LevelWhereInput> | null
+  levelHistory?: Prisma.PlayerLevelHistoryListRelationFilter
 }
 
 export type PlayerOrderByWithRelationInput = {
@@ -252,6 +262,7 @@ export type PlayerOrderByWithRelationInput = {
   photoThumbUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
+  levelId?: Prisma.SortOrderInput | Prisma.SortOrder
   games?: Prisma.GameOrderByRelationAggregateInput
   sets?: Prisma.SetOrderByRelationAggregateInput
   tournaments?: Prisma.TournamentOrderByRelationAggregateInput
@@ -260,6 +271,8 @@ export type PlayerOrderByWithRelationInput = {
   player2Matches?: Prisma.MatchOrderByRelationAggregateInput
   wonTournaments?: Prisma.TournamentOrderByRelationAggregateInput
   user?: Prisma.UserOrderByWithRelationInput
+  level?: Prisma.LevelOrderByWithRelationInput
+  levelHistory?: Prisma.PlayerLevelHistoryOrderByRelationAggregateInput
 }
 
 export type PlayerWhereUniqueInput = Prisma.AtLeast<{
@@ -277,6 +290,7 @@ export type PlayerWhereUniqueInput = Prisma.AtLeast<{
   photoUrl?: Prisma.StringNullableFilter<"Player"> | string | null
   photoThumbUrl?: Prisma.StringNullableFilter<"Player"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Player"> | Date | string | null
+  levelId?: Prisma.StringNullableFilter<"Player"> | string | null
   games?: Prisma.GameListRelationFilter
   sets?: Prisma.SetListRelationFilter
   tournaments?: Prisma.TournamentListRelationFilter
@@ -285,6 +299,8 @@ export type PlayerWhereUniqueInput = Prisma.AtLeast<{
   player2Matches?: Prisma.MatchListRelationFilter
   wonTournaments?: Prisma.TournamentListRelationFilter
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  level?: Prisma.XOR<Prisma.LevelNullableScalarRelationFilter, Prisma.LevelWhereInput> | null
+  levelHistory?: Prisma.PlayerLevelHistoryListRelationFilter
 }, "id" | "userId">
 
 export type PlayerOrderByWithAggregationInput = {
@@ -299,6 +315,7 @@ export type PlayerOrderByWithAggregationInput = {
   photoThumbUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrderInput | Prisma.SortOrder
+  levelId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.PlayerCountOrderByAggregateInput
   _max?: Prisma.PlayerMaxOrderByAggregateInput
   _min?: Prisma.PlayerMinOrderByAggregateInput
@@ -319,6 +336,7 @@ export type PlayerScalarWhereWithAggregatesInput = {
   photoThumbUrl?: Prisma.StringNullableWithAggregatesFilter<"Player"> | string | null
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Player"> | Date | string | null
   userId?: Prisma.StringNullableWithAggregatesFilter<"Player"> | string | null
+  levelId?: Prisma.StringNullableWithAggregatesFilter<"Player"> | string | null
 }
 
 export type PlayerCreateInput = {
@@ -340,6 +358,8 @@ export type PlayerCreateInput = {
   player2Matches?: Prisma.MatchCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentCreateNestedManyWithoutChampionInput
   user?: Prisma.UserCreateNestedOneWithoutPlayerInput
+  level?: Prisma.LevelCreateNestedOneWithoutPlayersInput
+  levelHistory?: Prisma.PlayerLevelHistoryCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerUncheckedCreateInput = {
@@ -354,6 +374,7 @@ export type PlayerUncheckedCreateInput = {
   photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
+  levelId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutWinnerInput
   tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutPlayersInput
@@ -361,6 +382,7 @@ export type PlayerUncheckedCreateInput = {
   player1Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer1Input
   player2Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutChampionInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerUpdateInput = {
@@ -382,6 +404,8 @@ export type PlayerUpdateInput = {
   player2Matches?: Prisma.MatchUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUpdateManyWithoutChampionNestedInput
   user?: Prisma.UserUpdateOneWithoutPlayerNestedInput
+  level?: Prisma.LevelUpdateOneWithoutPlayersNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUncheckedUpdateInput = {
@@ -396,6 +420,7 @@ export type PlayerUncheckedUpdateInput = {
   photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  levelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUncheckedUpdateManyWithoutWinnerNestedInput
   tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutPlayersNestedInput
@@ -403,6 +428,7 @@ export type PlayerUncheckedUpdateInput = {
   player1Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer1NestedInput
   player2Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUncheckedUpdateManyWithoutChampionNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerCreateManyInput = {
@@ -417,6 +443,7 @@ export type PlayerCreateManyInput = {
   photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
+  levelId?: string | null
 }
 
 export type PlayerUpdateManyMutationInput = {
@@ -444,6 +471,7 @@ export type PlayerUncheckedUpdateManyInput = {
   photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  levelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type PlayerNullableScalarRelationFilter = {
@@ -473,6 +501,7 @@ export type PlayerCountOrderByAggregateInput = {
   photoThumbUrl?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  levelId?: Prisma.SortOrder
 }
 
 export type PlayerMaxOrderByAggregateInput = {
@@ -487,6 +516,7 @@ export type PlayerMaxOrderByAggregateInput = {
   photoThumbUrl?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  levelId?: Prisma.SortOrder
 }
 
 export type PlayerMinOrderByAggregateInput = {
@@ -501,6 +531,7 @@ export type PlayerMinOrderByAggregateInput = {
   photoThumbUrl?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  levelId?: Prisma.SortOrder
 }
 
 export type PlayerScalarRelationFilter = {
@@ -564,6 +595,62 @@ export type PlayerUncheckedUpdateManyWithoutTournamentsNestedInput = {
 
 export type EnumGenderFieldUpdateOperationsInput = {
   set?: $Enums.Gender
+}
+
+export type PlayerCreateNestedManyWithoutLevelInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutLevelInput, Prisma.PlayerUncheckedCreateWithoutLevelInput> | Prisma.PlayerCreateWithoutLevelInput[] | Prisma.PlayerUncheckedCreateWithoutLevelInput[]
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutLevelInput | Prisma.PlayerCreateOrConnectWithoutLevelInput[]
+  createMany?: Prisma.PlayerCreateManyLevelInputEnvelope
+  connect?: Prisma.PlayerWhereUniqueInput | Prisma.PlayerWhereUniqueInput[]
+}
+
+export type PlayerUncheckedCreateNestedManyWithoutLevelInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutLevelInput, Prisma.PlayerUncheckedCreateWithoutLevelInput> | Prisma.PlayerCreateWithoutLevelInput[] | Prisma.PlayerUncheckedCreateWithoutLevelInput[]
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutLevelInput | Prisma.PlayerCreateOrConnectWithoutLevelInput[]
+  createMany?: Prisma.PlayerCreateManyLevelInputEnvelope
+  connect?: Prisma.PlayerWhereUniqueInput | Prisma.PlayerWhereUniqueInput[]
+}
+
+export type PlayerUpdateManyWithoutLevelNestedInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutLevelInput, Prisma.PlayerUncheckedCreateWithoutLevelInput> | Prisma.PlayerCreateWithoutLevelInput[] | Prisma.PlayerUncheckedCreateWithoutLevelInput[]
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutLevelInput | Prisma.PlayerCreateOrConnectWithoutLevelInput[]
+  upsert?: Prisma.PlayerUpsertWithWhereUniqueWithoutLevelInput | Prisma.PlayerUpsertWithWhereUniqueWithoutLevelInput[]
+  createMany?: Prisma.PlayerCreateManyLevelInputEnvelope
+  set?: Prisma.PlayerWhereUniqueInput | Prisma.PlayerWhereUniqueInput[]
+  disconnect?: Prisma.PlayerWhereUniqueInput | Prisma.PlayerWhereUniqueInput[]
+  delete?: Prisma.PlayerWhereUniqueInput | Prisma.PlayerWhereUniqueInput[]
+  connect?: Prisma.PlayerWhereUniqueInput | Prisma.PlayerWhereUniqueInput[]
+  update?: Prisma.PlayerUpdateWithWhereUniqueWithoutLevelInput | Prisma.PlayerUpdateWithWhereUniqueWithoutLevelInput[]
+  updateMany?: Prisma.PlayerUpdateManyWithWhereWithoutLevelInput | Prisma.PlayerUpdateManyWithWhereWithoutLevelInput[]
+  deleteMany?: Prisma.PlayerScalarWhereInput | Prisma.PlayerScalarWhereInput[]
+}
+
+export type PlayerUncheckedUpdateManyWithoutLevelNestedInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutLevelInput, Prisma.PlayerUncheckedCreateWithoutLevelInput> | Prisma.PlayerCreateWithoutLevelInput[] | Prisma.PlayerUncheckedCreateWithoutLevelInput[]
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutLevelInput | Prisma.PlayerCreateOrConnectWithoutLevelInput[]
+  upsert?: Prisma.PlayerUpsertWithWhereUniqueWithoutLevelInput | Prisma.PlayerUpsertWithWhereUniqueWithoutLevelInput[]
+  createMany?: Prisma.PlayerCreateManyLevelInputEnvelope
+  set?: Prisma.PlayerWhereUniqueInput | Prisma.PlayerWhereUniqueInput[]
+  disconnect?: Prisma.PlayerWhereUniqueInput | Prisma.PlayerWhereUniqueInput[]
+  delete?: Prisma.PlayerWhereUniqueInput | Prisma.PlayerWhereUniqueInput[]
+  connect?: Prisma.PlayerWhereUniqueInput | Prisma.PlayerWhereUniqueInput[]
+  update?: Prisma.PlayerUpdateWithWhereUniqueWithoutLevelInput | Prisma.PlayerUpdateWithWhereUniqueWithoutLevelInput[]
+  updateMany?: Prisma.PlayerUpdateManyWithWhereWithoutLevelInput | Prisma.PlayerUpdateManyWithWhereWithoutLevelInput[]
+  deleteMany?: Prisma.PlayerScalarWhereInput | Prisma.PlayerScalarWhereInput[]
+}
+
+export type PlayerCreateNestedOneWithoutLevelHistoryInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutLevelHistoryInput, Prisma.PlayerUncheckedCreateWithoutLevelHistoryInput>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutLevelHistoryInput
+  connect?: Prisma.PlayerWhereUniqueInput
+}
+
+export type PlayerUpdateOneRequiredWithoutLevelHistoryNestedInput = {
+  create?: Prisma.XOR<Prisma.PlayerCreateWithoutLevelHistoryInput, Prisma.PlayerUncheckedCreateWithoutLevelHistoryInput>
+  connectOrCreate?: Prisma.PlayerCreateOrConnectWithoutLevelHistoryInput
+  upsert?: Prisma.PlayerUpsertWithoutLevelHistoryInput
+  connect?: Prisma.PlayerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PlayerUpdateToOneWithWhereWithoutLevelHistoryInput, Prisma.PlayerUpdateWithoutLevelHistoryInput>, Prisma.PlayerUncheckedUpdateWithoutLevelHistoryInput>
 }
 
 export type PlayerCreateNestedOneWithoutWinnerMatchesInput = {
@@ -686,6 +773,8 @@ export type PlayerCreateWithoutWonTournamentsInput = {
   player1Matches?: Prisma.MatchCreateNestedManyWithoutPlayer1Input
   player2Matches?: Prisma.MatchCreateNestedManyWithoutPlayer2Input
   user?: Prisma.UserCreateNestedOneWithoutPlayerInput
+  level?: Prisma.LevelCreateNestedOneWithoutPlayersInput
+  levelHistory?: Prisma.PlayerLevelHistoryCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerUncheckedCreateWithoutWonTournamentsInput = {
@@ -700,12 +789,14 @@ export type PlayerUncheckedCreateWithoutWonTournamentsInput = {
   photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
+  levelId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutWinnerInput
   tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutPlayersInput
   winnerMatches?: Prisma.MatchUncheckedCreateNestedManyWithoutWinnerInput
   player1Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer1Input
   player2Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer2Input
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerCreateOrConnectWithoutWonTournamentsInput = {
@@ -731,6 +822,8 @@ export type PlayerCreateWithoutTournamentsInput = {
   player2Matches?: Prisma.MatchCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentCreateNestedManyWithoutChampionInput
   user?: Prisma.UserCreateNestedOneWithoutPlayerInput
+  level?: Prisma.LevelCreateNestedOneWithoutPlayersInput
+  levelHistory?: Prisma.PlayerLevelHistoryCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerUncheckedCreateWithoutTournamentsInput = {
@@ -745,12 +838,14 @@ export type PlayerUncheckedCreateWithoutTournamentsInput = {
   photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
+  levelId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutWinnerInput
   winnerMatches?: Prisma.MatchUncheckedCreateNestedManyWithoutWinnerInput
   player1Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer1Input
   player2Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutChampionInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerCreateOrConnectWithoutTournamentsInput = {
@@ -787,6 +882,8 @@ export type PlayerUpdateWithoutWonTournamentsInput = {
   player1Matches?: Prisma.MatchUpdateManyWithoutPlayer1NestedInput
   player2Matches?: Prisma.MatchUpdateManyWithoutPlayer2NestedInput
   user?: Prisma.UserUpdateOneWithoutPlayerNestedInput
+  level?: Prisma.LevelUpdateOneWithoutPlayersNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutWonTournamentsInput = {
@@ -801,12 +898,14 @@ export type PlayerUncheckedUpdateWithoutWonTournamentsInput = {
   photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  levelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUncheckedUpdateManyWithoutWinnerNestedInput
   tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutPlayersNestedInput
   winnerMatches?: Prisma.MatchUncheckedUpdateManyWithoutWinnerNestedInput
   player1Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer1NestedInput
   player2Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer2NestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUpsertWithWhereUniqueWithoutTournamentsInput = {
@@ -840,6 +939,181 @@ export type PlayerScalarWhereInput = {
   photoThumbUrl?: Prisma.StringNullableFilter<"Player"> | string | null
   deletedAt?: Prisma.DateTimeNullableFilter<"Player"> | Date | string | null
   userId?: Prisma.StringNullableFilter<"Player"> | string | null
+  levelId?: Prisma.StringNullableFilter<"Player"> | string | null
+}
+
+export type PlayerCreateWithoutLevelInput = {
+  id?: string
+  name: string
+  nickname?: string | null
+  lastname?: string | null
+  gender: $Enums.Gender
+  mail?: string | null
+  phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
+  deletedAt?: Date | string | null
+  games?: Prisma.GameCreateNestedManyWithoutWinnerInput
+  sets?: Prisma.SetCreateNestedManyWithoutWinnerInput
+  tournaments?: Prisma.TournamentCreateNestedManyWithoutPlayersInput
+  winnerMatches?: Prisma.MatchCreateNestedManyWithoutWinnerInput
+  player1Matches?: Prisma.MatchCreateNestedManyWithoutPlayer1Input
+  player2Matches?: Prisma.MatchCreateNestedManyWithoutPlayer2Input
+  wonTournaments?: Prisma.TournamentCreateNestedManyWithoutChampionInput
+  user?: Prisma.UserCreateNestedOneWithoutPlayerInput
+  levelHistory?: Prisma.PlayerLevelHistoryCreateNestedManyWithoutPlayerInput
+}
+
+export type PlayerUncheckedCreateWithoutLevelInput = {
+  id?: string
+  name: string
+  nickname?: string | null
+  lastname?: string | null
+  gender: $Enums.Gender
+  mail?: string | null
+  phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
+  deletedAt?: Date | string | null
+  userId?: string | null
+  games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
+  sets?: Prisma.SetUncheckedCreateNestedManyWithoutWinnerInput
+  tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutPlayersInput
+  winnerMatches?: Prisma.MatchUncheckedCreateNestedManyWithoutWinnerInput
+  player1Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer1Input
+  player2Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer2Input
+  wonTournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutChampionInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedCreateNestedManyWithoutPlayerInput
+}
+
+export type PlayerCreateOrConnectWithoutLevelInput = {
+  where: Prisma.PlayerWhereUniqueInput
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutLevelInput, Prisma.PlayerUncheckedCreateWithoutLevelInput>
+}
+
+export type PlayerCreateManyLevelInputEnvelope = {
+  data: Prisma.PlayerCreateManyLevelInput | Prisma.PlayerCreateManyLevelInput[]
+  skipDuplicates?: boolean
+}
+
+export type PlayerUpsertWithWhereUniqueWithoutLevelInput = {
+  where: Prisma.PlayerWhereUniqueInput
+  update: Prisma.XOR<Prisma.PlayerUpdateWithoutLevelInput, Prisma.PlayerUncheckedUpdateWithoutLevelInput>
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutLevelInput, Prisma.PlayerUncheckedCreateWithoutLevelInput>
+}
+
+export type PlayerUpdateWithWhereUniqueWithoutLevelInput = {
+  where: Prisma.PlayerWhereUniqueInput
+  data: Prisma.XOR<Prisma.PlayerUpdateWithoutLevelInput, Prisma.PlayerUncheckedUpdateWithoutLevelInput>
+}
+
+export type PlayerUpdateManyWithWhereWithoutLevelInput = {
+  where: Prisma.PlayerScalarWhereInput
+  data: Prisma.XOR<Prisma.PlayerUpdateManyMutationInput, Prisma.PlayerUncheckedUpdateManyWithoutLevelInput>
+}
+
+export type PlayerCreateWithoutLevelHistoryInput = {
+  id?: string
+  name: string
+  nickname?: string | null
+  lastname?: string | null
+  gender: $Enums.Gender
+  mail?: string | null
+  phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
+  deletedAt?: Date | string | null
+  games?: Prisma.GameCreateNestedManyWithoutWinnerInput
+  sets?: Prisma.SetCreateNestedManyWithoutWinnerInput
+  tournaments?: Prisma.TournamentCreateNestedManyWithoutPlayersInput
+  winnerMatches?: Prisma.MatchCreateNestedManyWithoutWinnerInput
+  player1Matches?: Prisma.MatchCreateNestedManyWithoutPlayer1Input
+  player2Matches?: Prisma.MatchCreateNestedManyWithoutPlayer2Input
+  wonTournaments?: Prisma.TournamentCreateNestedManyWithoutChampionInput
+  user?: Prisma.UserCreateNestedOneWithoutPlayerInput
+  level?: Prisma.LevelCreateNestedOneWithoutPlayersInput
+}
+
+export type PlayerUncheckedCreateWithoutLevelHistoryInput = {
+  id?: string
+  name: string
+  nickname?: string | null
+  lastname?: string | null
+  gender: $Enums.Gender
+  mail?: string | null
+  phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
+  deletedAt?: Date | string | null
+  userId?: string | null
+  levelId?: string | null
+  games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
+  sets?: Prisma.SetUncheckedCreateNestedManyWithoutWinnerInput
+  tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutPlayersInput
+  winnerMatches?: Prisma.MatchUncheckedCreateNestedManyWithoutWinnerInput
+  player1Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer1Input
+  player2Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer2Input
+  wonTournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutChampionInput
+}
+
+export type PlayerCreateOrConnectWithoutLevelHistoryInput = {
+  where: Prisma.PlayerWhereUniqueInput
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutLevelHistoryInput, Prisma.PlayerUncheckedCreateWithoutLevelHistoryInput>
+}
+
+export type PlayerUpsertWithoutLevelHistoryInput = {
+  update: Prisma.XOR<Prisma.PlayerUpdateWithoutLevelHistoryInput, Prisma.PlayerUncheckedUpdateWithoutLevelHistoryInput>
+  create: Prisma.XOR<Prisma.PlayerCreateWithoutLevelHistoryInput, Prisma.PlayerUncheckedCreateWithoutLevelHistoryInput>
+  where?: Prisma.PlayerWhereInput
+}
+
+export type PlayerUpdateToOneWithWhereWithoutLevelHistoryInput = {
+  where?: Prisma.PlayerWhereInput
+  data: Prisma.XOR<Prisma.PlayerUpdateWithoutLevelHistoryInput, Prisma.PlayerUncheckedUpdateWithoutLevelHistoryInput>
+}
+
+export type PlayerUpdateWithoutLevelHistoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  games?: Prisma.GameUpdateManyWithoutWinnerNestedInput
+  sets?: Prisma.SetUpdateManyWithoutWinnerNestedInput
+  tournaments?: Prisma.TournamentUpdateManyWithoutPlayersNestedInput
+  winnerMatches?: Prisma.MatchUpdateManyWithoutWinnerNestedInput
+  player1Matches?: Prisma.MatchUpdateManyWithoutPlayer1NestedInput
+  player2Matches?: Prisma.MatchUpdateManyWithoutPlayer2NestedInput
+  wonTournaments?: Prisma.TournamentUpdateManyWithoutChampionNestedInput
+  user?: Prisma.UserUpdateOneWithoutPlayerNestedInput
+  level?: Prisma.LevelUpdateOneWithoutPlayersNestedInput
+}
+
+export type PlayerUncheckedUpdateWithoutLevelHistoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  levelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
+  sets?: Prisma.SetUncheckedUpdateManyWithoutWinnerNestedInput
+  tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutPlayersNestedInput
+  winnerMatches?: Prisma.MatchUncheckedUpdateManyWithoutWinnerNestedInput
+  player1Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer1NestedInput
+  player2Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonTournaments?: Prisma.TournamentUncheckedUpdateManyWithoutChampionNestedInput
 }
 
 export type PlayerCreateWithoutWinnerMatchesInput = {
@@ -860,6 +1134,8 @@ export type PlayerCreateWithoutWinnerMatchesInput = {
   player2Matches?: Prisma.MatchCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentCreateNestedManyWithoutChampionInput
   user?: Prisma.UserCreateNestedOneWithoutPlayerInput
+  level?: Prisma.LevelCreateNestedOneWithoutPlayersInput
+  levelHistory?: Prisma.PlayerLevelHistoryCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerUncheckedCreateWithoutWinnerMatchesInput = {
@@ -874,12 +1150,14 @@ export type PlayerUncheckedCreateWithoutWinnerMatchesInput = {
   photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
+  levelId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutWinnerInput
   tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutPlayersInput
   player1Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer1Input
   player2Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutChampionInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerCreateOrConnectWithoutWinnerMatchesInput = {
@@ -905,6 +1183,8 @@ export type PlayerCreateWithoutPlayer1MatchesInput = {
   player2Matches?: Prisma.MatchCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentCreateNestedManyWithoutChampionInput
   user?: Prisma.UserCreateNestedOneWithoutPlayerInput
+  level?: Prisma.LevelCreateNestedOneWithoutPlayersInput
+  levelHistory?: Prisma.PlayerLevelHistoryCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerUncheckedCreateWithoutPlayer1MatchesInput = {
@@ -919,12 +1199,14 @@ export type PlayerUncheckedCreateWithoutPlayer1MatchesInput = {
   photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
+  levelId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutWinnerInput
   tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutPlayersInput
   winnerMatches?: Prisma.MatchUncheckedCreateNestedManyWithoutWinnerInput
   player2Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutChampionInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerCreateOrConnectWithoutPlayer1MatchesInput = {
@@ -950,6 +1232,8 @@ export type PlayerCreateWithoutPlayer2MatchesInput = {
   player1Matches?: Prisma.MatchCreateNestedManyWithoutPlayer1Input
   wonTournaments?: Prisma.TournamentCreateNestedManyWithoutChampionInput
   user?: Prisma.UserCreateNestedOneWithoutPlayerInput
+  level?: Prisma.LevelCreateNestedOneWithoutPlayersInput
+  levelHistory?: Prisma.PlayerLevelHistoryCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerUncheckedCreateWithoutPlayer2MatchesInput = {
@@ -964,12 +1248,14 @@ export type PlayerUncheckedCreateWithoutPlayer2MatchesInput = {
   photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
+  levelId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutWinnerInput
   tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutPlayersInput
   winnerMatches?: Prisma.MatchUncheckedCreateNestedManyWithoutWinnerInput
   player1Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer1Input
   wonTournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutChampionInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerCreateOrConnectWithoutPlayer2MatchesInput = {
@@ -1006,6 +1292,8 @@ export type PlayerUpdateWithoutWinnerMatchesInput = {
   player2Matches?: Prisma.MatchUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUpdateManyWithoutChampionNestedInput
   user?: Prisma.UserUpdateOneWithoutPlayerNestedInput
+  level?: Prisma.LevelUpdateOneWithoutPlayersNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutWinnerMatchesInput = {
@@ -1020,12 +1308,14 @@ export type PlayerUncheckedUpdateWithoutWinnerMatchesInput = {
   photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  levelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUncheckedUpdateManyWithoutWinnerNestedInput
   tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutPlayersNestedInput
   player1Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer1NestedInput
   player2Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUncheckedUpdateManyWithoutChampionNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUpsertWithoutPlayer1MatchesInput = {
@@ -1057,6 +1347,8 @@ export type PlayerUpdateWithoutPlayer1MatchesInput = {
   player2Matches?: Prisma.MatchUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUpdateManyWithoutChampionNestedInput
   user?: Prisma.UserUpdateOneWithoutPlayerNestedInput
+  level?: Prisma.LevelUpdateOneWithoutPlayersNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutPlayer1MatchesInput = {
@@ -1071,12 +1363,14 @@ export type PlayerUncheckedUpdateWithoutPlayer1MatchesInput = {
   photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  levelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUncheckedUpdateManyWithoutWinnerNestedInput
   tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutPlayersNestedInput
   winnerMatches?: Prisma.MatchUncheckedUpdateManyWithoutWinnerNestedInput
   player2Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUncheckedUpdateManyWithoutChampionNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUpsertWithoutPlayer2MatchesInput = {
@@ -1108,6 +1402,8 @@ export type PlayerUpdateWithoutPlayer2MatchesInput = {
   player1Matches?: Prisma.MatchUpdateManyWithoutPlayer1NestedInput
   wonTournaments?: Prisma.TournamentUpdateManyWithoutChampionNestedInput
   user?: Prisma.UserUpdateOneWithoutPlayerNestedInput
+  level?: Prisma.LevelUpdateOneWithoutPlayersNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutPlayer2MatchesInput = {
@@ -1122,12 +1418,14 @@ export type PlayerUncheckedUpdateWithoutPlayer2MatchesInput = {
   photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  levelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUncheckedUpdateManyWithoutWinnerNestedInput
   tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutPlayersNestedInput
   winnerMatches?: Prisma.MatchUncheckedUpdateManyWithoutWinnerNestedInput
   player1Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer1NestedInput
   wonTournaments?: Prisma.TournamentUncheckedUpdateManyWithoutChampionNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerCreateWithoutSetsInput = {
@@ -1148,6 +1446,8 @@ export type PlayerCreateWithoutSetsInput = {
   player2Matches?: Prisma.MatchCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentCreateNestedManyWithoutChampionInput
   user?: Prisma.UserCreateNestedOneWithoutPlayerInput
+  level?: Prisma.LevelCreateNestedOneWithoutPlayersInput
+  levelHistory?: Prisma.PlayerLevelHistoryCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerUncheckedCreateWithoutSetsInput = {
@@ -1162,12 +1462,14 @@ export type PlayerUncheckedCreateWithoutSetsInput = {
   photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
+  levelId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
   tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutPlayersInput
   winnerMatches?: Prisma.MatchUncheckedCreateNestedManyWithoutWinnerInput
   player1Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer1Input
   player2Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutChampionInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerCreateOrConnectWithoutSetsInput = {
@@ -1204,6 +1506,8 @@ export type PlayerUpdateWithoutSetsInput = {
   player2Matches?: Prisma.MatchUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUpdateManyWithoutChampionNestedInput
   user?: Prisma.UserUpdateOneWithoutPlayerNestedInput
+  level?: Prisma.LevelUpdateOneWithoutPlayersNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutSetsInput = {
@@ -1218,12 +1522,14 @@ export type PlayerUncheckedUpdateWithoutSetsInput = {
   photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  levelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
   tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutPlayersNestedInput
   winnerMatches?: Prisma.MatchUncheckedUpdateManyWithoutWinnerNestedInput
   player1Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer1NestedInput
   player2Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUncheckedUpdateManyWithoutChampionNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerCreateWithoutGamesInput = {
@@ -1244,6 +1550,8 @@ export type PlayerCreateWithoutGamesInput = {
   player2Matches?: Prisma.MatchCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentCreateNestedManyWithoutChampionInput
   user?: Prisma.UserCreateNestedOneWithoutPlayerInput
+  level?: Prisma.LevelCreateNestedOneWithoutPlayersInput
+  levelHistory?: Prisma.PlayerLevelHistoryCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerUncheckedCreateWithoutGamesInput = {
@@ -1258,12 +1566,14 @@ export type PlayerUncheckedCreateWithoutGamesInput = {
   photoThumbUrl?: string | null
   deletedAt?: Date | string | null
   userId?: string | null
+  levelId?: string | null
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutWinnerInput
   tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutPlayersInput
   winnerMatches?: Prisma.MatchUncheckedCreateNestedManyWithoutWinnerInput
   player1Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer1Input
   player2Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutChampionInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerCreateOrConnectWithoutGamesInput = {
@@ -1300,6 +1610,8 @@ export type PlayerUpdateWithoutGamesInput = {
   player2Matches?: Prisma.MatchUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUpdateManyWithoutChampionNestedInput
   user?: Prisma.UserUpdateOneWithoutPlayerNestedInput
+  level?: Prisma.LevelUpdateOneWithoutPlayersNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutGamesInput = {
@@ -1314,12 +1626,14 @@ export type PlayerUncheckedUpdateWithoutGamesInput = {
   photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  levelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sets?: Prisma.SetUncheckedUpdateManyWithoutWinnerNestedInput
   tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutPlayersNestedInput
   winnerMatches?: Prisma.MatchUncheckedUpdateManyWithoutWinnerNestedInput
   player1Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer1NestedInput
   player2Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUncheckedUpdateManyWithoutChampionNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerCreateWithoutUserInput = {
@@ -1340,6 +1654,8 @@ export type PlayerCreateWithoutUserInput = {
   player1Matches?: Prisma.MatchCreateNestedManyWithoutPlayer1Input
   player2Matches?: Prisma.MatchCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentCreateNestedManyWithoutChampionInput
+  level?: Prisma.LevelCreateNestedOneWithoutPlayersInput
+  levelHistory?: Prisma.PlayerLevelHistoryCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerUncheckedCreateWithoutUserInput = {
@@ -1353,6 +1669,7 @@ export type PlayerUncheckedCreateWithoutUserInput = {
   photoUrl?: string | null
   photoThumbUrl?: string | null
   deletedAt?: Date | string | null
+  levelId?: string | null
   games?: Prisma.GameUncheckedCreateNestedManyWithoutWinnerInput
   sets?: Prisma.SetUncheckedCreateNestedManyWithoutWinnerInput
   tournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutPlayersInput
@@ -1360,6 +1677,7 @@ export type PlayerUncheckedCreateWithoutUserInput = {
   player1Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer1Input
   player2Matches?: Prisma.MatchUncheckedCreateNestedManyWithoutPlayer2Input
   wonTournaments?: Prisma.TournamentUncheckedCreateNestedManyWithoutChampionInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedCreateNestedManyWithoutPlayerInput
 }
 
 export type PlayerCreateOrConnectWithoutUserInput = {
@@ -1396,6 +1714,8 @@ export type PlayerUpdateWithoutUserInput = {
   player1Matches?: Prisma.MatchUpdateManyWithoutPlayer1NestedInput
   player2Matches?: Prisma.MatchUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUpdateManyWithoutChampionNestedInput
+  level?: Prisma.LevelUpdateOneWithoutPlayersNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutUserInput = {
@@ -1409,6 +1729,7 @@ export type PlayerUncheckedUpdateWithoutUserInput = {
   photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  levelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUncheckedUpdateManyWithoutWinnerNestedInput
   tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutPlayersNestedInput
@@ -1416,6 +1737,7 @@ export type PlayerUncheckedUpdateWithoutUserInput = {
   player1Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer1NestedInput
   player2Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUncheckedUpdateManyWithoutChampionNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUpdateWithoutTournamentsInput = {
@@ -1436,6 +1758,8 @@ export type PlayerUpdateWithoutTournamentsInput = {
   player2Matches?: Prisma.MatchUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUpdateManyWithoutChampionNestedInput
   user?: Prisma.UserUpdateOneWithoutPlayerNestedInput
+  level?: Prisma.LevelUpdateOneWithoutPlayersNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUncheckedUpdateWithoutTournamentsInput = {
@@ -1450,15 +1774,90 @@ export type PlayerUncheckedUpdateWithoutTournamentsInput = {
   photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  levelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
   sets?: Prisma.SetUncheckedUpdateManyWithoutWinnerNestedInput
   winnerMatches?: Prisma.MatchUncheckedUpdateManyWithoutWinnerNestedInput
   player1Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer1NestedInput
   player2Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer2NestedInput
   wonTournaments?: Prisma.TournamentUncheckedUpdateManyWithoutChampionNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedUpdateManyWithoutPlayerNestedInput
 }
 
 export type PlayerUncheckedUpdateManyWithoutTournamentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  levelId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type PlayerCreateManyLevelInput = {
+  id?: string
+  name: string
+  nickname?: string | null
+  lastname?: string | null
+  gender: $Enums.Gender
+  mail?: string | null
+  phone?: string | null
+  photoUrl?: string | null
+  photoThumbUrl?: string | null
+  deletedAt?: Date | string | null
+  userId?: string | null
+}
+
+export type PlayerUpdateWithoutLevelInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  games?: Prisma.GameUpdateManyWithoutWinnerNestedInput
+  sets?: Prisma.SetUpdateManyWithoutWinnerNestedInput
+  tournaments?: Prisma.TournamentUpdateManyWithoutPlayersNestedInput
+  winnerMatches?: Prisma.MatchUpdateManyWithoutWinnerNestedInput
+  player1Matches?: Prisma.MatchUpdateManyWithoutPlayer1NestedInput
+  player2Matches?: Prisma.MatchUpdateManyWithoutPlayer2NestedInput
+  wonTournaments?: Prisma.TournamentUpdateManyWithoutChampionNestedInput
+  user?: Prisma.UserUpdateOneWithoutPlayerNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUpdateManyWithoutPlayerNestedInput
+}
+
+export type PlayerUncheckedUpdateWithoutLevelInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gender?: Prisma.EnumGenderFieldUpdateOperationsInput | $Enums.Gender
+  mail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  photoThumbUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  games?: Prisma.GameUncheckedUpdateManyWithoutWinnerNestedInput
+  sets?: Prisma.SetUncheckedUpdateManyWithoutWinnerNestedInput
+  tournaments?: Prisma.TournamentUncheckedUpdateManyWithoutPlayersNestedInput
+  winnerMatches?: Prisma.MatchUncheckedUpdateManyWithoutWinnerNestedInput
+  player1Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer1NestedInput
+  player2Matches?: Prisma.MatchUncheckedUpdateManyWithoutPlayer2NestedInput
+  wonTournaments?: Prisma.TournamentUncheckedUpdateManyWithoutChampionNestedInput
+  levelHistory?: Prisma.PlayerLevelHistoryUncheckedUpdateManyWithoutPlayerNestedInput
+}
+
+export type PlayerUncheckedUpdateManyWithoutLevelInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   nickname?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1485,6 +1884,7 @@ export type PlayerCountOutputType = {
   player1Matches: number
   player2Matches: number
   wonTournaments: number
+  levelHistory: number
 }
 
 export type PlayerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1495,6 +1895,7 @@ export type PlayerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions
   player1Matches?: boolean | PlayerCountOutputTypeCountPlayer1MatchesArgs
   player2Matches?: boolean | PlayerCountOutputTypeCountPlayer2MatchesArgs
   wonTournaments?: boolean | PlayerCountOutputTypeCountWonTournamentsArgs
+  levelHistory?: boolean | PlayerCountOutputTypeCountLevelHistoryArgs
 }
 
 /**
@@ -1556,6 +1957,13 @@ export type PlayerCountOutputTypeCountWonTournamentsArgs<ExtArgs extends runtime
   where?: Prisma.TournamentWhereInput
 }
 
+/**
+ * PlayerCountOutputType without action
+ */
+export type PlayerCountOutputTypeCountLevelHistoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PlayerLevelHistoryWhereInput
+}
+
 
 export type PlayerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1569,6 +1977,7 @@ export type PlayerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   photoThumbUrl?: boolean
   deletedAt?: boolean
   userId?: boolean
+  levelId?: boolean
   games?: boolean | Prisma.Player$gamesArgs<ExtArgs>
   sets?: boolean | Prisma.Player$setsArgs<ExtArgs>
   tournaments?: boolean | Prisma.Player$tournamentsArgs<ExtArgs>
@@ -1577,6 +1986,8 @@ export type PlayerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   player2Matches?: boolean | Prisma.Player$player2MatchesArgs<ExtArgs>
   wonTournaments?: boolean | Prisma.Player$wonTournamentsArgs<ExtArgs>
   user?: boolean | Prisma.Player$userArgs<ExtArgs>
+  level?: boolean | Prisma.Player$levelArgs<ExtArgs>
+  levelHistory?: boolean | Prisma.Player$levelHistoryArgs<ExtArgs>
   _count?: boolean | Prisma.PlayerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["player"]>
 
@@ -1592,7 +2003,9 @@ export type PlayerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   photoThumbUrl?: boolean
   deletedAt?: boolean
   userId?: boolean
+  levelId?: boolean
   user?: boolean | Prisma.Player$userArgs<ExtArgs>
+  level?: boolean | Prisma.Player$levelArgs<ExtArgs>
 }, ExtArgs["result"]["player"]>
 
 export type PlayerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1607,7 +2020,9 @@ export type PlayerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   photoThumbUrl?: boolean
   deletedAt?: boolean
   userId?: boolean
+  levelId?: boolean
   user?: boolean | Prisma.Player$userArgs<ExtArgs>
+  level?: boolean | Prisma.Player$levelArgs<ExtArgs>
 }, ExtArgs["result"]["player"]>
 
 export type PlayerSelectScalar = {
@@ -1622,9 +2037,10 @@ export type PlayerSelectScalar = {
   photoThumbUrl?: boolean
   deletedAt?: boolean
   userId?: boolean
+  levelId?: boolean
 }
 
-export type PlayerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "nickname" | "lastname" | "gender" | "mail" | "phone" | "photoUrl" | "photoThumbUrl" | "deletedAt" | "userId", ExtArgs["result"]["player"]>
+export type PlayerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "nickname" | "lastname" | "gender" | "mail" | "phone" | "photoUrl" | "photoThumbUrl" | "deletedAt" | "userId" | "levelId", ExtArgs["result"]["player"]>
 export type PlayerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   games?: boolean | Prisma.Player$gamesArgs<ExtArgs>
   sets?: boolean | Prisma.Player$setsArgs<ExtArgs>
@@ -1634,13 +2050,17 @@ export type PlayerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   player2Matches?: boolean | Prisma.Player$player2MatchesArgs<ExtArgs>
   wonTournaments?: boolean | Prisma.Player$wonTournamentsArgs<ExtArgs>
   user?: boolean | Prisma.Player$userArgs<ExtArgs>
+  level?: boolean | Prisma.Player$levelArgs<ExtArgs>
+  levelHistory?: boolean | Prisma.Player$levelHistoryArgs<ExtArgs>
   _count?: boolean | Prisma.PlayerCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PlayerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Player$userArgs<ExtArgs>
+  level?: boolean | Prisma.Player$levelArgs<ExtArgs>
 }
 export type PlayerIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.Player$userArgs<ExtArgs>
+  level?: boolean | Prisma.Player$levelArgs<ExtArgs>
 }
 
 export type $PlayerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1654,6 +2074,8 @@ export type $PlayerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     player2Matches: Prisma.$MatchPayload<ExtArgs>[]
     wonTournaments: Prisma.$TournamentPayload<ExtArgs>[]
     user: Prisma.$UserPayload<ExtArgs> | null
+    level: Prisma.$LevelPayload<ExtArgs> | null
+    levelHistory: Prisma.$PlayerLevelHistoryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1667,6 +2089,7 @@ export type $PlayerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     photoThumbUrl: string | null
     deletedAt: Date | null
     userId: string | null
+    levelId: string | null
   }, ExtArgs["result"]["player"]>
   composites: {}
 }
@@ -2069,6 +2492,8 @@ export interface Prisma__PlayerClient<T, Null = never, ExtArgs extends runtime.T
   player2Matches<T extends Prisma.Player$player2MatchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$player2MatchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MatchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   wonTournaments<T extends Prisma.Player$wonTournamentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$wonTournamentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TournamentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   user<T extends Prisma.Player$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  level<T extends Prisma.Player$levelArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$levelArgs<ExtArgs>>): Prisma.Prisma__LevelClient<runtime.Types.Result.GetResult<Prisma.$LevelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  levelHistory<T extends Prisma.Player$levelHistoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Player$levelHistoryArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PlayerLevelHistoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2109,6 +2534,7 @@ export interface PlayerFieldRefs {
   readonly photoThumbUrl: Prisma.FieldRef<"Player", 'String'>
   readonly deletedAt: Prisma.FieldRef<"Player", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Player", 'String'>
+  readonly levelId: Prisma.FieldRef<"Player", 'String'>
 }
     
 
@@ -2694,6 +3120,49 @@ export type Player$userArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
    */
   include?: Prisma.UserInclude<ExtArgs> | null
   where?: Prisma.UserWhereInput
+}
+
+/**
+ * Player.level
+ */
+export type Player$levelArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Level
+   */
+  select?: Prisma.LevelSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Level
+   */
+  omit?: Prisma.LevelOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LevelInclude<ExtArgs> | null
+  where?: Prisma.LevelWhereInput
+}
+
+/**
+ * Player.levelHistory
+ */
+export type Player$levelHistoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PlayerLevelHistory
+   */
+  select?: Prisma.PlayerLevelHistorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PlayerLevelHistory
+   */
+  omit?: Prisma.PlayerLevelHistoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PlayerLevelHistoryInclude<ExtArgs> | null
+  where?: Prisma.PlayerLevelHistoryWhereInput
+  orderBy?: Prisma.PlayerLevelHistoryOrderByWithRelationInput | Prisma.PlayerLevelHistoryOrderByWithRelationInput[]
+  cursor?: Prisma.PlayerLevelHistoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PlayerLevelHistoryScalarFieldEnum | Prisma.PlayerLevelHistoryScalarFieldEnum[]
 }
 
 /**

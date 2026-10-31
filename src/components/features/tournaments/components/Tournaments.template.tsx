@@ -11,6 +11,7 @@ type Tournament = {
   name: string;
   date: string | Date;
   champion?: { name?: string } | null;
+  level?: { name?: string } | null;
   tournamentCategory?: { tournamentCategoryPoints?: { points?: number }[] } | null;
 };
 
@@ -38,6 +39,11 @@ const TournamentsTemplate = ({ tournaments }: { tournaments: Tournament[] }) => 
         </div>
       ),
       header: () => <span>Ganador</span>,
+    }),
+    columnHelper.accessor((row) => row.level?.name ?? '-', {
+      id: 'level',
+      cell: (info) => <i>{info.getValue()}</i>,
+      header: () => <span>Nivel</span>,
     }),
     columnHelper.accessor((row) => row.tournamentCategory?.tournamentCategoryPoints?.[0]?.points ?? '-', {
       id: 'somethingLong',

@@ -3,7 +3,9 @@ import { getPlayerPhoto } from '@/utils/player-photo';
 import { calculatePlayerPoints } from '@/utils/utils';
 import { connection, NextRequest, NextResponse } from 'next/server';
 
-async function getTournaments(initialDate: Date, endDate: Date) {
+type LevelFilter = { levelId?: string | null };
+
+async function getTournaments(initialDate: Date, endDate: Date, level: LevelFilter) {
   const tournaments = await prisma.tournament.findMany({
     orderBy: [
       {
@@ -13,6 +15,7 @@ async function getTournaments(initialDate: Date, endDate: Date) {
     where: {
       status: 'FINISHED',
       deletedAt: null,
+      ...level,
       date: {
         gte: initialDate,
         lte: endDate,
@@ -92,7 +95,16 @@ export async function GET(req: NextRequest) {
     const rankingMode = req.nextUrl.searchParams.get('rankingMode');
     const { initialDate, endDate } = getDateRange(rankingMode, now);
 
-    const tournaments = await getTournaments(initialDate, endDate);
+    // `level` omitted or "all" -> general table; "none" -> tournaments without a level; otherwise a level id.
+    const levelParam = req.nextUrl.searchParams.get('level');
+    const levelFilter: LevelFilter =
+      !levelParam || levelParam === 'all' ? {} : levelParam === 'none' ? { levelId: null } : { levelId: levelParam };
+
+    const [tournaments, levels, withoutLevel] = await Promise.all([
+      getTournaments(initialDate, endDate, levelFilter),
+      prisma.level.findMany({ where: { deletedAt: null }, orderBy: { order: 'desc' }, select: { id: true, name: true, order: true } }),
+      prisma.tournament.count({ where: { status: 'FINISHED', deletedAt: null, levelId: null } }),
+    ]);
     const playerPoints = calculatePlayerPoints(tournaments);
 
     const genderByName = new Map<string, 'MALE' | 'FEMALE'>();
@@ -150,7 +162,7 @@ export async function GET(req: NextRequest) {
         });
 
     return NextResponse.json(
-      { male: toRanking('MALE'), female: toRanking('FEMALE') },
+      { male: toRanking('MALE'), female: toRanking('FEMALE'), levels, hasTournamentsWithoutLevel: withoutLevel > 0 },
       { status: 200 },
     );
   } catch (e) {

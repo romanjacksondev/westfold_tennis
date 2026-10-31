@@ -5067,7 +5067,18 @@ const DEMO_NEW_PLAYERS: DemoPlayer[] = [
 ];
 
 // Days before "now" for each demo tournament, so the data always falls inside the ranking windows.
-const DEMO_TOURNAMENT_OFFSETS_DAYS = [10, 40, 80, 130, 200, 320];
+const DEMO_TOURNAMENT_OFFSETS_DAYS = [10, 25, 40, 60, 80, 105, 130, 165, 200, 320];
+
+// Default scale (also created by the levels migration), highest first. Each tournament cycles through it.
+const DEMO_LEVELS = [
+  { id: 'level-a1', name: 'A1', order: 5 },
+  { id: 'level-a', name: 'A', order: 4 },
+  { id: 'level-b1', name: 'B1', order: 3 },
+  { id: 'level-b', name: 'B', order: 2 },
+  { id: 'level-c', name: 'C', order: 1 },
+];
+// Declared level of each demo player by strength position; the last one has none to show that it is optional.
+const DEMO_PLAYER_LEVELS = ['level-a1', 'level-a', 'level-b1', 'level-b', 'level-c', null];
 
 // Rotates the strength order a little per tournament so the ranking is not identical in each one.
 function demoOrder(ids: string[], tournamentIndex: number) {
@@ -5087,19 +5098,65 @@ async function seedDemoLeaderboard() {
     skipDuplicates: true,
   });
 
+  for (const level of DEMO_LEVELS) {
+    await prisma.level.upsert({ where: { id: level.id }, create: level, update: { ...level, deletedAt: null } });
+  }
+  for (const ids of [DEMO_MALE_IDS, DEMO_FEMALE_IDS]) {
+    for (let i = 0; i < ids.length; i++) {
+      const levelId = DEMO_PLAYER_LEVELS[i];
+      await prisma.player.update({ where: { id: ids[i] }, data: { levelId } });
+      const historyId = `demo-level-history-${ids[i]}`;
+      await prisma.playerLevelHistory.deleteMany({ where: { id: historyId } });
+      if (levelId) await prisma.playerLevelHistory.create({ data: { id: historyId, playerId: ids[i], levelId, reason: 'Nivel inicial' } });
+    }
+  }
+
   const types = await prisma.tournamentType.findMany({ where: { name: { in: DEMO_KINDS } } });
   const typeIdByName = new Map(types.map((type) => [type.name, type.id]));
 
   const matches: { id: string; winnerId: string; tournamentId: string; player1Id: string; player2Id: string; stage: DemoStage }[] = [];
-  const sets: { id: string; winnerId: string; matchId: string }[] = [];
+  const sets: { id: string; winnerId: string; matchId: string; hasTiebreak: boolean; tiebreakPlayer1Points: number | null; tiebreakPlayer2Points: number | null }[] = [];
   const games: { id: string; winnerId: string; setId: string }[] = [];
 
+  // Best of 3: each pattern lists the sets as [set winner, winner games, loser games, tiebreak loser points]
+  // from the match winner's (W) and loser's (L) point of view. Mixes 2-0 and 2-1 results with tiebreak sets.
+  type SetSpec = ['W' | 'L', number, number, number?];
+  const patterns = (lg: number): SetSpec[][] => [
+    [['W', 6, lg], ['W', 6, lg]],
+    [['L', 6, 4], ['W', 6, lg], ['W', 6, lg]],
+    [['W', 7, 6, 4], ['W', 6, lg]],
+    [['W', 6, lg], ['L', 7, 6, 5], ['W', 7, 5]],
+    [['W', 7, 5], ['W', 7, 6, 3]],
+    [['L', 6, 3], ['W', 7, 6, 6], ['W', 6, lg]],
+  ];
+  let matchCounter = 0;
+
   const addMatch = (matchId: string, tournamentId: string, winnerId: string, loserId: string, stage: DemoStage, loserGames: number) => {
-    const setId = `${matchId}-s1`;
-    matches.push({ id: matchId, winnerId, tournamentId, player1Id: winnerId, player2Id: loserId, stage });
-    sets.push({ id: setId, winnerId, matchId });
-    for (let g = 0; g < 6; g++) games.push({ id: `${setId}-w${g}`, winnerId, setId });
-    for (let g = 0; g < loserGames; g++) games.push({ id: `${setId}-l${g}`, winnerId: loserId, setId });
+    const n = matchCounter++;
+    // Alternate who is listed as player 1 so scores are not always winner-first.
+    const winnerIsP1 = n % 2 === 0;
+    const player1Id = winnerIsP1 ? winnerId : loserId;
+    const player2Id = winnerIsP1 ? loserId : winnerId;
+    matches.push({ id: matchId, winnerId, tournamentId, player1Id, player2Id, stage });
+
+    patterns(Math.min(loserGames, 4))[n % 6].forEach(([who, winGames, loseGames, tbLoserPoints], index) => {
+      const setId = `${matchId}-s${index + 1}`;
+      const setWinner = who === 'W' ? winnerId : loserId;
+      const setLoser = who === 'W' ? loserId : winnerId;
+      const hasTiebreak = tbLoserPoints !== undefined;
+      const setWinnerIsP1 = setWinner === player1Id;
+      const tbWinnerPoints = hasTiebreak ? Math.max(7, tbLoserPoints + 2) : null;
+      sets.push({
+        id: setId,
+        winnerId: setWinner,
+        matchId,
+        hasTiebreak,
+        tiebreakPlayer1Points: hasTiebreak ? (setWinnerIsP1 ? tbWinnerPoints : tbLoserPoints) : null,
+        tiebreakPlayer2Points: hasTiebreak ? (setWinnerIsP1 ? tbLoserPoints : tbWinnerPoints) : null,
+      });
+      for (let g = 0; g < winGames; g++) games.push({ id: `${setId}-w${g}`, winnerId: setWinner, setId });
+      for (let g = 0; g < loseGames; g++) games.push({ id: `${setId}-l${g}`, winnerId: setLoser, setId });
+    });
   };
 
   const groups = [
@@ -5124,11 +5181,13 @@ async function seedDemoLeaderboard() {
 
       const tournamentId = `demo-tournament-${group.key}-${t + 1}`;
       const data = {
-        name: `Demo ${group.label} ${t + 1} (${kind})`,
+        name: `Demo ${group.label} ${t + 1}`,
+        levelId: DEMO_LEVELS[t % DEMO_LEVELS.length].id,
         venueId: DEMO_VENUE_ID,
         surfaceId: DEMO_SURFACE_ID,
         tournamentCategoryId: DEMO_CATEGORIES[t % DEMO_CATEGORIES.length],
         tournamentTypeId: typeIdByName.get(kind),
+        drawSize: null,
         qualifiers: kind === 'Round Robin + Playoffs' ? 4 : null,
         championId: hasPlayoffs ? finalWinner : order[0],
         date,

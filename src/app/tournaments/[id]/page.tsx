@@ -2,7 +2,8 @@
 
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { Suspense, useEffect, useState } from 'react';
+import { Fragment, Suspense, useEffect, useState } from 'react';
+import { LuGitFork, LuListOrdered, LuSwords, LuTrophy } from 'react-icons/lu';
 import { formatSetScore } from '@/utils/utils';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -10,6 +11,7 @@ import { formatSetScore } from '@/utils/utils';
 type MatchSet = { gamesJugador1: number; gamesJugador2: number; hasTiebreak: boolean; tiebreakPlayer1Points: number | null; tiebreakPlayer2Points: number | null };
 
 type Match = {
+  stage?: string | null;
   player1Name?: { name?: string };
   player2Name?: { name?: string };
   player1Id: string;
@@ -21,150 +23,159 @@ type Match = {
 type TournamentData = {
   name: string;
   champion: string;
+  championGender?: 'MALE' | 'FEMALE' | null;
+  type?: string | null;
+  category?: string | null;
+  level?: string | null;
 };
+
+const STAGE_LABELS: Record<string, string> = {
+  GROUP: 'Fase de grupos',
+  ROUND_OF_16: 'Octavos',
+  QUARTERFINAL: 'Cuartos',
+  SEMIFINAL: 'Semifinal',
+  FINAL: 'Final',
+};
+const STAGE_ORDER = ['GROUP', 'ROUND_OF_16', 'QUARTERFINAL', 'SEMIFINAL', 'FINAL'];
+const stageRank = (stage?: string | null) => (stage ? STAGE_ORDER.indexOf(stage) : 0);
+
+const signed = (value: number) => `${value > 0 ? '+' : ''}${value}`;
 
 type TournamentResponse = {
   tournamentData: TournamentData | null;
-  playerStats: { id: string; name: string; matchesWon: number; matchesLost: number; gamesWon: number; gamesLost: number }[];
+  playerStats: { id: string; name: string; levelNote?: string | null; matchesWon: number; matchesLost: number; setsWon: number; setsLost: number; gamesWon: number; gamesLost: number }[];
+  standingsFromGroupStage?: boolean;
   matchSummary: Match[];
 };
 
-// ─── Draw types ─────────────────────────────────────────────────────────────
+// ─── Cuadro (built from type + played matches) ──────────────────────────────
 
-type DrawSlot = { id: string | null; label: string };
-type BracketMatch = { top: DrawSlot; bottom: DrawSlot };
-type BracketRound = { roundName: string; matches: BracketMatch[] };
+type Standing = TournamentResponse['playerStats'][number];
 
-type DrawResponse =
-  | { configured: false; message: string }
-  | { configured: true; type: 'playoffs'; rounds: BracketRound[] }
-  | { configured: true; type: 'round-robin'; rounds: BracketRound[] }
-  | { configured: true; type: 'mixed'; groupRounds: BracketRound[]; bracketRounds: BracketRound[] };
-
-// ─── Draw sub-components ────────────────────────────────────────────────────
-
-function DrawMatchCard({ top, bottom }: BracketMatch) {
+// Games per set for one side; the tiebreak points are shown as a superscript on the set loser's games.
+function SideSets({ match, side }: { match: Match; side: 1 | 2 }) {
   return (
-    <div className="draw-match">
-      <div className={`draw-match-player${top.id === null && top.label !== 'Vacante' ? ' draw-placeholder' : ''}${top.label === 'Vacante' ? ' draw-vacancy' : ''}`}>
-        {top.label}
-      </div>
-      <div className={`draw-match-player${bottom.id === null && bottom.label !== 'Vacante' ? ' draw-placeholder' : ''}${bottom.label === 'Vacante' ? ' draw-vacancy' : ''}`}>
-        {bottom.label}
-      </div>
-    </div>
+    <>
+      {(match.sets ?? []).map((set, i) => {
+        const mine = side === 1 ? set.gamesJugador1 : set.gamesJugador2;
+        const other = side === 1 ? set.gamesJugador2 : set.gamesJugador1;
+        const tb = side === 1 ? set.tiebreakPlayer1Points : set.tiebreakPlayer2Points;
+        return (
+          <span key={i} className="bracket-set">
+            {mine}
+            {set.hasTiebreak && mine < other && tb !== null && <sup>{tb}</sup>}
+          </span>
+        );
+      })}
+    </>
   );
 }
 
-function DrawColumn({ round }: { round: BracketRound }) {
-  return (
-    <div className="draw-round">
-      <p className="draw-round-title">{round.roundName}</p>
-      {round.matches.map((match, i) => (
-        <DrawMatchCard key={i} top={match.top} bottom={match.bottom} />
-      ))}
-    </div>
-  );
-}
+function GroupMatrix({ players, matches, champion }: { players: Standing[]; matches: Match[]; champion: string | null | undefined }) {
+  const findMatch = (a: string, b: string) =>
+    matches.find((m) => (m.player1Id === a && m.player2Id === b) || (m.player1Id === b && m.player2Id === a));
 
-function PlayoffsBracket({ rounds }: { rounds: BracketRound[] }) {
   return (
-    <div className="draw-rounds">
-      {rounds.map((round, i) => (
-        <DrawColumn key={i} round={round} />
-      ))}
-    </div>
-  );
-}
-
-function RoundRobinFixture({ rounds }: { rounds: BracketRound[] }) {
-  return (
-    <div className="draw-rr-grid">
-      {rounds.map((round, i) => (
-        <div key={i} className="draw-rr-round">
-          <p className="draw-round-title">{round.roundName}</p>
-          {round.matches.map((match, j) => (
-            <div key={j} className="draw-rr-match">
-              <span className={match.top.label === 'Vacante' ? 'draw-vacancy' : ''}>{match.top.label}</span>
-              <span className="draw-vs">vs</span>
-              <span className={match.bottom.label === 'Vacante' ? 'draw-vacancy' : ''}>{match.bottom.label}</span>
-            </div>
+    <div className="tournament-detail-table-wrap">
+      <table className="tournament-detail-table bracket-matrix">
+        <thead>
+          <tr>
+            <th />
+            {players.map((p) => (
+              <th key={p.id}>{p.name}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {players.map((row) => (
+            <tr key={row.id}>
+              <th className={row.name === champion ? 'is-champion-name' : undefined}>{row.name}</th>
+              {players.map((col) => {
+                if (row.id === col.id) return <td key={col.id} className="matrix-self">—</td>;
+                const match = findMatch(row.id, col.id);
+                if (!match) return <td key={col.id} className="matrix-empty">·</td>;
+                const rowIsP1 = match.player1Id === row.id;
+                const won = match.winnerId === row.id;
+                const score = (match.sets ?? [])
+                  .map((set) =>
+                    rowIsP1
+                      ? formatSetScore(set.gamesJugador1, set.gamesJugador2, set.hasTiebreak, set.tiebreakPlayer1Points, set.tiebreakPlayer2Points)
+                      : formatSetScore(set.gamesJugador2, set.gamesJugador1, set.hasTiebreak, set.tiebreakPlayer2Points, set.tiebreakPlayer1Points),
+                  )
+                  .join('  ');
+                return (
+                  <td key={col.id} className={won ? 'matrix-win' : 'matrix-loss'} title={won ? 'Victoria' : 'Derrota'}>
+                    {score}
+                  </td>
+                );
+              })}
+            </tr>
           ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function PlayoffBracket({ matches }: { matches: Match[] }) {
+  const stages = STAGE_ORDER.filter((stage) => stage !== 'GROUP' && matches.some((m) => m.stage === stage));
+  return (
+    <div className="bracket-rounds">
+      {stages.map((stage) => (
+        <div key={stage} className="bracket-round">
+          <p className="bracket-round-title">{STAGE_LABELS[stage]}</p>
+          <div className="bracket-round-matches">
+            {matches
+              .filter((m) => m.stage === stage)
+              .map((m, i) => (
+                <div key={i} className="bracket-match">
+                  {([1, 2] as const).map((side) => {
+                    const id = side === 1 ? m.player1Id : m.player2Id;
+                    const name = (side === 1 ? m.player1Name : m.player2Name)?.name ?? 'Sin nombre';
+                    const won = m.winnerId === id;
+                    return (
+                      <div key={side} className={`bracket-player${won ? ' is-winner' : ''}`}>
+                        <span>{name}</span>
+                        <span className="bracket-score"><SideSets match={m} side={side} /></span>
+                      </div>
+                    );
+                  })}
+                </div>
+              ))}
+          </div>
         </div>
       ))}
     </div>
   );
 }
 
-// ─── Draw section ────────────────────────────────────────────────────────────
+function DrawSection({ data }: { data: TournamentResponse }) {
+  const typeName = (data.tournamentData?.type ?? '').toLowerCase();
+  const groupMatches = data.matchSummary.filter((m) => !m.stage || m.stage === 'GROUP');
+  const playoffMatches = data.matchSummary.filter((m) => m.stage && m.stage !== 'GROUP');
+  const showGroup = groupMatches.length > 0 && (typeName.includes('round robin') || playoffMatches.length === 0 || !typeName);
+  const showPlayoffs = playoffMatches.length > 0;
 
-function DrawSection({ id }: { id: string }) {
-  const [draw, setDraw] = useState<DrawResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+  if (!showGroup && !showPlayoffs) return <p className="empty-state">Todavía no hay partidos jugados para armar el cuadro.</p>;
 
-  useEffect(() => {
-    fetch(`/api/tournaments/${id}/draw`)
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then((data: DrawResponse) => setDraw(data))
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
-  }, [id]);
-
-  if (loading) return <p className="empty-state">Cargando cuadro...</p>;
-  if (error) return <p className="empty-state draw-error">No se pudo cargar el cuadro del torneo.</p>;
-  if (!draw) return null;
-
-  if (!draw.configured) {
-    return (
-      <div className="draw-unconfigured">
-        <span className="draw-unconfigured-icon">📋</span>
-        <p>{draw.message}</p>
-      </div>
-    );
-  }
-
-  if (draw.type === 'playoffs') {
-    return (
-      <section className="tournament-detail-panel">
-        <p className="eyebrow">Cuadro</p>
-        <h2>Llave del torneo</h2>
-        <PlayoffsBracket rounds={draw.rounds} />
-      </section>
-    );
-  }
-
-  if (draw.type === 'round-robin') {
-    return (
-      <section className="tournament-detail-panel">
-        <p className="eyebrow">Cuadro</p>
-        <h2>Fixture — Todos contra todos</h2>
-        <RoundRobinFixture rounds={draw.rounds} />
-      </section>
-    );
-  }
-
-  if (draw.type === 'mixed') {
-    return (
-      <>
+  return (
+    <>
+      {showGroup && (
         <section className="tournament-detail-panel">
-          <p className="eyebrow">Cuadro · Fase de grupos</p>
-          <h2>Fixture — Todos contra todos</h2>
-          <RoundRobinFixture rounds={draw.groupRounds} />
+          <p className="eyebrow">Cuadro{showPlayoffs ? ' · Fase de grupos' : ''}</p>
+          <h2>Todos contra todos</h2>
+          <GroupMatrix players={data.playerStats} matches={groupMatches} champion={data.tournamentData?.champion} />
         </section>
+      )}
+      {showPlayoffs && (
         <section className="tournament-detail-panel">
-          <p className="eyebrow">Cuadro · Playoffs</p>
-          <h2>Clasificados a Playoffs</h2>
-          <PlayoffsBracket rounds={draw.bracketRounds} />
+          <p className="eyebrow">Cuadro{showGroup ? ' · Playoffs' : ''}</p>
+          <h2>Llave de playoffs</h2>
+          <PlayoffBracket matches={playoffMatches} />
         </section>
-      </>
-    );
-  }
-
-  return null;
+      )}
+    </>
+  );
 }
 
 // ─── Main page ───────────────────────────────────────────────────────────────
@@ -175,6 +186,7 @@ function TournamentDetailsContent() {
   const [data, setData] = useState<TournamentResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [activeTab, setActiveTab] = useState<'standings' | 'matches' | 'draw'>('standings');
 
   useEffect(() => {
     fetch(`/api/matches?id=${id}`)
@@ -187,6 +199,9 @@ function TournamentDetailsContent() {
       .finally(() => setLoading(false));
   }, [id]);
 
+  const orderedMatches = [...(data?.matchSummary ?? [])].sort((a, b) => stageRank(a.stage) - stageRank(b.stage));
+  const hasStages = orderedMatches.some((match) => match.stage && match.stage !== 'GROUP');
+
   return (
     <main className="tournament-detail-page">
       <div className="tournament-detail-content">
@@ -196,39 +211,130 @@ function TournamentDetailsContent() {
         {data?.tournamentData && (
           <>
             <header className="tournament-detail-header">
-              <div>
-                <p className="eyebrow">Detalle de competencia</p>
-                <h1>{data.tournamentData.name}</h1>
-                <div className="tournament-champion">
-                  <span>Campeón</span>
-                  <strong>{data.tournamentData.champion || 'En disputa'}</strong>
-                </div>
+              <p className="eyebrow">
+                {[data.tournamentData.type, data.tournamentData.category, data.tournamentData.level && `Nivel ${data.tournamentData.level}`].filter(Boolean).join(' · ') || 'Detalle de competencia'}
+              </p>
+              <h1>{data.tournamentData.name}</h1>
+              <div className="tournament-champion">
+                <LuTrophy aria-hidden="true" />
+                <span>{data.tournamentData.championGender === 'FEMALE' ? 'Campeona' : 'Campeón'}</span>
+                <strong>{data.tournamentData.champion || 'En disputa'}</strong>
               </div>
             </header>
 
-            {/* Draw section */}
-            <DrawSection id={id} />
+            <div className="stats-tabs-container">
+              <div className="stats-tabs" role="tablist" aria-label="Secciones del torneo">
+                {([
+                  ['standings', 'Posiciones', LuListOrdered],
+                  ['matches', 'Partidos', LuSwords],
+                  ['draw', 'Cuadro', LuGitFork],
+                ] as const).map(([key, label, Icon]) => (
+                  <button
+                    key={key}
+                    type="button"
+                    role="tab"
+                    aria-selected={activeTab === key}
+                    className={`stats-tab-btn ${activeTab === key ? 'active' : ''}`}
+                    onClick={() => setActiveTab(key)}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-            <section className="tournament-detail-panel">
-              <p className="eyebrow">Rendimiento</p>
-              <h2>Estadísticas de jugadores</h2>
-              <div className="tournament-detail-table-wrap">
-                <table className="tournament-detail-table">
-                  <thead><tr><th>Jugador</th><th>PG</th><th>PP</th><th>Games</th></tr></thead>
-                  <tbody>{data.playerStats.map((player) => <tr key={player.id}><td>{player.name}</td><td>{player.matchesWon}</td><td>{player.matchesLost}</td><td>{player.gamesWon - player.gamesLost >= 0 ? '+' : ''}{player.gamesWon - player.gamesLost}</td></tr>)}</tbody>
-                </table>
-              </div>
-            </section>
-            <section className="tournament-detail-panel">
-              <p className="eyebrow">Historial</p>
-              <h2>Partidos</h2>
-              <div className="tournament-detail-table-wrap">
-                <table className="tournament-detail-table">
-                  <thead><tr><th>Jugador 1</th><th>Jugador 2</th><th>Ganador</th><th>Resultado</th></tr></thead>
-                  <tbody>{data.matchSummary.map((match) => <tr key={`${match.player1Id}-${match.player2Id}-${match.winnerId}`}><td>{match.player1Name?.name ?? 'Sin nombre'}</td><td>{match.player2Name?.name ?? 'Sin nombre'}</td><td className="tournament-details-winner">{data.playerStats.find((player) => player.id === match.winnerId)?.name ?? 'Sin resultado'}</td><td>{(match.sets ?? []).map((set) => formatSetScore(set.gamesJugador1, set.gamesJugador2, set.hasTiebreak, set.tiebreakPlayer1Points, set.tiebreakPlayer2Points)).join(' ')}</td></tr>)}</tbody>
-                </table>
-              </div>
-            </section>
+            {activeTab === 'draw' && <DrawSection data={data} />}
+
+            <div className="tournament-detail-grid">
+              {activeTab === 'standings' && (
+              <section className="tournament-detail-panel">
+                <p className="eyebrow">{data.standingsFromGroupStage ? 'Fase de grupos' : 'Rendimiento'}</p>
+                <h2>Tabla de posiciones</h2>
+                <div className="tournament-detail-table-wrap">
+                  <table className="tournament-detail-table tournament-standings">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Jugador</th>
+                        <th title="Partidos ganados">PG</th>
+                        <th title="Partidos perdidos">PP</th>
+                        <th title="Diferencia de sets">Sets</th>
+                        <th title="Diferencia de games">Games</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.playerStats.map((player, index) => (
+                        <tr key={player.id} className={player.name === data.tournamentData?.champion ? 'is-champion' : undefined}>
+                          <td className="tournament-pos">{index + 1}</td>
+                          <td className="tournament-player">
+                            {player.name}
+                            {player.levelNote && <small className="level-gap" title="Nivel declarado del jugador respecto al del torneo">{player.levelNote}</small>}
+                            {player.name === data.tournamentData?.champion && <LuTrophy aria-label={data.tournamentData?.championGender === 'FEMALE' ? 'Campeona' : 'Campeón'} />}
+                          </td>
+                          <td>{player.matchesWon}</td>
+                          <td>{player.matchesLost}</td>
+                          <td>{signed(player.setsWon - player.setsLost)}</td>
+                          <td>{signed(player.gamesWon - player.gamesLost)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+              )}
+
+              {activeTab === 'matches' && (
+              <section className="tournament-detail-panel">
+                <p className="eyebrow">Historial</p>
+                <h2>Partidos</h2>
+                <div className="tournament-detail-table-wrap">
+                  <table className="tournament-detail-table tournament-matches">
+                    <thead>
+                      <tr>
+                        <th>Ganador</th>
+                        <th>Rival</th>
+                        <th>Resultado</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {orderedMatches.map((match, index) => {
+                        const player1Won = match.winnerId === match.player1Id;
+                        const winnerName = (player1Won ? match.player1Name : match.player2Name)?.name ?? 'Sin resultado';
+                        const loserName = (player1Won ? match.player2Name : match.player1Name)?.name ?? 'Sin nombre';
+                        // Scores are shown from the winner's point of view.
+                        const score = (match.sets ?? [])
+                          .map((set) =>
+                            player1Won
+                              ? formatSetScore(set.gamesJugador1, set.gamesJugador2, set.hasTiebreak, set.tiebreakPlayer1Points, set.tiebreakPlayer2Points)
+                              : formatSetScore(set.gamesJugador2, set.gamesJugador1, set.hasTiebreak, set.tiebreakPlayer2Points, set.tiebreakPlayer1Points),
+                          )
+                          .join('  ');
+                        const stage = match.stage ?? 'GROUP';
+                        const startsStage = hasStages && (index === 0 || (orderedMatches[index - 1].stage ?? 'GROUP') !== stage);
+                        return (
+                          <Fragment key={`${match.player1Id}-${match.player2Id}-${index}`}>
+                            {startsStage && (
+                              <tr className="tournament-stage-row">
+                                <td colSpan={3}>
+                                  <span className={`stage-badge stage-${stage.toLowerCase()}`}>{STAGE_LABELS[stage] ?? stage}</span>
+                                </td>
+                              </tr>
+                            )}
+                            <tr>
+                              <td className="tournament-details-winner">{winnerName}</td>
+                              <td>{loserName}</td>
+                              <td className="tournament-score">{score}</td>
+                            </tr>
+                          </Fragment>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+              )}
+            </div>
           </>
         )}
       </div>

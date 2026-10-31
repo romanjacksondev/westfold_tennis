@@ -91,7 +91,7 @@ const SidebarTemplate = ({ handleClose }: SidebarInterface) => {
           ]
         : [...publicItems];
 
-  if ((session?.user as { role?: string } | undefined)?.role === 'ADMIN') {
+  if (hydrated && (session?.user as { role?: string } | undefined)?.role === 'ADMIN') {
     items.push({
       label: 'Dashboard',
       icon: LuLayoutDashboard,

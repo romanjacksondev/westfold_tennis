@@ -247,6 +247,26 @@ const InformationTemplate = ({
       </div>
     </section>
 
+    <section className="info-section" aria-labelledby="info-levels">
+      <div className="info-section-title">
+        <LuListOrdered aria-hidden="true" />
+        <h2 id="info-levels">Niveles</h2>
+      </div>
+      <p>
+        Los torneos se organizan por nivel (por ejemplo, «Torneo Masculino Nivel A»). La escala va de mayor a menor:
+        A1, A, B1, B y C, y puede ajustarla la organización.
+      </p>
+      <ul className="info-list">
+        <li>El nivel de un jugador es una referencia, no una restricción: podés anotarte en el nivel en el que creas que podés jugar.</li>
+        <li>Los puntos de un torneo van al ranking del nivel de ese torneo. La tabla «Todos» suma los puntos de todos los niveles.</li>
+        <li>Si tu nivel cambia (por frecuencia de juego, una lesión, mejora o baja de rendimiento), se guarda el historial con el motivo.</li>
+        <li>
+          Si ganás 5 partidos seguidos ante rivales de tu nivel o superior, te sugerimos subir un nivel; con 5 derrotas
+          seguidas ante rivales de tu nivel o inferior, te sugerimos bajar. Si todavía no tenés nivel, la sugerencia sale del nivel de tus rivales.
+        </li>
+      </ul>
+    </section>
+
     <section className="info-section" aria-labelledby="info-reading">
       <div className="info-section-title">
         <LuListOrdered aria-hidden="true" />

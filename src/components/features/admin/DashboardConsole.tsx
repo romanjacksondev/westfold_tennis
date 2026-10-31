@@ -8,9 +8,9 @@ import TournamentTypeVisual from '@/components/features/admin/TournamentTypeVisu
 import TournamentPreparationModal from '@/components/features/admin/TournamentPreparationModal';
 import PlayerPhotoEditor from '@/components/ui/PlayerPhoto/PlayerPhotoEditor';
 
-type Resource = 'tournaments' | 'tournament-types' | 'tournament-categories' | 'players' | 'surfaces' | 'venues' | 'matches' | 'users';
+type Resource = 'tournaments' | 'tournament-types' | 'tournament-categories' | 'players' | 'surfaces' | 'venues' | 'matches' | 'users' | 'levels';
 type RecordItem = { id: string; name?: string; [key: string]: unknown };
-type Options = { players: RecordItem[]; venues: RecordItem[]; surfaces: RecordItem[]; categories: RecordItem[]; types: RecordItem[]; tournaments: RecordItem[]; users: RecordItem[] };
+type Options = { players: RecordItem[]; venues: RecordItem[]; surfaces: RecordItem[]; categories: RecordItem[]; types: RecordItem[]; tournaments: RecordItem[]; users: RecordItem[]; levels: RecordItem[] };
 
 const sections: { key: Resource; label: string; description: string }[] = [
   { key: 'tournaments', label: 'Torneos', description: 'Competencias y participantes' },
@@ -20,6 +20,7 @@ const sections: { key: Resource; label: string; description: string }[] = [
   { key: 'surfaces', label: 'Superficies', description: 'Tipos de cancha' },
   { key: 'tournament-types', label: 'Tipos', description: 'Playoff y round robin' },
   { key: 'tournament-categories', label: 'Categorías', description: 'ATP 250, 500 y más' },
+  { key: 'levels', label: 'Niveles', description: 'Escala A1, A, B1, B, C' },
   { key: 'users', label: 'Usuarios', description: 'Acceso y permisos' },
 ];
 
@@ -31,19 +32,21 @@ const resourceInfo: Record<Resource, { singular: string; plural: string; newBtn:
   surfaces: { singular: 'Superficie', plural: 'Superficies', newBtn: '+ Nueva Superficie' },
   'tournament-types': { singular: 'Tipo de torneo', plural: 'Tipos', newBtn: '+ Nuevo Tipo' },
   'tournament-categories': { singular: 'Categoría', plural: 'Categorías', newBtn: '+ Nueva Categoría' },
+  levels: { singular: 'Nivel', plural: 'Niveles', newBtn: '+ Nuevo Nivel' },
   users: { singular: 'Usuario', plural: 'Usuarios', newBtn: '+ Nuevo Usuario' },
 };
 
 const simpleFields: Record<Exclude<Resource, 'tournaments' | 'matches'>, string[]> = {
-  players: ['name', 'nickname', 'lastname', 'gender', 'mail', 'phone', 'userId'],
+  players: ['name', 'nickname', 'lastname', 'gender', 'mail', 'phone', 'levelId', 'userId'],
   venues: ['name', 'phone', 'address'],
   surfaces: ['name'],
   'tournament-types': ['name'],
   'tournament-categories': ['name'],
+  levels: ['name', 'order'],
   users: ['name', 'email', 'role', 'password', 'playerId'],
 };
 
-const labels: Record<string, string> = { name: 'Nombre', nickname: 'Apodo', lastname: 'Apellido', mail: 'Email de contacto', email: 'Email de acceso', phone: 'Teléfono', address: 'Dirección', date: 'Fecha', venueId: 'Sede', surfaceId: 'Superficie', championId: 'Campeón', tournamentCategoryId: 'Categoría', tournamentTypeId: 'Tipo', tournamentId: 'Torneo', player1Id: 'Jugador 1', player2Id: 'Jugador 2', winnerId: 'Ganador', role: 'Rol', gender: 'Género', password: 'Contraseña', status: 'Estado', drawSize: 'Tamaño del cuadro', qualifiers: 'Clasificados a playoffs', userId: 'Cuenta de usuario', playerId: 'Perfil de jugador' };
+const labels: Record<string, string> = { name: 'Nombre', nickname: 'Apodo', lastname: 'Apellido', mail: 'Email de contacto', email: 'Email de acceso', phone: 'Teléfono', address: 'Dirección', date: 'Fecha', venueId: 'Sede', surfaceId: 'Superficie', championId: 'Campeón', tournamentCategoryId: 'Categoría', tournamentTypeId: 'Tipo', tournamentId: 'Torneo', player1Id: 'Jugador 1', player2Id: 'Jugador 2', winnerId: 'Ganador', role: 'Rol', gender: 'Género', password: 'Contraseña', status: 'Estado', drawSize: 'Tamaño del cuadro', qualifiers: 'Clasificados a playoffs', userId: 'Cuenta de usuario', levelId: 'Nivel', order: 'Orden (mayor = nivel más alto)', levelReason: 'Motivo del cambio de nivel', playerId: 'Perfil de jugador' };
 const tournamentStatusLabels: Record<string, string> = { PREPARATION: 'En preparación', IN_PROGRESS: 'En curso', FINISHED: 'Terminado', CANCELLED: 'Cancelado' };
 const tournamentTypeInfo: Record<string, { description: string; rounds: string[] }> = {
   'Round Robin': { description: 'Todos los jugadores se enfrentan entre sí. La tabla final define las posiciones.', rounds: ['Jugador 1 vs Jugador 2', 'Jugador 1 vs Jugador 3', 'Tabla de posiciones'] },
@@ -82,7 +85,7 @@ export default function DashboardConsole() {
   const [modalError, setModalError] = useState<string | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [query, setQuery] = useState('');
-  const [options, setOptions] = useState<Options>({ players: [], venues: [], surfaces: [], categories: [], types: [], tournaments: [], users: [] });
+  const [options, setOptions] = useState<Options>({ players: [], venues: [], surfaces: [], categories: [], types: [], tournaments: [], users: [], levels: [] });
   const [showTournamentTypeInfo, setShowTournamentTypeInfo] = useState(false);
   const [prepTournament, setPrepTournament] = useState<RecordItem | null>(null);
   const [matchSets, setMatchSets] = useState<MatchSetForm[]>([emptyMatchSet()]);
@@ -136,9 +139,9 @@ export default function DashboardConsole() {
       Promise.all([
         requestJson('/api/admin/players'), requestJson('/api/admin/venues'), requestJson('/api/admin/surfaces'),
         requestJson('/api/admin/tournament-categories'), requestJson('/api/admin/tournament-types'), requestJson('/api/admin/tournaments'),
-        requestJson('/api/admin/users'),
-      ]).then(([players, venues, surfaces, categories, types, tournaments, users]) => {
-        setOptions({ players, venues, surfaces, categories, types, tournaments, users });
+        requestJson('/api/admin/users'), requestJson('/api/admin/levels'),
+      ]).then(([players, venues, surfaces, categories, types, tournaments, users, levels]) => {
+        setOptions({ players, venues, surfaces, categories, types, tournaments, users, levels });
         if (resource === 'tournaments') setForm((current) => ({ ...current, date: current.date || todayInputValue(), venueId: current.venueId || venues.find((venue: RecordItem) => venue.name === 'Kauri Club')?.id || '', surfaceId: current.surfaceId || surfaces.find((surface: RecordItem) => surface.name === 'Polvo de Ladrillo')?.id || '' }));
       }).catch(() => setMessage({ type: 'error', text: 'No se pudieron cargar las opciones relacionadas.' }));
     }
@@ -159,14 +162,15 @@ export default function DashboardConsole() {
   }, [isFormModalOpen, showTournamentTypeInfo]);
 
   const visibleItems = useMemo(() => items.filter((item) => JSON.stringify(item).toLowerCase().includes(query.toLowerCase())), [items, query]);
-  const relationOptions: Record<string, RecordItem[]> = { venueId: options.venues, surfaceId: options.surfaces, championId: options.players, tournamentCategoryId: options.categories, tournamentTypeId: options.types, tournamentId: options.tournaments, player1Id: options.players, player2Id: options.players, winnerId: options.players, playerId: options.players, userId: options.users };
+  const relationOptions: Record<string, RecordItem[]> = { venueId: options.venues, surfaceId: options.surfaces, championId: options.players, tournamentCategoryId: options.categories, tournamentTypeId: options.types, tournamentId: options.tournaments, player1Id: options.players, player2Id: options.players, winnerId: options.players, playerId: options.players, userId: options.users, levelId: options.levels };
   const matchTournamentType = options.tournaments.find((tournament) => tournament.id === form.tournamentId)?.tournamentType as { name?: string } | null | undefined;
   const matchHasPlayoffs = /playoff/i.test(matchTournamentType?.name ?? '');
   const matchStageOptions = [['GROUP', 'Fase de grupos'], ['ROUND_OF_16', 'Octavos de final'], ['QUARTERFINAL', 'Cuartos de final'], ['SEMIFINAL', 'Semifinal'], ['FINAL', 'Final']];
   const selectedTournamentTypeName = options.types.find((t) => t.id === form.tournamentTypeId)?.name ?? '';
   const isRoundRobinPlusPlayoffs = String(selectedTournamentTypeName).trim().toLowerCase() === 'round robin + playoffs';
-  const fields = isSimple ? simpleFields[resource as Exclude<Resource, 'tournaments' | 'matches'>] : resource === 'tournaments' ? ['name', 'date', 'venueId', 'surfaceId', 'tournamentCategoryId', 'tournamentTypeId', 'drawSize', ...(isRoundRobinPlusPlayoffs ? ['qualifiers'] : []), ...(editing ? ['championId'] : [])] : resource === 'matches' && !editing ? ['tournamentId', 'player1Id', 'player2Id'] : ['tournamentId', 'player1Id', 'player2Id', 'winnerId'];
-  const requiredFields = resource === 'users' ? ['email', 'role', ...(!editing ? ['password'] : [])] : fields.filter((field) => field !== 'date' && field !== 'championId' && field !== 'drawSize' && field !== 'qualifiers' && field !== 'userId' && field !== 'playerId' && field !== 'nickname' && field !== 'lastname' && field !== 'mail' && field !== 'phone');
+  const levelChanged = resource === 'players' && Boolean(editing) && (form.levelId ?? '') !== String(editing?.levelId ?? '');
+  const fields = isSimple ? [...simpleFields[resource as Exclude<Resource, 'tournaments' | 'matches'>], ...(levelChanged ? ['levelReason'] : [])] : resource === 'tournaments' ? ['name', 'date', 'venueId', 'surfaceId', 'tournamentCategoryId', 'tournamentTypeId', 'levelId', 'drawSize', ...(isRoundRobinPlusPlayoffs ? ['qualifiers'] : []), ...(editing ? ['championId'] : [])] : resource === 'matches' && !editing ? ['tournamentId', 'player1Id', 'player2Id'] : ['tournamentId', 'player1Id', 'player2Id', 'winnerId'];
+  const requiredFields = resource === 'users' ? ['email', 'role', ...(!editing ? ['password'] : [])] : fields.filter((field) => field !== 'date' && field !== 'championId' && field !== 'drawSize' && field !== 'qualifiers' && field !== 'userId' && field !== 'levelId' && field !== 'levelReason' && field !== 'playerId' && field !== 'nickname' && field !== 'lastname' && field !== 'mail' && field !== 'phone');
   const selectedTournamentType = options.types.find((option) => option.id === form.tournamentTypeId);
 
   function openCreateModal() {
@@ -447,11 +451,11 @@ export default function DashboardConsole() {
                       </strong>
                       <small>
                         {resource === 'tournaments'
-                          ? `${tournamentStatusLabels[String(item.status)] ?? String(item.status)} · Creado ${formatShortDate(item.createdAt as string) ?? '-'}${item.finishedAt ? ` · Finalizado ${formatShortDate(item.finishedAt as string)}` : ''}`
+                          ? `${tournamentStatusLabels[String(item.status)] ?? String(item.status)} · Nivel {(item.level as { name?: string } | null)?.name ?? 'sin nivel'} · Creado ${formatShortDate(item.createdAt as string) ?? '-'}${item.finishedAt ? ` · Finalizado ${formatShortDate(item.finishedAt as string)}` : ''}`
                           : resource === 'users'
                           ? `${String(item.email)} · ${String(item.role ?? 'USER')} · ${item.player ? `👤 ${(item.player as { name?: string })?.name}` : '⚪ Sin jugador vinculado'}`
                           : resource === 'players'
-                          ? `${item.mail ? `${item.mail} · ` : ''}${item.user ? `🔑 ${(item.user as { email?: string })?.email}` : '⚪ Sin cuenta vinculada'}`
+                          ? `${(item.level as { name?: string } | null)?.name ? `Nivel ${(item.level as { name?: string }).name} · ` : ''}${item.mail ? `${item.mail} · ` : ''}${item.user ? `🔑 ${(item.user as { email?: string })?.email}` : '⚪ Sin cuenta vinculada'}`
                           : item.email
                           ? `${String(item.email)} · ${String(item.role ?? 'USER')}`
                           : item.id}
@@ -470,6 +474,31 @@ export default function DashboardConsole() {
                         >
                           Editar
                         </button>
+                      )}
+                      {resource === 'tournaments' && item.status === 'FINISHED' && (
+                        <select
+                          aria-label="Nivel del torneo"
+                          title="Nivel del torneo (los torneos terminados solo permiten cambiar el nivel)"
+                          value={String(item.levelId ?? '')}
+                          onChange={async (event) => {
+                            try {
+                              const result = await requestJson(`/api/admin/tournaments/${item.id}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ levelId: event.target.value }),
+                              });
+                              setMessage({ type: 'success', text: result.message });
+                              await load();
+                            } catch (error) {
+                              setMessage({ type: 'error', text: error instanceof Error ? error.message : 'No se pudo guardar' });
+                            }
+                          }}
+                        >
+                          <option value="">Sin nivel</option>
+                          {options.levels.map((level) => (
+                            <option key={level.id} value={level.id}>{String(level.name)}</option>
+                          ))}
+                        </select>
                       )}
                       {resource === 'tournaments' && item.status !== 'FINISHED' && (
                         <button
@@ -610,7 +639,7 @@ export default function DashboardConsole() {
                         onChange={(event) => setForm((current) => ({ ...current, [field]: event.target.value }))}
                       >
                         <option value="">
-                          {field === 'playerId' || field === 'userId' ? 'Ninguno (sin vincular)' : 'Seleccionar...'}
+                          {field === 'playerId' || field === 'userId' ? 'Ninguno (sin vincular)' : field === 'levelId' ? 'Sin nivel' : 'Seleccionar...'}
                         </option>
                         {field === 'playerId'
                           ? relationOptions[field].map((option) => {
@@ -662,6 +691,8 @@ export default function DashboardConsole() {
                         placeholder={
                           field === 'password'
                             ? 'Mínimo 12 caracteres'
+                            : field === 'levelReason'
+                            ? 'Ej: volvió de una lesión'
                             : field === 'name'
                             ? 'Escribí un nombre'
                             : `Agregar ${labels[field]?.toLowerCase() ?? field}`

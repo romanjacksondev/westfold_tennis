@@ -13,24 +13,22 @@ import {
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import Sidebar from '../Sidebar';
 
 const NavBarTemplate = () => {
   const { data: session } = useSession();
   const pathname = usePathname();
   const isDashboardView = pathname === '/dashboard';
-  const [user, setUser] = useState(session?.user);
+  // False during SSR and hydration so the first client render matches the server HTML.
+  const hydrated = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
+  const user = hydrated ? session?.user : undefined;
   const [isOpen, setIsOpen] = useState(false);
   const handleClose = () => setIsOpen(false);
-
-  useEffect(() => {
-    if (session) {
-      setUser(session.user);
-    } else {
-      setUser(undefined);
-    }
-  }, [session]);
 
   return (
     <>
