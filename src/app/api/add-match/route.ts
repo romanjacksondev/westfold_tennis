@@ -35,6 +35,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ message: 'La fase del partido es inválida' }, { status: 400 });
     }
 
+    const playedAt = body.playedAt ? new Date(body.playedAt) : null;
+    if (playedAt && Number.isNaN(playedAt.getTime())) {
+      return NextResponse.json({ message: 'La fecha del partido es inválida' }, { status: 400 });
+    }
+
     const setData = sets.map((set) => {
       const hasTiebreak = Boolean(set.hasTiebreak);
       const tiebreakPlayer1Points = hasTiebreak ? toScore(set.tiebreakPlayer1Points) : null;
@@ -71,6 +76,7 @@ export async function POST(request: NextRequest) {
         player2: { connect: { id: body.idPlayer2 } },
         winner: { connect: { id: body.winner } },
         stage,
+        playedAt: playedAt ?? (await prisma.tournament.findUnique({ where: { id: body.tournamentId }, select: { date: true } }))?.date ?? null,
         sets: { create: setData },
       },
     });

@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import Pagination, { paginate } from '@/components/ui/Pagination/Pagination';
 import SiteFooter from '@/components/features/SiteFooter';
 import TournamentTypeVisual from '@/components/features/admin/TournamentTypeVisual';
 import TournamentPreparationModal from '@/components/features/admin/TournamentPreparationModal';
@@ -59,6 +60,43 @@ const todayInputValue = () => {
   const day = String(today.getDate()).padStart(2, '0');
   return `${today.getFullYear()}-${month}-${day}`;
 };
+type MatchRecord = {
+  player1Id?: string;
+  player1?: { name?: string } | null;
+  player2?: { name?: string } | null;
+  winner?: { name?: string } | null;
+  tournament?: { name?: string; date?: string } | null;
+  stage?: string | null;
+  playedAt?: string | null;
+  sets?: { hasTiebreak?: boolean; tiebreakPlayer1Points?: number | null; tiebreakPlayer2Points?: number | null; games?: { winnerId: string }[] }[];
+};
+
+const matchStageLabels: Record<string, string> = { GROUP: 'Fase de grupos', ROUND_OF_16: 'Octavos de final', QUARTERFINAL: 'Cuartos de final', SEMIFINAL: 'Semifinal', FINAL: 'Final' };
+
+const matchTitle = (match: MatchRecord) => `${match.player1?.name ?? 'Jugador 1'} vs ${match.player2?.name ?? 'Jugador 2'}`;
+
+const matchDate = (match: MatchRecord) => match.playedAt ?? match.tournament?.date ?? null;
+
+const matchDetails = (match: MatchRecord) => {
+  const score = (match.sets ?? [])
+    .map((set) => {
+      const first = (set.games ?? []).filter((game) => game.winnerId === match.player1Id).length;
+      const second = (set.games ?? []).length - first;
+      const tiebreak = set.hasTiebreak && set.tiebreakPlayer1Points != null ? `(${set.tiebreakPlayer1Points}-${set.tiebreakPlayer2Points})` : '';
+      return `${first}-${second}${tiebreak}`;
+    })
+    .join(' ');
+  return [
+    match.tournament?.name ?? 'Sin torneo',
+    match.stage ? matchStageLabels[match.stage] ?? match.stage : null,
+    matchDate(match) ? new Date(matchDate(match) as string).toLocaleDateString('es-AR') : null,
+    score ? `Resultado ${score}` : null,
+    match.winner?.name ? `Ganó ${match.winner.name}` : null,
+  ].filter(Boolean).join(' · ');
+};
+
+const PAGE_SIZE = 20;
+
 const formatShortDate = (value?: string | null) => (value ? new Date(value).toLocaleDateString('es-AR') : null);
 type MatchSetForm = { gamesPlayer1: string; gamesPlayer2: string; hasTiebreak: boolean; tiebreakPlayer1: string; tiebreakPlayer2: string };
 const emptyMatchSet = (): MatchSetForm => ({ gamesPlayer1: '', gamesPlayer2: '', hasTiebreak: false, tiebreakPlayer1: '', tiebreakPlayer2: '' });
@@ -85,11 +123,15 @@ export default function DashboardConsole() {
   const [modalError, setModalError] = useState<string | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState('');
+  const [matchFilters, setMatchFilters] = useState({ player: '', tournament: '', from: '', to: '' });
   const [options, setOptions] = useState<Options>({ players: [], venues: [], surfaces: [], categories: [], types: [], tournaments: [], users: [], levels: [] });
   const [showTournamentTypeInfo, setShowTournamentTypeInfo] = useState(false);
   const [prepTournament, setPrepTournament] = useState<RecordItem | null>(null);
   const [matchSets, setMatchSets] = useState<MatchSetForm[]>([emptyMatchSet()]);
   const [matchStage, setMatchStage] = useState('');
+  const [matchPlayedAt, setMatchPlayedAt] = useState('');
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
   const isSimple = resource !== 'tournaments' && resource !== 'matches';
   const newTournamentForm = () => ({ name: '', date: todayInputValue(), venueId: options.venues.find((venue) => venue.name === 'Kauri Club')?.id ?? '', surfaceId: options.surfaces.find((surface) => surface.name === 'Polvo de Ladrillo')?.id ?? '', role: 'USER' });
@@ -161,7 +203,38 @@ export default function DashboardConsole() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isFormModalOpen, showTournamentTypeInfo]);
 
-  const visibleItems = useMemo(() => items.filter((item) => JSON.stringify(item).toLowerCase().includes(query.toLowerCase())), [items, query]);
+  const filterOptions: [string, string][] =
+    resource === 'tournaments' ? Object.entries(tournamentStatusLabels) : resource === 'matches' ? Object.entries(matchStageLabels) : [];
+  const visibleItems = useMemo(() => {
+    const filtered = items.filter((item) => {
+        if (resource === 'matches') {
+          const match = item as MatchRecord & { player2Id?: string; tournamentId?: string };
+          if (matchFilters.player && match.player1Id !== matchFilters.player && match.player2Id !== matchFilters.player) return false;
+          if (matchFilters.tournament && match.tournamentId !== matchFilters.tournament) return false;
+          const day = matchDate(match)?.slice(0, 10) ?? '';
+          if (matchFilters.from && (!day || day < matchFilters.from)) return false;
+          if (matchFilters.to && (!day || day > matchFilters.to)) return false;
+        }
+        if (filter) {
+          const value = resource === 'tournaments' ? item.status : resource === 'matches' ? item.stage : null;
+          if (value !== filter) return false;
+        }
+        return JSON.stringify(item).toLowerCase().includes(query.toLowerCase());
+      });
+    if (resource !== 'matches') return filtered;
+    const time = (item: RecordItem) => new Date(matchDate(item as MatchRecord) ?? 0).getTime();
+    return [...filtered].sort((a, b) => time(b) - time(a));
+  }, [items, query, filter, matchFilters, resource]);
+  const pagedItems = useMemo(() => paginate(visibleItems, page, PAGE_SIZE), [visibleItems, page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [query, filter, matchFilters, resource]);
+
+  useEffect(() => {
+    setFilter('');
+    setMatchFilters({ player: '', tournament: '', from: '', to: '' });
+  }, [resource]);
   const relationOptions: Record<string, RecordItem[]> = { venueId: options.venues, surfaceId: options.surfaces, championId: options.players, tournamentCategoryId: options.categories, tournamentTypeId: options.types, tournamentId: options.tournaments, player1Id: options.players, player2Id: options.players, winnerId: options.players, playerId: options.players, userId: options.users, levelId: options.levels };
   const matchTournamentType = options.tournaments.find((tournament) => tournament.id === form.tournamentId)?.tournamentType as { name?: string } | null | undefined;
   const matchHasPlayoffs = /playoff/i.test(matchTournamentType?.name ?? '');
@@ -178,6 +251,7 @@ export default function DashboardConsole() {
     setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER', gender: 'MALE' });
     setMatchSets([emptyMatchSet()]);
     setMatchStage('');
+    setMatchPlayedAt('');
     setSelectedPlayerIds([]);
     setModalError(null);
     setIsFormModalOpen(true);
@@ -284,7 +358,7 @@ export default function DashboardConsole() {
         await requestJson('/api/add-match', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idPlayer1: form.player1Id, idPlayer2: form.player2Id, tournamentId: form.tournamentId, winner, sets, stage: matchHasPlayoffs ? matchStage : null }),
+          body: JSON.stringify({ idPlayer1: form.player1Id, idPlayer2: form.player2Id, tournamentId: form.tournamentId, winner, sets, stage: matchHasPlayoffs ? matchStage : null, playedAt: matchPlayedAt || undefined }),
         });
         setMessage({ type: 'success', text: 'Partido creado correctamente' });
         closeFormModal();
@@ -425,6 +499,14 @@ export default function DashboardConsole() {
                     {unifying ? 'Vinculando...' : '⚡ Auto-vincular por email'}
                   </button>
                 )}
+                {filterOptions.length > 0 && (
+                  <select className="search-input" value={filter} onChange={(event) => setFilter(event.target.value)} aria-label="Filtrar registros">
+                    <option value="">{resource === 'matches' ? 'Todas las fases' : 'Todos los estados'}</option>
+                    {filterOptions.map(([value, label]) => (
+                      <option key={value} value={value}>{label}</option>
+                    ))}
+                  </select>
+                )}
                 <input
                   className="search-input"
                   value={query}
@@ -435,22 +517,58 @@ export default function DashboardConsole() {
               </div>
             </div>
 
+            {resource === 'matches' && (
+              <div className="tournament-filters">
+                <select className="search-input" value={matchFilters.player} onChange={(event) => setMatchFilters((current) => ({ ...current, player: event.target.value }))} aria-label="Filtrar por jugador">
+                  <option value="">Todos los jugadores</option>
+                  {options.players.map((player) => (
+                    <option key={player.id} value={player.id}>{String(player.name)}</option>
+                  ))}
+                </select>
+                <select className="search-input" value={matchFilters.tournament} onChange={(event) => setMatchFilters((current) => ({ ...current, tournament: event.target.value }))} aria-label="Filtrar por torneo">
+                  <option value="">Todos los torneos</option>
+                  {options.tournaments.map((tournament) => (
+                    <option key={tournament.id} value={tournament.id}>{String(tournament.name)}</option>
+                  ))}
+                </select>
+                <input className="search-input" type="date" value={matchFilters.from} onChange={(event) => setMatchFilters((current) => ({ ...current, from: event.target.value }))} aria-label="Fecha desde" title="Fecha desde" />
+                <input className="search-input" type="date" value={matchFilters.to} onChange={(event) => setMatchFilters((current) => ({ ...current, to: event.target.value }))} aria-label="Fecha hasta" title="Fecha hasta" />
+              </div>
+            )}
+
             {loading ? (
               <div className="empty-state">Cargando registros...</div>
             ) : visibleItems.length === 0 ? (
               <div className="empty-state">No hay registros para mostrar.</div>
             ) : (
               <div className="record-list">
-                {visibleItems.map((item) => (
+                {pagedItems.items.map((item) => (
                   <div className="record-row" key={item.id}>
+                    {resource === 'venues' ? (
+                      <div className="venue-info">
+                        <strong>{String(item.name)}</strong>
+                        <strong>
+                          <span className="venue-label">Dirección</span>
+                          {String(item.address || 'Sin dirección')}
+                        </strong>
+                        <strong>
+                          <span className="venue-label">Teléfono</span>
+                          {String(item.phone || 'Sin teléfono')}
+                        </strong>
+                      </div>
+                    ) : (
                     <div>
                       <strong>
-                        {resource === 'players'
+                        {resource === 'matches'
+                          ? matchTitle(item as MatchRecord)
+                          : resource === 'players'
                           ? `${String(item.name ?? item.id)}${item.lastname ? ` ${item.lastname}` : ''}${item.nickname ? ` “${item.nickname}”` : ''}`
                           : String(item.name ?? item.email ?? item.id)}
                       </strong>
                       <small>
-                        {resource === 'tournaments'
+                        {resource === 'matches'
+                          ? matchDetails(item as MatchRecord)
+                          : resource === 'tournaments'
                           ? `${tournamentStatusLabels[String(item.status)] ?? String(item.status)} · Nivel ${(item.level as { name?: string } | null)?.name ?? 'sin nivel'} · Creado ${formatShortDate(item.createdAt as string) ?? '-'}${item.finishedAt ? ` · Finalizado ${formatShortDate(item.finishedAt as string)}` : ''}`
                           : resource === 'users'
                           ? `${String(item.email)} · ${String(item.role ?? 'USER')} · ${item.player ? `👤 ${(item.player as { name?: string })?.name}` : '⚪ Sin jugador vinculado'}`
@@ -461,6 +579,7 @@ export default function DashboardConsole() {
                           : item.id}
                       </small>
                     </div>
+                    )}
                     <div className="row-actions">
                       {!(resource === 'tournaments' && item.status === 'FINISHED') && (
                         <button
@@ -525,6 +644,7 @@ export default function DashboardConsole() {
                 ))}
               </div>
             )}
+            <Pagination page={pagedItems.current} pageSize={PAGE_SIZE} total={visibleItems.length} onPageChange={setPage} />
           </section>
         </div>
 
@@ -754,6 +874,14 @@ export default function DashboardConsole() {
                         <option key={value} value={value}>{label}</option>
                       ))}
                     </select>
+                  </label>
+                )}
+
+                {resource === 'matches' && !editing && (
+                  <label className="field">
+                    <span>Fecha del partido</span>
+                    <input type="date" value={matchPlayedAt} onChange={(event) => setMatchPlayedAt(event.target.value)} />
+                    <small>Opcional. Por defecto, la fecha de inicio.</small>
                   </label>
                 )}
 

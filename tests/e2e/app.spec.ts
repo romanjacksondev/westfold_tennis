@@ -203,8 +203,10 @@ test('admin creates, starts, scores, and finishes a playoff tournament from the 
         response.request().method() === 'POST' &&
         response.status() === 201,
     );
+    await matchDialog.getByLabel('Fecha del partido').fill('2026-03-15');
     await matchDialog.getByRole('button', { name: 'Crear registro' }).click();
-    await matchResponse;
+    const created = await (await matchResponse).json();
+    expect(String(created.playedAt)).toContain('2026-03-15');
     await expect(matchDialog).toBeHidden();
     await expect(page.getByRole('status')).toContainText('Partido creado correctamente');
   }

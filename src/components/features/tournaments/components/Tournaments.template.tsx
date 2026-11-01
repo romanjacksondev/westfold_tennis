@@ -1,9 +1,10 @@
 'use client';
+import Pagination, { paginate } from '@/components/ui/Pagination/Pagination';
 import SimpleTable from '@/components/ui/SimpleTable/SimpleTable';
 import { createColumnHelper } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { HiOutlineEye } from 'react-icons/hi';
 
 type Tournament = {
@@ -17,6 +18,24 @@ type Tournament = {
 
 const TournamentsTemplate = ({ tournaments }: { tournaments: Tournament[] }) => {
   const [tableReady, setTableReady] = useState(false);
+  const [query, setQuery] = useState('');
+  const [year, setYear] = useState('');
+  const [page, setPage] = useState(1);
+  const years = useMemo(() => Array.from(new Set(tournaments.map((item) => new Date(item.date).getFullYear()))).sort((a, b) => b - a), [tournaments]);
+  const filtered = useMemo(
+    () =>
+      tournaments.filter((item) => {
+        if (year && String(new Date(item.date).getFullYear()) !== year) return false;
+        const text = `${item.name} ${item.champion?.name ?? ''} ${item.level?.name ?? ''}`.toLowerCase();
+        return text.includes(query.toLowerCase());
+      }),
+    [tournaments, query, year],
+  );
+  const paged = paginate(filtered, page, 15);
+
+  useEffect(() => {
+    setPage(1);
+  }, [query, year]);
   const columnHelper = createColumnHelper<any>();
 
   useEffect(() => {
@@ -79,7 +98,7 @@ const TournamentsTemplate = ({ tournaments }: { tournaments: Tournament[] }) => 
           <h1>Torneos</h1>
           <p className="muted">Explora el historial y los resultados del circuito.</p>
         </div>
-        <div className="status-pill"><span /> {tournaments.length} registrados</div>
+        <div className="status-pill"><span /> {filtered.length} registrados</div>
       </header>
       <section className="tournament-panel">
         <div className="panel-heading">
@@ -88,9 +107,19 @@ const TournamentsTemplate = ({ tournaments }: { tournaments: Tournament[] }) => 
             <h2>Historial de torneos</h2>
           </div>
         </div>
-        <div className="tournament-table">
-          {tableReady ? <SimpleTable data={tournaments} columns={columns} /> : <div className="empty-state">Cargando torneos...</div>}
+        <div className="tournament-filters">
+          <input className="search-input" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar torneo, ganador o nivel..." aria-label="Buscar torneos" />
+          <select className="search-input" value={year} onChange={(event) => setYear(event.target.value)} aria-label="Filtrar por año">
+            <option value="">Todos los años</option>
+            {years.map((value) => (
+              <option key={value} value={value}>{value}</option>
+            ))}
+          </select>
         </div>
+        <div className="tournament-table">
+          {tableReady ? <SimpleTable data={paged.items} columns={columns} /> : <div className="empty-state">Cargando torneos...</div>}
+        </div>
+        <Pagination page={paged.current} pageSize={15} total={filtered.length} onPageChange={setPage} />
       </section>
     </main>
   );

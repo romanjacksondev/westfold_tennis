@@ -51,6 +51,7 @@ export async function GET(_request: NextRequest, context: Context) {
               player1: { select: { name: true } },
               player2: { select: { name: true } },
               winner: { select: { name: true } },
+              tournament: { select: { name: true, date: true } },
               sets: { include: { games: true } },
             }
           : resource === 'players'

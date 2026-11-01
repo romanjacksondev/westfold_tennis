@@ -148,6 +148,7 @@ model Match {
   player2      Player      @relation("Player2", fields: [player2Id], references: [id])
   sets         Set[]
   stage        MatchStage?
+  playedAt     DateTime?
   deletedAt    DateTime?
 }
 
