@@ -1,9 +1,11 @@
+import { logger } from '@/lib/logger';
+import { withApiLogging } from '@/lib/api-logging';
 import { prisma } from '@/utils/prisma';
 import { calculatePlayerStats, createMatchSummary } from '@/utils/utils';
 import { describeLevelGap, levelGap } from '@/utils/levels';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+async function handleGet(request: NextRequest) {
   const tournamentId = request.nextUrl.searchParams.get('id');
 
   try {
@@ -58,7 +60,9 @@ export async function GET(request: NextRequest) {
       tournamentData,
     });
   } catch (error) {
-    console.log(error);
+    logger.error('matches.failed', { err: error });
     return NextResponse.json({ message: 'No se pudieron obtener los partidos' }, { status: 500 });
   }
 }
+
+export const GET = withApiLogging('/api/matches', handleGet, { quiet: true });

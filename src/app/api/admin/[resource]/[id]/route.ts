@@ -3,6 +3,10 @@ import { requireAdmin } from '@/lib/require-session';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import { didPlayerLevelChange } from '@/utils/levels';
+import { actorFromSession } from '@/lib/audit';
+import { auditActionFor, auditAdminMutation, snapshotRecord } from '@/lib/admin-audit';
+import { logger } from '@/lib/logger';
+import { withApiLogging } from '@/lib/api-logging';
 
 const models = {
   players: 'player',
@@ -18,7 +22,7 @@ const models = {
 
 type Context = { params: Promise<{ resource: string; id: string }> };
 
-export async function PATCH(request: NextRequest, context: Context) {
+async function updateRecord(request: NextRequest, context: Context) {
   const { response } = await requireAdmin();
   if (response) return response;
 
@@ -224,12 +228,12 @@ export async function PATCH(request: NextRequest, context: Context) {
     });
     return NextResponse.json({ data: updated, message: 'Registro actualizado correctamente' });
   } catch (error) {
-    console.error(error);
+    logger.warn('admin.update_failed', { err: error, resource, id });
     return NextResponse.json({ message: error instanceof Error ? error.message : 'No se pudo actualizar el registro' }, { status: 400 });
   }
 }
 
-export async function DELETE(_request: NextRequest, context: Context) {
+async function archiveRecord(_request: NextRequest, context: Context) {
   const { response } = await requireAdmin();
   if (response) return response;
 
@@ -253,7 +257,51 @@ export async function DELETE(_request: NextRequest, context: Context) {
     await (prisma as any)[modelName].update({ where: { id }, data: { deletedAt: new Date() } });
     return NextResponse.json({ message: 'Registro archivado correctamente' });
   } catch (error) {
-    console.error(error);
+    logger.warn('admin.archive_failed', { err: error, resource, id });
     return NextResponse.json({ message: 'No se pudo archivar el registro' }, { status: 400 });
   }
 }
+
+async function patchHandler(request: NextRequest, context: Context) {
+  const { session, response } = await requireAdmin();
+  if (response) return response;
+
+  const { resource, id } = await context.params;
+  const modelName = models[resource as keyof typeof models];
+  if (!modelName) return updateRecord(request, context);
+
+  const body = await request.clone().json().catch(() => ({}));
+  const before = await snapshotRecord(modelName, id);
+  const result = await updateRecord(request, context);
+  if (result.ok) {
+    await auditAdminMutation({
+      action: auditActionFor(resource, body?.action),
+      modelName,
+      entityId: id,
+      actor: actorFromSession(session),
+      before,
+      after: await snapshotRecord(modelName, id),
+      metadata: body?.password ? { pwChanged: true } : undefined,
+    });
+  }
+  return result;
+}
+
+async function deleteHandler(request: NextRequest, context: Context) {
+  const { session, response } = await requireAdmin();
+  if (response) return response;
+
+  const { resource, id } = await context.params;
+  const modelName = models[resource as keyof typeof models];
+  if (!modelName) return archiveRecord(request, context);
+
+  const before = await snapshotRecord(modelName, id);
+  const result = await archiveRecord(request, context);
+  if (result.ok) {
+    await auditAdminMutation({ action: 'DELETE', modelName, entityId: id, actor: actorFromSession(session), before, metadata: { softDelete: true } });
+  }
+  return result;
+}
+
+export const PATCH = withApiLogging('/api/admin/[resource]/[id]', patchHandler);
+export const DELETE = withApiLogging('/api/admin/[resource]/[id]', deleteHandler);

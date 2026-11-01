@@ -1,5 +1,8 @@
+import { logger } from '@/lib/logger';
+import { withApiLogging } from '@/lib/api-logging';
 import { prisma } from '@/utils/prisma';
 import { requireUser } from '@/lib/require-session';
+import { actorFromSession, audit } from '@/lib/audit';
 import { NextRequest, NextResponse } from 'next/server';
 
 type MatchSet = {
@@ -18,8 +21,8 @@ function toScore(value: number | string | null | undefined) {
   return Number.isInteger(score) && score >= 0 ? score : null;
 }
 
-export async function POST(request: NextRequest) {
-  const { response } = await requireUser();
+async function handlePost(request: NextRequest) {
+  const { session, response } = await requireUser();
   if (response) return response;
 
   try {
@@ -81,9 +84,19 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    await audit({
+      action: 'CREATE',
+      entity: 'Match',
+      entityId: match.id,
+      actor: actorFromSession(session),
+      after: { tournamentId: match.tournamentId, player1Id: match.player1Id, player2Id: match.player2Id, winnerId: match.winnerId, stage: match.stage, playedAt: match.playedAt, sets: setData.length },
+    });
     return NextResponse.json(match, { status: 201 });
   } catch (error) {
+    logger.warn('add_match.failed', { err: error });
     const message = error instanceof Error ? error.message : 'No se pudo crear el partido';
     return NextResponse.json({ message }, { status: 400 });
   }
 }
+
+export const POST = withApiLogging('/api/add-match', handlePost);

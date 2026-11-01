@@ -2,6 +2,10 @@ import { prisma } from '@/utils/prisma';
 import { requireAdmin } from '@/lib/require-session';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import { actorFromSession } from '@/lib/audit';
+import { auditAdminMutation } from '@/lib/admin-audit';
+import { logger } from '@/lib/logger';
+import { withApiLogging } from '@/lib/api-logging';
 
 const models = {
   players: 'player',
@@ -23,11 +27,11 @@ function getResource(resource: string) {
 }
 
 function errorResponse(error: unknown) {
-  console.error(error);
+  logger.warn('admin.request_failed', { err: error });
   return NextResponse.json({ message: 'No se pudo completar la solicitud' }, { status: 400 });
 }
 
-export async function GET(_request: NextRequest, context: Context) {
+async function listRecords(_request: NextRequest, context: Context) {
   const { response } = await requireAdmin();
   if (response) return response;
 
@@ -91,7 +95,7 @@ export async function GET(_request: NextRequest, context: Context) {
   }
 }
 
-export async function POST(request: NextRequest, context: Context) {
+async function createRecord(request: NextRequest, context: Context) {
   const { response } = await requireAdmin();
   if (response) return response;
 
@@ -248,3 +252,19 @@ export async function POST(request: NextRequest, context: Context) {
     return errorResponse(error);
   }
 }
+
+async function postHandler(request: NextRequest, context: Context) {
+  const { session, response } = await requireAdmin();
+  if (response) return response;
+
+  const result = await createRecord(request, context);
+  const resource = getResource((await context.params).resource);
+  if (result.status === 201 && resource) {
+    const { data } = await result.clone().json();
+    await auditAdminMutation({ action: 'CREATE', modelName: models[resource], entityId: data?.id, actor: actorFromSession(session), after: data });
+  }
+  return result;
+}
+
+export const GET = withApiLogging('/api/admin/[resource]', listRecords, { quiet: true });
+export const POST = withApiLogging('/api/admin/[resource]', postHandler);

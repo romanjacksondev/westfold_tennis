@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+import { withApiLogging } from '@/lib/api-logging';
 import { prisma } from '@/utils/prisma';
 import { getPlayerPhoto } from '@/utils/player-photo';
 import { calculatePlayerPoints } from '@/utils/utils';
@@ -87,7 +89,7 @@ function getDateRange(rankingMode: string | null, now: Date): { initialDate: Dat
   };
 }
 
-export async function GET(req: NextRequest) {
+async function handleGet(req: NextRequest) {
   await connection();
 
   try {
@@ -165,7 +167,9 @@ export async function GET(req: NextRequest) {
       { status: 200 },
     );
   } catch (e) {
-    console.error('Error in /api/leaderboard:', e);
+    logger.error('leaderboard.failed', { err: e });
     return NextResponse.json({ error: 'Error calculating leaderboard' }, { status: 500 });
   }
 }
+
+export const GET = withApiLogging('/api/leaderboard', handleGet, { quiet: true });

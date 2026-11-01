@@ -274,6 +274,80 @@ describe('player-level API data', () => {
   });
 });
 
+describe('health, audit trail and logging', () => {
+  const auditFor = (entityId: string) => prisma.auditLog.findMany({ where: { entityId }, orderBy: { createdAt: 'asc' } });
+
+  it('exposes a public health check that verifies the database', async () => {
+    const response = await request('/api/health');
+    assert.equal(response.status, 200);
+    assert.equal((await json(response)).db, 'ok');
+  });
+
+  it('adds a request id header to API responses', async () => {
+    const response = await request('/api/admin/levels', { role: 'ADMIN' });
+    assert.match(response.headers.get('x-request-id') ?? '', /^[0-9a-f-]{36}$/);
+  });
+
+  it('audits admin create, update and archive with actor and field-level diff', async () => {
+    const created = await request('/api/admin/venues', { role: 'ADMIN', method: 'POST', body: { name: 'Audit Venue', address: 'Calle 1', phone: '123' } });
+    assert.equal(created.status, 201);
+    const id = (await json(created)).data.id as string;
+
+    assert.equal((await request(`/api/admin/venues/${id}`, { role: 'ADMIN', method: 'PATCH', body: { name: 'Audit Venue 2' } })).status, 200);
+    assert.equal((await request(`/api/admin/venues/${id}`, { role: 'ADMIN', method: 'DELETE' })).status, 200);
+
+    const entries = await auditFor(id);
+    assert.deepEqual(entries.map((entry) => entry.action), ['CREATE', 'UPDATE', 'DELETE']);
+    assert.ok(entries.every((entry) => entry.entity === 'Venue' && entry.actorId === 'it-admin-user' && entry.actorRole === 'ADMIN'));
+    assert.deepEqual(entries[1].before, { name: 'Audit Venue' });
+    assert.deepEqual(entries[1].after, { name: 'Audit Venue 2' });
+    assert.ok((entries[0].metadata as { requestId?: string }).requestId);
+  });
+
+  it('never stores passwords in the audit trail when creating or updating users', async () => {
+    const email = `audit-${Date.now()}@example.com`;
+    const created = await request('/api/admin/users', { role: 'ADMIN', method: 'POST', body: { email, password: 'super-secret-password', role: 'USER' } });
+    assert.equal(created.status, 201);
+    const id = (await json(created)).data.id as string;
+    assert.equal((await request(`/api/admin/users/${id}`, { role: 'ADMIN', method: 'PATCH', body: { password: 'another-secret-password' } })).status, 200);
+
+    const entries = await auditFor(id);
+    assert.equal(JSON.stringify(entries).includes('secret-password'), false);
+    assert.deepEqual(entries[1].metadata && (entries[1].metadata as { pwChanged?: boolean }).pwChanged, true);
+  });
+
+  it('records denied admin access and restricts the audit API to admins', async () => {
+    assert.equal((await request('/api/admin/levels', { role: 'USER' })).status, 403);
+    assert.equal((await request('/api/admin/audit-logs', { role: 'USER' })).status, 403);
+    assert.equal((await request('/api/admin/audit-logs')).status, 401);
+    assert.ok((await prisma.auditLog.count({ where: { action: 'ACCESS_DENIED', actorId: 'it-regular-user' } })) >= 1);
+
+    const response = await request('/api/admin/audit-logs?action=CREATE&entity=Venue&pageSize=5', { role: 'ADMIN' });
+    assert.equal(response.status, 200);
+    const page = await json(response);
+    assert.ok(page.total >= 1);
+    assert.ok(page.items.every((item: { action: string; entity: string }) => item.action === 'CREATE' && item.entity === 'Venue'));
+  });
+
+  it('records failed logins without keeping the password', async () => {
+    const csrfResponse = await fetch(new URL('/api/auth/csrf', baseUrl));
+    const { csrfToken } = await csrfResponse.json();
+    const cookie = (csrfResponse.headers.getSetCookie?.() ?? []).map((value) => value.split(';')[0]).join('; ');
+    const email = `nobody-${Date.now()}@example.com`;
+    await fetch(new URL('/api/auth/callback/credentials', baseUrl), {
+      method: 'POST',
+      redirect: 'manual',
+      headers: { 'content-type': 'application/x-www-form-urlencoded', cookie },
+      body: new URLSearchParams({ csrfToken, email, password: 'wrong-password-123', json: 'true' }),
+    });
+
+    const entries = await prisma.auditLog.findMany({ where: { action: 'LOGIN_FAILURE', actorEmail: { startsWith: 'n***@' } } });
+    assert.ok(entries.length >= 1);
+    assert.equal(JSON.stringify(entries).includes('wrong-password-123'), false);
+    assert.equal((entries[0].metadata as { reason?: string }).reason, 'unknown_user');
+  });
+});
+
 after(async () => {
   await prisma.$disconnect();
 });

@@ -1,7 +1,10 @@
 import { del, get, put } from '@vercel/blob';
-import { connection, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { requireSession } from '@/lib/require-session';
 import { prisma } from '@/utils/prisma';
+import { actorFromSession, audit } from '@/lib/audit';
+import { logger } from '@/lib/logger';
+import { withApiLogging } from '@/lib/api-logging';
 
 type Context = { params: Promise<{ id: string }> };
 
@@ -13,8 +16,7 @@ const extensionFor = (type: string) => (type === 'image/png' ? 'png' : type === 
 const notFound = () => new NextResponse(null, { status: 404, headers: { 'Cache-Control': 'public, max-age=60' } });
 
 // GET es público: el ranking muestra las fotos sin login y el Blob privado nunca se expone.
-export async function GET(request: Request, context: Context) {
-  await connection();
+async function getPhoto(request: Request, context: Context) {
 
   const { id } = await context.params;
   const { searchParams } = new URL(request.url);
@@ -43,7 +45,7 @@ export async function GET(request: Request, context: Context) {
       headers: { ...headers, 'Content-Type': result.blob.contentType, 'X-Content-Type-Options': 'nosniff' },
     });
   } catch (error) {
-    console.error('No se pudo leer la foto del jugador', error);
+    logger.error('photo.read_failed', { err: error, pathname });
     return notFound();
   }
 }
@@ -52,11 +54,12 @@ async function authorize(id: string) {
   const { session, response } = await requireSession();
   if (response) return { response };
   if (session.user.role !== 'ADMIN' && session.user.playerId !== id) {
+    logger.warn('photo.forbidden', { userId: session.user.id, playerId: id });
     return { response: NextResponse.json({ message: 'No tenés permisos para editar esta foto' }, { status: 403 }) };
   }
   const player = await prisma.player.findFirst({ where: { id, deletedAt: null }, select: { photoUrl: true, photoThumbUrl: true } });
   if (!player) return { response: NextResponse.json({ message: 'Jugador no encontrado' }, { status: 404 }) };
-  return { player };
+  return { player, actor: actorFromSession(session) };
 }
 
 function validate(file: FormDataEntryValue | null, maxBytes: number, label: string) {
@@ -71,8 +74,7 @@ const removeBlobs = (paths: (string | null | undefined)[]) => {
   return list.length ? del(list) : Promise.resolve();
 };
 
-export async function POST(request: Request, context: Context) {
-  await connection();
+async function postPhoto(request: Request, context: Context) {
   const { id } = await context.params;
   const auth = await authorize(id);
   if (auth.response) return auth.response;
@@ -93,17 +95,17 @@ export async function POST(request: Request, context: Context) {
     ]);
 
     await prisma.player.update({ where: { id }, data: { photoUrl: full.pathname, photoThumbUrl: small.pathname } });
-    await removeBlobs([player.photoUrl, player.photoThumbUrl]).catch((e) => console.error('No se pudo borrar la foto anterior', e));
+    await removeBlobs([player.photoUrl, player.photoThumbUrl]).catch((e) => logger.error('photo.blob_cleanup_failed', { err: e, playerId: id }));
 
+    await audit({ action: 'PHOTO_UPLOAD', entity: 'Player', entityId: id, actor: auth.actor, metadata: { sizeBytes: photoFile.size, contentType: photoFile.type } });
     return NextResponse.json({ photoUrl: full.pathname, photoThumbUrl: small.pathname, message: 'Foto actualizada' });
   } catch (e) {
-    console.error(e);
+    logger.error('photo.upload_failed', { err: e, playerId: id });
     return NextResponse.json({ message: 'No se pudo subir la foto' }, { status: 500 });
   }
 }
 
-export async function DELETE(_request: Request, context: Context) {
-  await connection();
+async function deletePhoto(_request: Request, context: Context) {
   const { id } = await context.params;
   const auth = await authorize(id);
   if (auth.response) return auth.response;
@@ -111,10 +113,15 @@ export async function DELETE(_request: Request, context: Context) {
 
   try {
     await prisma.player.update({ where: { id }, data: { photoUrl: null, photoThumbUrl: null } });
-    await removeBlobs([player.photoUrl, player.photoThumbUrl]).catch((e) => console.error('No se pudo borrar la foto', e));
+    await removeBlobs([player.photoUrl, player.photoThumbUrl]).catch((e) => logger.error('photo.blob_cleanup_failed', { err: e, playerId: id }));
+    await audit({ action: 'PHOTO_DELETE', entity: 'Player', entityId: id, actor: auth.actor });
     return NextResponse.json({ message: 'Foto eliminada' });
   } catch (e) {
-    console.error(e);
+    logger.error('photo.delete_failed', { err: e, playerId: id });
     return NextResponse.json({ message: 'No se pudo eliminar la foto' }, { status: 500 });
   }
 }
+
+export const GET = withApiLogging('/api/players/[id]/photo', getPhoto, { quiet: true });
+export const POST = withApiLogging('/api/players/[id]/photo', postPhoto);
+export const DELETE = withApiLogging('/api/players/[id]/photo', deletePhoto);

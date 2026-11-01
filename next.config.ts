@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
       }
     : {}),
   distDir: process.env.NEXT_DIST_DIR ?? '.next',
+  serverExternalPackages: ['pino'],
   cacheComponents: true,
   partialPrefetching: true,
 };

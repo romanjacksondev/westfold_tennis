@@ -1,9 +1,12 @@
+import { logger } from '@/lib/logger';
+import { withApiLogging } from '@/lib/api-logging';
 import { prisma } from '@/utils/prisma';
 import { requireAdmin } from '@/lib/require-session';
+import { actorFromSession, audit } from '@/lib/audit';
 import { NextResponse } from 'next/server';
 
-export async function POST() {
-  const { response } = await requireAdmin();
+async function handlePost() {
+  const { session, response } = await requireAdmin();
   if (response) return response;
 
   try {
@@ -81,13 +84,20 @@ export async function POST() {
         ? 'No se encontraron coincidencias pendientes de email entre jugadores y usuarios.'
         : `Se unificaron exitosamente ${count} jugador(es) y usuario(s) por coincidencia de email.`;
 
+    await audit({
+      action: 'USERS_PLAYERS_UNIFY',
+      entity: 'Player',
+      actor: actorFromSession(session),
+      metadata: { count, pairs: matched.map((m) => ({ playerId: m.playerId, userId: m.userId })) },
+    });
+
     return NextResponse.json({
       message,
       count,
       matched,
     });
   } catch (error) {
-    console.error('Error al auto-unificar jugadores y usuarios:', error);
+    logger.error('unify.failed', { err: error });
     return NextResponse.json(
       { message: error instanceof Error ? error.message : 'Error al procesar la unificación' },
       { status: 500 }
@@ -95,3 +105,4 @@ export async function POST() {
   }
 }
 
+export const POST = withApiLogging('/api/admin/unify-users-players', handlePost);

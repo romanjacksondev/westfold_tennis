@@ -1,7 +1,9 @@
+import { logger } from '@/lib/logger';
+import { withApiLogging } from '@/lib/api-logging';
 import { prisma } from '@/utils/prisma';
 import { connection, NextResponse } from 'next/server';
 
-export async function GET() {
+async function handleGet() {
   await connection();
 
   try {
@@ -10,7 +12,9 @@ export async function GET() {
     });
     return NextResponse.json(venues);
   } catch (e) {
-    console.log(e);
+    logger.error('venues.failed', { err: e });
     return NextResponse.error();
   }
 }
+
+export const GET = withApiLogging('/api/venues', handleGet, { quiet: true });

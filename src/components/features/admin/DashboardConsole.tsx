@@ -8,6 +8,7 @@ import SiteFooter from '@/components/features/SiteFooter';
 import TournamentTypeVisual from '@/components/features/admin/TournamentTypeVisual';
 import TournamentPreparationModal from '@/components/features/admin/TournamentPreparationModal';
 import PlayerPhotoEditor from '@/components/ui/PlayerPhoto/PlayerPhotoEditor';
+import AuditLogPanel from '@/components/features/admin/AuditLogPanel';
 
 type Resource = 'tournaments' | 'tournament-types' | 'tournament-categories' | 'players' | 'surfaces' | 'venues' | 'matches' | 'users' | 'levels';
 type RecordItem = { id: string; name?: string; [key: string]: unknown };
@@ -113,6 +114,7 @@ export default function DashboardConsole() {
   const { data: session } = useSession();
   const userName = session?.user?.name ?? session?.user?.email ?? 'Administrador';
   const [resource, setResource] = useState<Resource>('tournaments');
+  const [showAudit, setShowAudit] = useState(false);
   const [items, setItems] = useState<RecordItem[]>([]);
   const [editing, setEditing] = useState<RecordItem | null>(null);
   const [form, setForm] = useState<Record<string, string>>({ name: '', role: 'USER', gender: 'MALE' });
@@ -439,13 +441,20 @@ export default function DashboardConsole() {
           {sections.map((section) => (
             <button
               key={section.key}
-              className={resource === section.key ? 'nav-item active' : 'nav-item'}
-              onClick={() => setResource(section.key)}
+              className={!showAudit && resource === section.key ? 'nav-item active' : 'nav-item'}
+              onClick={() => {
+                setShowAudit(false);
+                setResource(section.key);
+              }}
             >
               <span>{section.label}</span>
               <small>{section.description}</small>
             </button>
           ))}
+          <button className={showAudit ? 'nav-item active' : 'nav-item'} onClick={() => setShowAudit(true)}>
+            <span>Auditoría</span>
+            <small>Cambios, accesos y errores</small>
+          </button>
         </nav>
         <div className="admin-user">
           <small>Sesión activa</small>
@@ -456,7 +465,7 @@ export default function DashboardConsole() {
         <header className="admin-header">
           <div>
             <p className="eyebrow">Panel de gestión</p>
-            <h1>{sections.find((section) => section.key === resource)?.label}</h1>
+            <h1>{showAudit ? 'Auditoría' : sections.find((section) => section.key === resource)?.label}</h1>
             <p className="muted">Administra el circuito con datos claros y controlados.</p>
           </div>
           <div className="status-pill">
@@ -470,6 +479,9 @@ export default function DashboardConsole() {
           </div>
         )}
 
+        {showAudit ? (
+          <AuditLogPanel />
+        ) : (
         <div className="admin-grid">
           <section className="admin-panel list-panel">
             <div className="panel-heading">
@@ -647,6 +659,7 @@ export default function DashboardConsole() {
             <Pagination page={pagedItems.current} pageSize={PAGE_SIZE} total={visibleItems.length} onPageChange={setPage} />
           </section>
         </div>
+        )}
 
         {isFormModalOpen && (
           <div className="type-modal-backdrop" role="presentation" onClick={closeFormModal}>

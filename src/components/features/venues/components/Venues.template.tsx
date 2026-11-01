@@ -5,7 +5,6 @@ import { Venue } from '../types/Venues';
 const VenuesTemplate = ({ venues }: { venues: Venue[] }) => {
   const columnHelper = createColumnHelper<Venue>();
 
-  // console.log("venues: ", venues)
 
   const columns = [
     columnHelper.accessor('name', {

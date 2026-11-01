@@ -1,8 +1,10 @@
+import { logger } from '@/lib/logger';
+import { withApiLogging } from '@/lib/api-logging';
 import { prisma } from '@/utils/prisma';
 import { createMatchSummary } from '@/utils/utils';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
+async function handleGet(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const player1Id = searchParams.get('player1Id');
   const player2Id = searchParams.get('player2Id');
@@ -69,7 +71,9 @@ export async function GET(request: NextRequest) {
     const parsedMatches = createMatchSummary(matches);
     return NextResponse.json(parsedMatches);
   } catch (e) {
-    console.log(e);
+    logger.error('match_history.failed', { err: e });
     return NextResponse.json(e, { status: 500 });
   }
 }
+
+export const GET = withApiLogging('/api/stats/matchHistory', handleGet, { quiet: true });

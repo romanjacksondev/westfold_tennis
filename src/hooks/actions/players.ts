@@ -4,10 +4,6 @@ export async function usePlayers() {
   return json;
 }
 
-export function useSetPlayersData(data: any) {
-  console.log("Setting players data", data);
-}
-
 export async function useAddPlayer(data: any) {
   const response = await fetch("/api/add-player", {
     method: "POST",

@@ -198,3 +198,22 @@ enum UserRole {
   USER
   ADMIN
 }
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  actorId    String?
+  actorRole  String?
+  actorEmail String?
+  action     String
+  entity     String
+  entityId   String?
+  before     Json?
+  after      Json?
+  metadata   Json?
+
+  @@index([createdAt])
+  @@index([action])
+  @@index([entity, entityId])
+  @@index([actorId])
+}

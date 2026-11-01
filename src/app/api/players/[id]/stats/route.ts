@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+import { withApiLogging } from '@/lib/api-logging';
 import { prisma } from '@/utils/prisma';
 import { formatSetScore } from '@/utils/utils';
 import { getPlayerLevelInfo } from '@/lib/player-level';
@@ -8,7 +10,7 @@ type Counter = { played: number; won: number; lost: number };
 
 const percentage = (won: number, played: number) => played ? Math.round((won / played) * 100) : 0;
 
-export async function GET(_request: Request, context: RouteContext) {
+async function handleGet(_request: Request, context: RouteContext) {
   const { id } = await context.params;
 
   try {
@@ -92,7 +94,9 @@ export async function GET(_request: Request, context: RouteContext) {
       recentMatches,
     });
   } catch (error) {
-    console.error(error);
+    logger.error('player_stats.failed', { err: error });
     return NextResponse.json({ message: 'No se pudieron obtener las estadísticas' }, { status: 500 });
   }
 }
+
+export const GET = withApiLogging('/api/players/[id]/stats', handleGet, { quiet: true });

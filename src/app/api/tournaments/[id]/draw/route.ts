@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+import { withApiLogging } from '@/lib/api-logging';
 import { prisma } from '@/utils/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 import { buildEliminationBracket, generateDraw, DrawSlot } from '@/utils/utils';
@@ -14,7 +16,7 @@ function shuffle<T>(arr: T[]): T[] {
   return result;
 }
 
-export async function GET(_request: NextRequest, context: Context) {
+async function handleGet(_request: NextRequest, context: Context) {
   const { id } = await context.params;
 
   try {
@@ -34,6 +36,7 @@ export async function GET(_request: NextRequest, context: Context) {
 
     const typeName = tournament.tournamentType?.name ?? null;
     const drawSize = tournament.drawSize ?? null;
+    logger.info('draw.generated', { tournamentId: id, type: typeName, drawSize, players: tournament.players.length });
 
     // Missing configuration — return a clear non-error response
     if (!typeName || !drawSize) {
@@ -100,7 +103,9 @@ export async function GET(_request: NextRequest, context: Context) {
       message: `Tipo de torneo "${typeName}" no reconocido para la generación del cuadro.`,
     });
   } catch (error) {
-    console.error('[draw] Error generating draw:', error);
+    logger.error('draw.failed', { err: error });
     return NextResponse.json({ message: 'No se pudo generar el cuadro' }, { status: 500 });
   }
 }
+
+export const GET = withApiLogging('/api/tournaments/[id]/draw', handleGet, { quiet: true });

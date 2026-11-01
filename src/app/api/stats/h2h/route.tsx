@@ -1,8 +1,10 @@
+import { logger } from '@/lib/logger';
+import { withApiLogging } from '@/lib/api-logging';
 import { prisma } from '@/utils/prisma';
 import { countTournamentsByPlayer, createH2H } from '@/utils/utils';
 import { connection, NextResponse } from 'next/server';
 
-export async function GET() {
+async function handleGet() {
   await connection();
 
   try {
@@ -44,7 +46,9 @@ export async function GET() {
 
     return NextResponse.json({ h2h, championships });
   } catch (e) {
-    console.log(e);
+    logger.error('h2h.failed', { err: e });
     return NextResponse.json(e, { status: 500 });
   }
 }
+
+export const GET = withApiLogging('/api/stats/h2h', handleGet, { quiet: true });

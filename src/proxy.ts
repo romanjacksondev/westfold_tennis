@@ -1,7 +1,7 @@
 import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
-const publicPaths = ['/', '/leaderboard', '/api/leaderboard', '/api/home', '/information', '/auth/signin', '/privacy', '/terms'];
+const publicPaths = ['/', '/leaderboard', '/api/leaderboard', '/api/home', '/api/health', '/information', '/auth/signin', '/privacy', '/terms'];
 
 // Las fotos se leen sin login (ranking público); subir o borrar sigue exigiendo sesión.
 const isPublicPhotoRead = (request: NextRequest) =>

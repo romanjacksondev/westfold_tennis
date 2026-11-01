@@ -1,3 +1,5 @@
+import { logger } from '@/lib/logger';
+import { withApiLogging } from '@/lib/api-logging';
 import { getServerSession } from 'next-auth';
 import { connection, NextResponse } from 'next/server';
 import { authOptions } from '@/lib/auth';
@@ -12,7 +14,7 @@ const STAGE_LABELS: Record<string, string> = {
   FINAL: 'Final',
 };
 
-export async function GET() {
+async function handleGet() {
   await connection();
 
   try {
@@ -110,7 +112,9 @@ export async function GET() {
       me,
     });
   } catch (error) {
-    console.error('Error in /api/home:', error);
+    logger.error('home.failed', { err: error });
     return NextResponse.json({ message: 'No se pudo cargar el inicio' }, { status: 500 });
   }
 }
+
+export const GET = withApiLogging('/api/home', handleGet, { quiet: true });

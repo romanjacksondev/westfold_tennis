@@ -5,6 +5,11 @@ import nextVitals from 'eslint-config-next/core-web-vitals';
 export default defineConfig([
   ...nextVitals,
   ...nextTs,
+  {
+    files: ['src/app/api/**', 'src/lib/**', 'src/utils/**', 'src/instrumentation.ts'],
+    ignores: ['src/lib/logger.ts'],
+    rules: { 'no-console': 'error' },
+  },
   globalIgnores([
     '.next/**',
     'out/**',
