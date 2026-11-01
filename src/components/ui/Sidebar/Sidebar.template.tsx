@@ -30,6 +30,11 @@ const SidebarTemplate = ({ handleClose }: SidebarInterface) => {
       icon: LuMedal,
       path: '/leaderboard',
     },
+    {
+      label: 'Reglas y puntuación',
+      icon: LuInfo,
+      path: '/information',
+    },
   ];
   const privateItems: SidebarItem[] = [
     {
@@ -56,11 +61,6 @@ const SidebarTemplate = ({ handleClose }: SidebarInterface) => {
       label: 'Draw Generator',
       icon: LuGitFork,
       path: '/draws',
-    },
-    {
-      label: 'Reglas y puntuación',
-      icon: LuInfo,
-      path: '/information',
     },
   ];
 

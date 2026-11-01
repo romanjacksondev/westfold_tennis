@@ -451,7 +451,7 @@ export default function DashboardConsole() {
                       </strong>
                       <small>
                         {resource === 'tournaments'
-                          ? `${tournamentStatusLabels[String(item.status)] ?? String(item.status)} · Nivel {(item.level as { name?: string } | null)?.name ?? 'sin nivel'} · Creado ${formatShortDate(item.createdAt as string) ?? '-'}${item.finishedAt ? ` · Finalizado ${formatShortDate(item.finishedAt as string)}` : ''}`
+                          ? `${tournamentStatusLabels[String(item.status)] ?? String(item.status)} · Nivel ${(item.level as { name?: string } | null)?.name ?? 'sin nivel'} · Creado ${formatShortDate(item.createdAt as string) ?? '-'}${item.finishedAt ? ` · Finalizado ${formatShortDate(item.finishedAt as string)}` : ''}`
                           : resource === 'users'
                           ? `${String(item.email)} · ${String(item.role ?? 'USER')} · ${item.player ? `👤 ${(item.player as { name?: string })?.name}` : '⚪ Sin jugador vinculado'}`
                           : resource === 'players'

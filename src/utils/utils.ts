@@ -1,6 +1,29 @@
-import { format } from 'date-fns';
-import { Tournament, Stat, PointsBreakdown } from '@/types';
-import { calculateTournamentPoints, compareStandings, createHeadToHead } from '@/utils/scoring';
+import { calculateTournamentPoints, compareStandings, createHeadToHead } from './scoring.ts';
+
+type Stat = {
+  id: string;
+  name: string;
+  matchesWon: number;
+  matchesLost: number;
+  gamesWon: number;
+  setsWon: number;
+  setsLost: number;
+  gamesLost: number;
+};
+
+type PointsBreakdown = {
+  name: string;
+  points: number;
+  breakdown: { points: number; tournament: string }[];
+};
+
+const formatDate = (value: string | Date) => {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return [date.getDate(), date.getMonth() + 1, date.getFullYear()]
+    .map((part, index) => (index < 2 ? String(part).padStart(2, '0') : String(part)))
+    .join('/');
+};
 
 // Formats a set's real score, e.g. "6-4" or "7(7)-6(5)" when it was decided by tiebreak.
 export const formatSetScore = (
@@ -145,18 +168,18 @@ export const calculatePlayerStats = (matches: MatchWithDetails[] | any[]): Stat[
 
 // Suma los puntos de cada jugador según el tipo de torneo (solo torneos finalizados)
 export const calculatePlayerPoints = (
-  tournaments: (Tournament | any)[],
+  tournaments: any[],
 ): Record<string, PointsBreakdown> => {
   const playerPoints: Record<string, PointsBreakdown> = {};
   for (const tournament of tournaments || []) {
     if (!tournament) continue;
 
-    for (const { name, points } of calculateTournamentPoints(tournament)) {
-      if (!playerPoints[name]) {
-        playerPoints[name] = { points: 0, breakdown: [] };
+    for (const { playerId, name, points } of calculateTournamentPoints(tournament)) {
+      if (!playerPoints[playerId]) {
+        playerPoints[playerId] = { name, points: 0, breakdown: [] };
       }
-      playerPoints[name].points += points;
-      playerPoints[name].breakdown.push({ points, tournament: tournament.name });
+      playerPoints[playerId].points += points;
+      playerPoints[playerId].breakdown.push({ points, tournament: tournament.name });
     }
   }
   return playerPoints;
@@ -266,12 +289,14 @@ function bracketRoundName(matchCount: number): string {
  * not a power of 2, it is padded with vacancy slots up to the next power of 2.
  */
 export function buildEliminationBracket(slots: DrawSlot[]): BracketRound[] {
+  if (slots.length < 2) return [];
+
   // Pad to next power of 2
   let size = 1;
   while (size < slots.length) size *= 2;
   const paddedSlots: DrawSlot[] = [...slots];
   while (paddedSlots.length < size) {
-    paddedSlots.push({ id: null, label: 'Vacante' });
+    paddedSlots.push({ id: null, label: 'BYE' });
   }
 
   const rounds: BracketRound[] = [];
@@ -336,11 +361,7 @@ export const createMatchSummary = (matchesList: any[]): MatchSummaryItem[] => {
   (matchesList || []).forEach((match) => {
     let formattedDate = '';
     if (match.tournament?.date) {
-      try {
-        formattedDate = format(new Date(match.tournament.date), 'dd/MM/yyyy');
-      } catch {
-        formattedDate = String(match.tournament.date);
-      }
+      formattedDate = formatDate(match.tournament.date);
     }
 
     const matchData: MatchSummaryItem = {
@@ -392,6 +413,7 @@ export interface PlayerChampionshipWon {
 }
 
 export interface PlayerChampionships {
+  id?: string;
   name: string;
   total: number;
   points: Record<string, number>;
@@ -404,10 +426,12 @@ export const countTournamentsByPlayer = (tournaments: any[]): PlayerChampionship
   (tournaments || []).forEach((tournament) => {
     if (!tournament.champion?.name) return;
     const winner = tournament.champion.name;
+    const winnerId = tournament.champion.id ?? winner;
     const category = tournament.tournamentCategory?.name || 'Otro';
 
-    if (!stats[winner]) {
-      stats[winner] = {
+    if (!stats[winnerId]) {
+      stats[winnerId] = {
+        id: winnerId,
         name: winner,
         total: 0,
         points: {},
@@ -415,19 +439,15 @@ export const countTournamentsByPlayer = (tournaments: any[]): PlayerChampionship
       };
     }
 
-    stats[winner].total += 1;
-    stats[winner].points[category] = (stats[winner].points[category] || 0) + 1;
+    stats[winnerId].total += 1;
+    stats[winnerId].points[category] = (stats[winnerId].points[category] || 0) + 1;
 
     let formattedDate = '';
     if (tournament.date) {
-      try {
-        formattedDate = format(new Date(tournament.date), 'dd/MM/yyyy');
-      } catch {
-        formattedDate = String(tournament.date);
-      }
+      formattedDate = formatDate(tournament.date);
     }
 
-    stats[winner].tournaments.push({
+    stats[winnerId].tournaments.push({
       id: tournament.id,
       name: tournament.name,
       category,

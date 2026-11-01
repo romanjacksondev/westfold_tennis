@@ -30,7 +30,11 @@ const match = (winner: string, loser: string, stage?: MatchStage | null): Scorin
   player2: { name: loser.toUpperCase() },
 });
 
-const tournament = (type: string | null, matches: ScoringMatch[], status = 'FINISHED'): ScoringTournament => ({
+const tournament = (
+  type: string | null,
+  matches: ScoringMatch[],
+  status = 'FINISHED',
+): ScoringTournament => ({
   name: 'Test',
   status,
   tournamentType: type ? { name: type } : null,
@@ -151,8 +155,31 @@ describe('Playoffs', () => {
   });
 
   it('scores a 4 player bracket starting in the semifinals', () => {
-    const matches = [match('a', 'c', 'SEMIFINAL'), match('b', 'd', 'SEMIFINAL'), match('b', 'a', 'FINAL')];
-    assert.deepEqual(pointsById(tournament('Playoffs', matches)), { a: 1300, b: 2000, c: 800, d: 800 });
+    const matches = [
+      match('a', 'c', 'SEMIFINAL'),
+      match('b', 'd', 'SEMIFINAL'),
+      match('b', 'a', 'FINAL'),
+    ];
+    assert.deepEqual(pointsById(tournament('Playoffs', matches)), {
+      a: 1300,
+      b: 2000,
+      c: 800,
+      d: 800,
+    });
+  });
+
+  it('scores players who enter the bracket after a BYE', () => {
+    const matches = [
+      match('a', 'c', 'SEMIFINAL'),
+      match('b', 'd', 'SEMIFINAL'),
+      match('a', 'b', 'FINAL'),
+    ];
+    assert.deepEqual(pointsById(tournament('Playoffs', matches)), {
+      a: 2000,
+      b: 1300,
+      c: 800,
+      d: 800,
+    });
   });
 
   it('gives 0 points to players eliminated before the quarterfinals', () => {
@@ -172,7 +199,11 @@ describe('Round Robin + Playoffs', () => {
 
   it('adds match points of the group stage and the stage reached in the playoffs', () => {
     // Semifinals a-d and b-c, final a-b.
-    const playoffs = [match('a', 'd', 'SEMIFINAL'), match('b', 'c', 'SEMIFINAL'), match('a', 'b', 'FINAL')];
+    const playoffs = [
+      match('a', 'd', 'SEMIFINAL'),
+      match('b', 'c', 'SEMIFINAL'),
+      match('a', 'b', 'FINAL'),
+    ];
     // a: 3 group wins + champion. b: 2 group wins + finalist. c, d lose their first playoff round.
     assert.deepEqual(pointsById(tournament('Round Robin + Playoffs', [...group(), ...playoffs])), {
       a: 3 * 200 + 2000,
@@ -183,14 +214,24 @@ describe('Round Robin + Playoffs', () => {
   });
 
   it('does not award stage points for losing the first playoff round', () => {
-    const playoffs = [match('a', 'd', 'SEMIFINAL'), match('b', 'c', 'SEMIFINAL'), match('a', 'b', 'FINAL')];
-    const result = calculateTournamentPoints(tournament('Round Robin + Playoffs', [...group(), ...playoffs]));
+    const playoffs = [
+      match('a', 'd', 'SEMIFINAL'),
+      match('b', 'c', 'SEMIFINAL'),
+      match('a', 'b', 'FINAL'),
+    ];
+    const result = calculateTournamentPoints(
+      tournament('Round Robin + Playoffs', [...group(), ...playoffs]),
+    );
     assert.equal(result.find((entry) => entry.playerId === 'c')?.stagePoints, 0);
     assert.equal(result.find((entry) => entry.playerId === 'd')?.stagePoints, 0);
   });
 
   it('does not count playoff wins as match wins', () => {
-    const playoffs = [match('d', 'a', 'SEMIFINAL'), match('c', 'b', 'SEMIFINAL'), match('d', 'c', 'FINAL')];
+    const playoffs = [
+      match('d', 'a', 'SEMIFINAL'),
+      match('c', 'b', 'SEMIFINAL'),
+      match('d', 'c', 'FINAL'),
+    ];
     const points = pointsById(tournament('Round Robin + Playoffs', [...group(), ...playoffs]));
     assert.equal(points.d, 0 * 200 + 2000);
     assert.equal(points.a, 3 * 200);
@@ -215,8 +256,14 @@ describe('Round Robin + Playoffs', () => {
   });
 
   it('treats matches without stage as group matches', () => {
-    const playoffs = [match('a', 'd', 'SEMIFINAL'), match('b', 'c', 'SEMIFINAL'), match('a', 'b', 'FINAL')];
-    const points = pointsById(tournament('Round Robin + Playoffs', [...roundRobinMatches(), ...playoffs]));
+    const playoffs = [
+      match('a', 'd', 'SEMIFINAL'),
+      match('b', 'c', 'SEMIFINAL'),
+      match('a', 'b', 'FINAL'),
+    ];
+    const points = pointsById(
+      tournament('Round Robin + Playoffs', [...roundRobinMatches(), ...playoffs]),
+    );
     assert.equal(points.a, 3 * 200 + 2000);
   });
 });
@@ -224,8 +271,14 @@ describe('Round Robin + Playoffs', () => {
 describe('Tournament status', () => {
   it('awards no points while the tournament is not finished', () => {
     for (const status of ['PREPARATION', 'IN_PROGRESS', 'CANCELLED']) {
-      assert.deepEqual(calculateTournamentPoints(tournament('Round Robin', roundRobinMatches(), status)), []);
-      assert.deepEqual(calculateTournamentPoints(tournament('Playoffs', bracketMatches(), status)), []);
+      assert.deepEqual(
+        calculateTournamentPoints(tournament('Round Robin', roundRobinMatches(), status)),
+        [],
+      );
+      assert.deepEqual(
+        calculateTournamentPoints(tournament('Playoffs', bracketMatches(), status)),
+        [],
+      );
     }
   });
 
@@ -233,6 +286,16 @@ describe('Tournament status', () => {
     assert.deepEqual(calculateTournamentPoints({ name: 'Empty', status: 'FINISHED' }), []);
     const noCategory = { ...tournament('Playoffs', bracketMatches()), tournamentCategory: null };
     assert.equal(pointsById(noCategory).a, 0);
+  });
+
+  it('awards zero when the category does not define the reached position', () => {
+    const noChampionPoints = {
+      ...tournament('Playoffs', [match('a', 'b', 'FINAL')]),
+      tournamentCategory: {
+        tournamentCategoryPoints: [{ initial_position: 2, final_position: 2, points: 100 }],
+      },
+    };
+    assert.equal(pointsById(noChampionPoints).a, 0);
   });
 });
 
@@ -250,7 +313,10 @@ describe('compareStandings', () => {
     [...stats].sort((a, b) => compareStandings(a, b, createHeadToHead(matches))).map((s) => s.id);
 
   it('ranks by matches won first, even with worse sets and games', () => {
-    assert.deepEqual(order([stat('a', { setsWon: 0, gamesWon: 0 }), stat('b', { matchesWon: 2 })]), ['b', 'a']);
+    assert.deepEqual(
+      order([stat('a', { setsWon: 0, gamesWon: 0 }), stat('b', { matchesWon: 2 })]),
+      ['b', 'a'],
+    );
   });
 
   it('uses set difference before game difference', () => {

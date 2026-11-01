@@ -12,8 +12,8 @@ interface ChampionshipsTemplateProps {
 const ChampionshipsTemplate = ({ championships = [] }: ChampionshipsTemplateProps) => {
   const [expandedPlayer, setExpandedPlayer] = useState<string | null>(null);
 
-  const toggleExpand = (playerName: string) => {
-    setExpandedPlayer((prev) => (prev === playerName ? null : playerName));
+  const toggleExpand = (playerId: string) => {
+    setExpandedPlayer((prev) => (prev === playerId ? null : playerId));
   };
 
   if (!championships || championships.length === 0) {
@@ -110,18 +110,19 @@ const ChampionshipsTemplate = ({ championships = [] }: ChampionshipsTemplateProp
           </thead>
           <tbody>
             {championships.map((player, index) => {
-              const isExpanded = expandedPlayer === player.name;
+              const playerId = player.id ?? player.name;
+              const isExpanded = expandedPlayer === playerId;
               return (
-                <Fragment key={player.name}>
+                <Fragment key={playerId}>
                   <tr
                     className={`leaderboard-row-interactive ${isExpanded ? 'bg-[#f7f9f7]' : ''}`}
-                    onClick={() => toggleExpand(player.name)}
+                    onClick={() => toggleExpand(playerId)}
                     tabIndex={0}
                     role="button"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        toggleExpand(player.name);
+                        toggleExpand(playerId);
                       }
                     }}
                   >
@@ -202,4 +203,3 @@ const ChampionshipsTemplate = ({ championships = [] }: ChampionshipsTemplateProp
 };
 
 export default ChampionshipsTemplate;
-

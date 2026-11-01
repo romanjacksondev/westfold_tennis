@@ -9,7 +9,10 @@
     "lint": "eslint .",
     "start": "next start",
     "postinstall": "prisma generate",
-    "test": "node --test",
+    "test": "node --test src/utils/levels.test.ts src/utils/scoring.test.ts src/utils/utils.test.ts",
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=src/utils/scoring.ts --test-coverage-include=src/utils/levels.ts --test-coverage-include=src/utils/utils.ts --test-coverage-lines=80 --test-coverage-functions=80 src/utils/levels.test.ts src/utils/scoring.test.ts src/utils/utils.test.ts",
+    "test:e2e": "node scripts/run-integration.mjs --e2e",
+    "test:integration": "node scripts/run-integration.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -34,6 +37,7 @@
     "node": ">=20"
   },
   "devDependencies": {
+    "@playwright/test": "^1.64.1",
     "@types/node": "^26.6.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",

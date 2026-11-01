@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo, FormEvent } from 'react';
+import TournamentDrawPreview from './TournamentDrawPreview';
 import TournamentTypeVisual from './TournamentTypeVisual';
 
 type RecordItem = { id: string; name?: string; [key: string]: unknown };
@@ -381,6 +382,19 @@ export default function TournamentPreparationModal({ tournament, options, onClos
               </div>
             </div>
           </div>
+
+          <section className="prep-draw-section" aria-label="Vista previa del cuadro">
+            <h3 className="prep-section-title">Cuadro</h3>
+            <p className="muted" style={{ margin: '2px 0 12px', fontSize: '13px' }}>
+              Se completa a medida que sumás jugadores. Los cruces siguen el orden de confirmación.
+            </p>
+            <TournamentDrawPreview
+              typeName={String(selectedType?.name ?? '')}
+              drawSize={targetDrawSize}
+              qualifiers={Number(qualifiers) || 2}
+              playerNames={selectedPlayers.map((player) => String(player.nickname || player.name || player.id))}
+            />
+          </section>
 
           {/* Acciones del Modal */}
           <div className="prep-modal-footer">

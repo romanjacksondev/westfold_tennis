@@ -1,7 +1,5 @@
 import { prisma } from '@/utils/prisma';
-import { suggestLevel, type RatedMatch } from '@/utils/levels';
-
-const STAGE_ORDER: Record<string, number> = { GROUP: 0, ROUND_OF_16: 1, QUARTERFINAL: 2, SEMIFINAL: 3, FINAL: 4 };
+import { sortPlayerMatches, suggestLevel, type RatedMatch } from '@/utils/levels';
 
 /** Declared level, advisory level suggestion and level history of a player. */
 export async function getPlayerLevelInfo(playerId: string) {
@@ -28,14 +26,7 @@ export async function getPlayerLevelInfo(playerId: string) {
     }),
   ]);
 
-  const rated: RatedMatch[] = matches
-    .sort(
-      (a, b) =>
-        (a.tournament?.date.getTime() ?? 0) - (b.tournament?.date.getTime() ?? 0) ||
-        (STAGE_ORDER[a.stage ?? 'GROUP'] ?? 0) - (STAGE_ORDER[b.stage ?? 'GROUP'] ?? 0) ||
-        a.id.localeCompare(b.id),
-    )
-    .map((match) => {
+  const rated: RatedMatch[] = sortPlayerMatches(matches).map((match) => {
       const opponent = match.player1Id === playerId ? match.player2 : match.player1;
       return { won: match.winnerId === playerId, opponentOrder: opponent.level?.order ?? null };
     });

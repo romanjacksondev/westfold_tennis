@@ -867,3 +867,8 @@ body {
 .level-history li { display: grid; grid-template-columns: 56px 1fr auto; gap: 10px; align-items: baseline; padding: 8px 0; border-top: 1px solid #e3ebe5; font-size: 14px; }
 .level-history small { color: #7a8a83; }
 .level-gap { display: block; color: #7a8a83; font-weight: 500; font-size: 11px; }
+
+.prep-draw-section { margin-top: 24px; padding-top: 18px; border-top: 1px solid #e0e7e2; }
+.draw-preview { display: grid; gap: 20px; }
+.draw-preview-scroll { overflow-x: auto; }
+.bracket-player.draw-slot-empty, .bracket-matrix .draw-slot-empty, .bracket-matrix tbody th.draw-slot-empty { color: #a3aca7; font-style: italic; font-weight: 500; background: #fafbfa; }

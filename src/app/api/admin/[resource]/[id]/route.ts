@@ -2,6 +2,7 @@ import { prisma } from '@/utils/prisma';
 import { requireAdmin } from '@/lib/require-session';
 import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import { didPlayerLevelChange } from '@/utils/levels';
 
 const models = {
   players: 'player',
@@ -134,7 +135,7 @@ export async function PATCH(request: NextRequest, context: Context) {
         delete data.levelId;
         delete data.levelReason;
         const currentPlayer = await prisma.player.findUnique({ where: { id }, select: { levelId: true } });
-        if ((currentPlayer?.levelId ?? null) !== newLevelId) {
+        if (didPlayerLevelChange(currentPlayer?.levelId, newLevelId)) {
           data.level = newLevelId ? { connect: { id: newLevelId } } : { disconnect: true };
           data.levelHistory = { create: { levelId: newLevelId, reason } };
         }

@@ -14,6 +14,32 @@ export type LevelSuggestion = {
 export const SUGGESTION_STREAK = 5;
 
 const sortLevels = (levels: LevelRef[]) => [...levels].sort((a, b) => a.order - b.order);
+const MATCH_STAGE_ORDER: Record<string, number> = {
+  GROUP: 0,
+  ROUND_OF_16: 1,
+  QUARTERFINAL: 2,
+  SEMIFINAL: 3,
+  FINAL: 4,
+};
+
+export type MatchForLevelSort = {
+  id: string;
+  stage?: string | null;
+  tournament?: { date?: Date | null } | null;
+};
+
+export function sortPlayerMatches<T extends MatchForLevelSort>(matches: T[]): T[] {
+  return [...matches].sort(
+    (a, b) =>
+      (a.tournament?.date?.getTime() ?? 0) - (b.tournament?.date?.getTime() ?? 0) ||
+      (MATCH_STAGE_ORDER[a.stage ?? 'GROUP'] ?? 0) - (MATCH_STAGE_ORDER[b.stage ?? 'GROUP'] ?? 0) ||
+      a.id.localeCompare(b.id),
+  );
+}
+
+export function didPlayerLevelChange(currentLevelId: string | null | undefined, newLevelId: string | null | undefined): boolean {
+  return (currentLevelId ?? null) !== (newLevelId ?? null);
+}
 
 /**
  * Suggests a level from recent results. The declared level is only a reference, so this is advisory:

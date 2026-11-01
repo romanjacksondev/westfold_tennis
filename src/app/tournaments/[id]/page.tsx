@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { Fragment, Suspense, useEffect, useState } from 'react';
 import { LuGitFork, LuListOrdered, LuSwords, LuTrophy } from 'react-icons/lu';
 import { formatSetScore } from '@/utils/utils';
+import { buildGroupMatrix, buildPlayoffRounds, getSideSetScores, sortDrawMatches } from '@/utils/draw-view';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -36,9 +37,6 @@ const STAGE_LABELS: Record<string, string> = {
   SEMIFINAL: 'Semifinal',
   FINAL: 'Final',
 };
-const STAGE_ORDER = ['GROUP', 'ROUND_OF_16', 'QUARTERFINAL', 'SEMIFINAL', 'FINAL'];
-const stageRank = (stage?: string | null) => (stage ? STAGE_ORDER.indexOf(stage) : 0);
-
 const signed = (value: number) => `${value > 0 ? '+' : ''}${value}`;
 
 type TournamentResponse = {
@@ -57,13 +55,11 @@ function SideSets({ match, side }: { match: Match; side: 1 | 2 }) {
   return (
     <>
       {(match.sets ?? []).map((set, i) => {
-        const mine = side === 1 ? set.gamesJugador1 : set.gamesJugador2;
-        const other = side === 1 ? set.gamesJugador2 : set.gamesJugador1;
-        const tb = side === 1 ? set.tiebreakPlayer1Points : set.tiebreakPlayer2Points;
+        const score = getSideSetScores(set, side);
         return (
           <span key={i} className="bracket-set">
-            {mine}
-            {set.hasTiebreak && mine < other && tb !== null && <sup>{tb}</sup>}
+            {score.games}
+            {score.hasTiebreak && score.games < score.opponentGames && score.tiebreakPoints != null && <sup>{score.tiebreakPoints}</sup>}
           </span>
         );
       })}
@@ -72,8 +68,7 @@ function SideSets({ match, side }: { match: Match; side: 1 | 2 }) {
 }
 
 function GroupMatrix({ players, matches, champion }: { players: Standing[]; matches: Match[]; champion: string | null | undefined }) {
-  const findMatch = (a: string, b: string) =>
-    matches.find((m) => (m.player1Id === a && m.player2Id === b) || (m.player1Id === b && m.player2Id === a));
+  const rows = buildGroupMatrix(players, matches);
 
   return (
     <div className="tournament-detail-table-wrap">
@@ -87,29 +82,23 @@ function GroupMatrix({ players, matches, champion }: { players: Standing[]; matc
           </tr>
         </thead>
         <tbody>
-          {players.map((row) => (
-            <tr key={row.id}>
-              <th className={row.name === champion ? 'is-champion-name' : undefined}>{row.name}</th>
-              {players.map((col) => {
-                if (row.id === col.id) return <td key={col.id} className="matrix-self">—</td>;
-                const match = findMatch(row.id, col.id);
-                if (!match) return <td key={col.id} className="matrix-empty">·</td>;
-                const rowIsP1 = match.player1Id === row.id;
-                const won = match.winnerId === row.id;
-                const score = (match.sets ?? [])
-                  .map((set) =>
-                    rowIsP1
-                      ? formatSetScore(set.gamesJugador1, set.gamesJugador2, set.hasTiebreak, set.tiebreakPlayer1Points, set.tiebreakPlayer2Points)
-                      : formatSetScore(set.gamesJugador2, set.gamesJugador1, set.hasTiebreak, set.tiebreakPlayer2Points, set.tiebreakPlayer1Points),
-                  )
-                  .join('  ');
-                return (
-                  <td key={col.id} className={won ? 'matrix-win' : 'matrix-loss'} title={won ? 'Victoria' : 'Derrota'}>
-                    {score}
-                  </td>
-                );
-              })}
-            </tr>
+          {rows.map(({ player, cells }) => (
+          <tr key={player.id}>
+            <th className={player.name === champion ? 'is-champion-name' : undefined}>{player.name}</th>
+            {cells.map((cell, index) => {
+              const opponentId = players[index].id;
+              if (cell.kind === 'self') return <td key={opponentId} className="matrix-self">—</td>;
+              if (cell.kind === 'empty') return <td key={opponentId} className="matrix-empty">·</td>;
+              const score = cell.sets
+                .map((set) => formatSetScore(set.gamesJugador1, set.gamesJugador2, set.hasTiebreak, set.tiebreakPlayer1Points, set.tiebreakPlayer2Points))
+                .join('  ');
+              return (
+                <td key={opponentId} className={cell.won ? 'matrix-win' : 'matrix-loss'} title={cell.won ? 'Victoria' : 'Derrota'}>
+                  {score}
+                </td>
+              );
+            })}
+          </tr>
           ))}
         </tbody>
       </table>
@@ -118,16 +107,14 @@ function GroupMatrix({ players, matches, champion }: { players: Standing[]; matc
 }
 
 function PlayoffBracket({ matches }: { matches: Match[] }) {
-  const stages = STAGE_ORDER.filter((stage) => stage !== 'GROUP' && matches.some((m) => m.stage === stage));
+  const rounds = buildPlayoffRounds(matches);
   return (
     <div className="bracket-rounds">
-      {stages.map((stage) => (
+      {rounds.map(({ stage, matches: roundMatches }) => (
         <div key={stage} className="bracket-round">
           <p className="bracket-round-title">{STAGE_LABELS[stage]}</p>
           <div className="bracket-round-matches">
-            {matches
-              .filter((m) => m.stage === stage)
-              .map((m, i) => (
+            {roundMatches.map((m, i) => (
                 <div key={i} className="bracket-match">
                   {([1, 2] as const).map((side) => {
                     const id = side === 1 ? m.player1Id : m.player2Id;
@@ -199,7 +186,7 @@ function TournamentDetailsContent() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  const orderedMatches = [...(data?.matchSummary ?? [])].sort((a, b) => stageRank(a.stage) - stageRank(b.stage));
+  const orderedMatches = sortDrawMatches(data?.matchSummary ?? []);
   const hasStages = orderedMatches.some((match) => match.stage && match.stage !== 'GROUP');
 
   return (

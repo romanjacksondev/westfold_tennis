@@ -6,6 +6,7 @@ import { LuChevronDown, LuMedal, LuTrophy } from 'react-icons/lu';
 export type RankingMode = 'year' | 'calendar';
 
 export type LeaderboardEntry = {
+  id: string;
   key: string;
   photo?: string | null;
   record: { wins: number; losses: number; titles: number; form: ('W' | 'L')[] };
@@ -92,7 +93,7 @@ const Podium = ({ entries, periodLabel }: { entries: LeaderboardEntry[]; periodL
       const entry = entries[position];
       if (!entry) return <div key={position} className="lb-podium-slot lb-podium-empty" />;
       return (
-        <div key={entry.key} className={`lb-podium-slot lb-podium-${position + 1}`}>
+        <div key={entry.id} className={`lb-podium-slot lb-podium-${position + 1}`}>
           <span className="lb-podium-medal">
             {position === 0 ? <LuTrophy /> : <LuMedal />}
             {PODIUM_LABELS[position]}
@@ -130,15 +131,15 @@ const RankingList = ({
   return (
     <ul className="lb-list">
       {entries.map((entry, index) => {
-        const isExpanded = expanded === entry.key;
+        const isExpanded = expanded === entry.id;
         return (
-          <Fragment key={entry.key}>
+          <Fragment key={entry.id}>
             <li>
               <button
                 type="button"
                 className="lb-row"
                 aria-expanded={isExpanded}
-                onClick={() => setExpanded(isExpanded ? null : entry.key)}
+                onClick={() => setExpanded(isExpanded ? null : entry.id)}
               >
                 <span className="lb-row-pos">{offset + index + 1}</span>
                 <Avatar entry={entry} size="sm" />

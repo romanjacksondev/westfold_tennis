@@ -13,6 +13,7 @@ import {
 } from 'react-icons/lu';
 
 type Entry = {
+  id: string;
   key: string;
   photo?: string | null;
   record: { wins: number; losses: number; titles: number; form: ('W' | 'L')[] };
@@ -88,7 +89,7 @@ const Form = ({ results }: { results: ('W' | 'L')[] }) => (
   </span>
 );
 
-function RankingCarousel({ myName, myGender }: { myName?: string; myGender?: Gender }) {
+function RankingCarousel({ myId, myGender }: { myId?: string | null; myGender?: Gender }) {
   const [mode, setMode] = useState<Mode>('year');
   const [level, setLevel] = useState('all');
   const [cache, setCache] = useState<Record<string, Ranking>>({});
@@ -210,7 +211,7 @@ function RankingCarousel({ myName, myGender }: { myName?: string; myGender?: Gen
           {SLIDES.map((slide) => {
             const list = ranking?.[slide.key] ?? [];
             const top = list.slice(0, TOP);
-            const meIndex = myName ? list.findIndex((e) => e.key === myName) : -1;
+            const meIndex = myId ? list.findIndex((e) => e.id === myId) : -1;
             const rows =
               meIndex >= TOP
                 ? [
@@ -236,14 +237,14 @@ function RankingCarousel({ myName, myGender }: { myName?: string; myGender?: Gen
                     <ol className="home-rank-list">
                       {rows.map(({ e, pos }) => (
                         <li
-                          key={e.key}
-                          className={`${pos <= 3 ? `top-${pos}` : ''}${e.key === myName ? ' is-me' : ''}${pos > TOP ? ' is-extra' : ''}`}
+                          key={e.id}
+                          className={`${pos <= 3 ? `top-${pos}` : ''}${e.id === myId ? ' is-me' : ''}${pos > TOP ? ' is-extra' : ''}`}
                         >
                           <span className="home-rank-pos">{pos <= 3 ? <LuMedal /> : pos}</span>
                           <Avatar entry={e} />
                           <span className="home-rank-name">
                             {e.key}
-                            {e.key === myName && <em>Vos</em>}
+                            {e.id === myId && <em>Vos</em>}
                           </span>
                           <Form results={e.record.form} />
                           <strong className="home-rank-points">{e.value.points}</strong>
@@ -445,7 +446,7 @@ export default function Home() {
       </section>
 
       <RankingCarousel
-        myName={me?.name}
+        myId={session?.user?.playerId}
         myGender={me ? (me.gender === 'FEMALE' ? 'female' : 'male') : undefined}
       />
 

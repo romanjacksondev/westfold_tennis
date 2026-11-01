@@ -22,7 +22,7 @@ async function getTournaments(initialDate: Date, endDate: Date, level: LevelFilt
       },
     },
     include: {
-      champion: { select: { name: true } },
+      champion: { select: { id: true, name: true } },
       tournamentType: { select: { name: true } },
       tournamentCategory: {
         select: {
@@ -107,39 +107,37 @@ export async function GET(req: NextRequest) {
     ]);
     const playerPoints = calculatePlayerPoints(tournaments);
 
-    const genderByName = new Map<string, 'MALE' | 'FEMALE'>();
-    const photoByName = new Map<string, string | null>();
+    const genderById = new Map<string, 'MALE' | 'FEMALE'>();
+    const photoById = new Map<string, string | null>();
+    const nameById = new Map<string, string>();
     for (const tournament of tournaments) {
       for (const match of tournament.matches) {
-        genderByName.set(match.player1.name, match.player1.gender);
-        genderByName.set(match.player2.name, match.player2.gender);
-        photoByName.set(match.player1.name, getPlayerPhoto(match.player1, 'thumb'));
-        photoByName.set(match.player2.name, getPlayerPhoto(match.player2, 'thumb'));
+        genderById.set(match.player1.id, match.player1.gender);
+        genderById.set(match.player2.id, match.player2.gender);
+        nameById.set(match.player1.id, match.player1.name);
+        nameById.set(match.player2.id, match.player2.name);
+        photoById.set(match.player1.id, getPlayerPhoto(match.player1, 'thumb'));
+        photoById.set(match.player2.id, getPlayerPhoto(match.player2, 'thumb'));
       }
     }
 
     // Tournaments arrive newest first; walk oldest first so `form` ends with the latest results.
-    const stats = new Map<
-      string,
-      { wins: number; losses: number; titles: number; form: ('W' | 'L')[] }
-    >();
-    const statsFor = (name: string) => {
-      let entry = stats.get(name);
+    const stats = new Map<string, { wins: number; losses: number; titles: number; form: ('W' | 'L')[] }>();
+    const statsFor = (playerId: string) => {
+      let entry = stats.get(playerId);
       if (!entry) {
         entry = { wins: 0, losses: 0, titles: 0, form: [] };
-        stats.set(name, entry);
+        stats.set(playerId, entry);
       }
       return entry;
     };
     for (const tournament of [...tournaments].reverse()) {
-      if (tournament.champion) statsFor(tournament.champion.name).titles += 1;
+      if (tournament.champion) statsFor(tournament.champion.id).titles += 1;
       for (const match of tournament.matches) {
-        const winnerName =
-          match.winnerId === match.player1Id ? match.player1.name : match.player2.name;
-        const loserName =
-          match.winnerId === match.player1Id ? match.player2.name : match.player1.name;
-        const winner = statsFor(winnerName);
-        const loser = statsFor(loserName);
+        const winnerId = match.winnerId === match.player1Id ? match.player1Id : match.player2Id;
+        const loserId = match.winnerId === match.player1Id ? match.player2Id : match.player1Id;
+        const winner = statsFor(winnerId);
+        const loser = statsFor(loserId);
         winner.wins += 1;
         winner.form.push('W');
         loser.losses += 1;
@@ -149,13 +147,14 @@ export async function GET(req: NextRequest) {
 
     const toRanking = (gender: 'MALE' | 'FEMALE') =>
       Object.entries(playerPoints)
-        .filter(([name]) => genderByName.get(name) === gender)
+        .filter(([id]) => genderById.get(id) === gender)
         .sort((a, b) => b[1].points - a[1].points)
-        .map(([key, value]) => {
-          const { wins, losses, titles, form } = statsFor(key);
+        .map(([id, value]) => {
+          const { wins, losses, titles, form } = statsFor(id);
           return {
-            key,
-            photo: photoByName.get(key) ?? null,
+            id,
+            key: nameById.get(id) ?? value.name,
+            photo: photoById.get(id) ?? null,
             value,
             record: { wins, losses, titles, form: form.slice(-5) },
           };
