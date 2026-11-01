@@ -138,9 +138,17 @@ test('admin creates, starts, scores, and finishes a playoff tournament from the 
 
   for (const playerName of ['E2E Player One', 'E2E Player Two', 'E2E Player Three']) {
     await setupDialog.locator('.prep-available-item').filter({ hasText: playerName }).click();
+    await expect(
+      setupDialog.locator('.tournament-draw-preview').getByText(playerName, { exact: true }),
+    ).toBeVisible();
   }
   const preview = setupDialog.getByRole('region', { name: 'Vista previa del cuadro' });
   await expect(preview).toContainText('BYE');
+  const finalRound = preview.locator('.bracket-round').nth(1);
+  await expect(
+    finalRound.locator('.bracket-player').filter({ hasText: 'E2E Player One' }),
+  ).toBeVisible();
+  await expect(finalRound).toContainText('Pase directo por BYE · sin puntos por victoria');
   await expect(setupDialog.locator('.prep-slots-badge')).toContainText('3 / 3 cupos');
   await setupDialog.getByRole('button', { name: /Iniciar torneo/ }).click();
   await expect(setupDialog).toBeHidden();
@@ -202,8 +210,8 @@ test('admin creates, starts, scores, and finishes a playoff tournament from the 
   }
 
   await createPlayoffMatch({
-    playerOne: 'E2E Player One',
-    playerTwo: 'E2E Player Two',
+    playerOne: 'E2E Player Two',
+    playerTwo: 'E2E Player Three',
     stage: 'Semifinal',
     gamesOne: '6',
     gamesTwo: '4',
@@ -239,6 +247,6 @@ test('admin creates, starts, scores, and finishes a playoff tournament from the 
   await page.getByRole('tab', { name: 'Cuadro' }).click();
   await expect(page.getByText('Semifinal', { exact: true })).toBeVisible();
   await expect(page.getByText('Final', { exact: true })).toBeVisible();
-  await expect(page.locator('.bracket-round').getByText('E2E Player Three')).toBeVisible();
+  await expect(page.locator('.bracket-round').getByText('E2E Player Three').first()).toBeVisible();
   assertNoRenderRegressions();
 });

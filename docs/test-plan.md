@@ -32,7 +32,7 @@ Documento para retomar el trabajo en otra sesión. Marcar cada casilla al comple
 - [x] `calculatePlayerPoints`: puntos y desglose por torneo; solo torneos terminados; jugadores con el mismo nombre no mezclan puntos.
 - [x] `createH2H` (simétrico) y `createMatchSummary` (orden y etapa).
 - [x] `countTournamentsByPlayer`.
-- [x] `generateDraw` y `buildEliminationBracket`: cupos que no son potencia de 2 (BYE), cruce 1 vs último, nombres de rondas.
+- [x] `generateDraw` y `buildEliminationBracket`: cupos que no son potencia de 2 (BYE), avance automático sin partido ni puntos de victoria, cruce 1 vs último, nombres de rondas.
 - [x] Ampliar `scoring.test.ts`: torneo en curso o cancelado = 0 puntos; mixto sin puntos de etapa al perder la primera ronda de playoffs; playoffs con BYE; categoría sin puntos para una posición.
 - [x] Ampliar `levels.test.ts`: racha con un rival sin nivel en el medio; niveles reordenados; lista de niveles vacía.
 - [x] Tests de las funciones extraídas en 1.1.
@@ -58,10 +58,11 @@ Documento para retomar el trabajo en otra sesión. Marcar cada casilla al comple
 
 - [x] Playwright aprobado e integrado en el runner con Chromium y un esquema aislado por ejecución.
 - [x] E2E visitante: cambiar categoría, período y nivel del ranking de home; filtrar ranking por nivel; navegar a Ranking y `/information` desde el sidebar.
-- [x] E2E admin: crear un torneo de playoffs, agregar jugadores viendo el BYE de la vista previa, iniciar, cargar semifinal/final y terminarlo eligiendo campeón.
+- [x] E2E admin: crear un torneo de playoffs, comprobar el avance visible por BYE sin puntos de victoria, iniciar, cargar los partidos disputados y terminarlo eligiendo campeón.
 - [x] Torneo terminado: verificar las etiquetas Campeón y Campeona y resultados con tiebreak.
 - [x] Regresiones: comprobar errores runtime, hidratación y claves duplicadas en NavBar, Sidebar y vistas de torneo.
 - [x] La creación de torneos conserva `drawSize` y `qualifiers`; un flujo E2E detectó y corrigió que esos valores se descartaban en el endpoint POST.
+- [x] La vista previa del cuadro usa estilos separados de la miniatura del selector de formatos; E2E verifica que cada jugador agregado aparece en el cuadro visible.
 
 ## Fase 4: cobertura
 
@@ -79,6 +80,7 @@ Documento para retomar el trabajo en otra sesión. Marcar cada casilla al comple
 
 - [x] Las funciones del ranking y el palmarés ahora agregan por ID de jugador, no por nombre; el mismo nombre ya no fusiona puntos/títulos y la UI usa IDs como claves estables.
 - [x] La vista previa muestra el número real de clasificados y rellena la llave con BYEs sin convertir esos cupos en clasificados adicionales.
+- [x] Los BYEs avanzan al participante visible en rondas posteriores; los huecos dobles no producen clasificados y el BYE no crea un partido ni puntos de victoria.
 - [x] Aislar cada ejecución en un esquema PostgreSQL aleatorio `westfold_test_<id>` y limpiar solo ese esquema al terminar.
 
 ## Estado de ejecución

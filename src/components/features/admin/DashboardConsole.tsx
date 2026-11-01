@@ -900,7 +900,7 @@ export default function DashboardConsole() {
                         setShowTournamentTypeInfo(false);
                       }}
                     >
-                      <div className="draw-preview" aria-hidden="true">
+                      <div className="draw-preview-illustration" aria-hidden="true">
                         <TournamentTypeVisual typeName={name} />
                       </div>
                       <div>

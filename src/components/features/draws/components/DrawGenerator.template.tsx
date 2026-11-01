@@ -8,7 +8,6 @@ import {
   LuDices,
   LuPlus,
   LuRefreshCw,
-  LuRotateCcw,
   LuTrophy,
   LuUsers,
   LuX,
@@ -701,8 +700,8 @@ const DrawGeneratorTemplate = ({ players, loading = false }: DrawGeneratorTempla
                       </div>
                       <div className="draw-round-matches">
                         {round.matches.map((match, mIndex) => {
-                          const isTopVacancy = match.top.label === 'Vacante';
-                          const isBottomVacancy = match.bottom.label === 'Vacante';
+                          const isTopVacancy = ['BYE', 'Vacante', 'Cupo libre'].includes(match.top.label);
+                          const isBottomVacancy = ['BYE', 'Vacante', 'Cupo libre'].includes(match.bottom.label);
                           const isTopPlaceholder = match.top.id === null && match.top.label.startsWith('Ganador');
                           const isBottomPlaceholder = match.bottom.id === null && match.bottom.label.startsWith('Ganador');
 
@@ -717,7 +716,14 @@ const DrawGeneratorTemplate = ({ players, loading = false }: DrawGeneratorTempla
                               >
                                 <span className="draw-slot-num">1</span>
                                 <span className="draw-slot-label">{match.top.label}</span>
-                                {isTopVacancy && <span className="draw-bye-pill">BYE</span>}
+                                {(isTopVacancy || match.top.advancedByBye) && (
+                                  <span
+                                    className="draw-bye-pill"
+                                    title="El BYE no es un partido ni otorga puntos por victoria."
+                                  >
+                                    BYE
+                                  </span>
+                                )}
                               </div>
 
                               <div
@@ -725,7 +731,14 @@ const DrawGeneratorTemplate = ({ players, loading = false }: DrawGeneratorTempla
                               >
                                 <span className="draw-slot-num">2</span>
                                 <span className="draw-slot-label">{match.bottom.label}</span>
-                                {isBottomVacancy && <span className="draw-bye-pill">BYE</span>}
+                                {(isBottomVacancy || match.bottom.advancedByBye) && (
+                                  <span
+                                    className="draw-bye-pill"
+                                    title="El BYE no es un partido ni otorga puntos por victoria."
+                                  >
+                                    BYE
+                                  </span>
+                                )}
                               </div>
                             </div>
                           );

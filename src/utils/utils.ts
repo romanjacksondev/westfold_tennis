@@ -1,4 +1,9 @@
-import { calculateTournamentPoints, compareStandings, createHeadToHead } from './scoring.ts';
+import {
+  calculateTournamentPoints,
+  compareStandings,
+  createHeadToHead,
+  type ScoringTournament,
+} from './scoring.ts';
 
 type Stat = {
   id: string;
@@ -60,7 +65,7 @@ export interface MatchWithDetails {
   sets?: MatchSet[];
 }
 
-export const calculatePlayerStats = (matches: MatchWithDetails[] | any[]): Stat[] => {
+export const calculatePlayerStats = (matches: MatchWithDetails[]): Stat[] => {
   const playerStats: Record<string, Stat> = {};
 
   (matches || []).forEach((match) => {
@@ -168,7 +173,7 @@ export const calculatePlayerStats = (matches: MatchWithDetails[] | any[]): Stat[
 
 // Suma los puntos de cada jugador según el tipo de torneo (solo torneos finalizados)
 export const calculatePlayerPoints = (
-  tournaments: any[],
+  tournaments: ScoringTournament[],
 ): Record<string, PointsBreakdown> => {
   const playerPoints: Record<string, PointsBreakdown> = {};
   for (const tournament of tournaments || []) {
@@ -192,7 +197,13 @@ export interface H2HRecord {
   lost: Record<string, number>;
 }
 
-export const createH2H = (matches: any[]): Record<string, H2HRecord> => {
+export interface HeadToHeadMatch {
+  player1?: { name?: string | null } | null;
+  player2?: { name?: string | null } | null;
+  winner?: { name?: string | null } | null;
+}
+
+export const createH2H = (matches: HeadToHeadMatch[]): Record<string, H2HRecord> => {
   const results: Record<string, H2HRecord> = {};
 
   (matches || []).forEach((match) => {
@@ -223,7 +234,7 @@ export const createH2H = (matches: any[]): Record<string, H2HRecord> => {
 
 // ─── Round Robin Draw Generator ────────────────────────────────────────────
 
-export const generateDraw = <T = any>(n: number, ps?: T[] | null): [T, T][][] => {
+export const generateDraw = <T = number>(n: number, ps?: T[] | null): [T, T][][] => {
   const DUMMY = -1 as unknown as T;
   let playersList: T[];
 
@@ -265,11 +276,33 @@ export const generateDraw = <T = any>(n: number, ps?: T[] | null): [T, T][][] =>
 
 // ─── Elimination Bracket ───────────────────────────────────────────────────
 
-export type DrawSlot = { id: string | null; label: string };
+export type DrawSlot = { id: string | null; label: string; advancedByBye?: boolean };
 
 export type BracketMatch = { top: DrawSlot; bottom: DrawSlot };
 
 export type BracketRound = { roundName: string; matches: BracketMatch[] };
+
+function isVacantSlot(slot: DrawSlot): boolean {
+  return slot.id === null && ['BYE', 'Vacante', 'Cupo libre'].includes(slot.label);
+}
+
+function advanceBracketMatch(match: BracketMatch, matchNumber: number): DrawSlot {
+  const topIsVacant = isVacantSlot(match.top);
+  const bottomIsVacant = isVacantSlot(match.bottom);
+
+  if (topIsVacant && bottomIsVacant) {
+    return { id: null, label: 'Cupo libre' };
+  }
+
+  if (topIsVacant !== bottomIsVacant) {
+    return {
+      ...(topIsVacant ? match.bottom : match.top),
+      advancedByBye: true,
+    };
+  }
+
+  return { id: null, label: `Ganador Partido ${matchNumber}` };
+}
 
 /** Returns a human-readable name for a bracket round given the number of matches in it. */
 function bracketRoundName(matchCount: number): string {
@@ -308,25 +341,23 @@ export function buildEliminationBracket(slots: DrawSlot[]): BracketRound[] {
   }
   rounds.push({ roundName: bracketRoundName(round1Matches.length), matches: round1Matches });
 
-  // Subsequent rounds: placeholder winners from the previous round
+  // Subsequent rounds carry BYE recipients forward without creating a played match.
   let matchCounter = round1Matches.length; // track match numbers across rounds
-  let prevMatchCount = round1Matches.length;
+  let previousMatches = round1Matches;
 
-  while (prevMatchCount > 1) {
-    const nextMatchCount = prevMatchCount / 2;
-    const startIndex = matchCounter - prevMatchCount + 1; // first match number of prev round
+  while (previousMatches.length > 1) {
+    const nextMatchCount = previousMatches.length / 2;
+    const startIndex = matchCounter - previousMatches.length + 1;
+    const previousWinners = previousMatches.map((match, index) =>
+      advanceBracketMatch(match, startIndex + index),
+    );
     const matches: BracketMatch[] = [];
     for (let i = 0; i < nextMatchCount; i++) {
-      const topMatchNum = startIndex + i * 2;
-      const bottomMatchNum = startIndex + i * 2 + 1;
-      matches.push({
-        top: { id: null, label: `Ganador Partido ${topMatchNum}` },
-        bottom: { id: null, label: `Ganador Partido ${bottomMatchNum}` },
-      });
+      matches.push({ top: previousWinners[i * 2], bottom: previousWinners[i * 2 + 1] });
     }
     matchCounter += nextMatchCount;
     rounds.push({ roundName: bracketRoundName(nextMatchCount), matches });
-    prevMatchCount = nextMatchCount;
+    previousMatches = matches;
   }
 
   return rounds;
@@ -355,7 +386,24 @@ export interface MatchSummaryItem {
   sets: MatchSummarySet[];
 }
 
-export const createMatchSummary = (matchesList: any[]): MatchSummaryItem[] => {
+export interface MatchSummaryInput {
+  id?: string;
+  winnerId?: string | null;
+  stage?: string | null;
+  player1Id?: string | null;
+  player2Id?: string | null;
+  player1?: { id?: string; name?: string } | null;
+  player2?: { id?: string; name?: string } | null;
+  tournament?: { name?: string | null; date?: string | Date | null } | null;
+  sets?: {
+    hasTiebreak?: boolean | null;
+    tiebreakPlayer1Points?: number | null;
+    tiebreakPlayer2Points?: number | null;
+    games?: { winnerId?: string | null }[] | null;
+  }[] | null;
+}
+
+export const createMatchSummary = (matchesList: MatchSummaryInput[]): MatchSummaryItem[] => {
   const data: MatchSummaryItem[] = [];
 
   (matchesList || []).forEach((match) => {
@@ -377,7 +425,7 @@ export const createMatchSummary = (matchesList: any[]): MatchSummaryItem[] => {
       sets: [],
     };
 
-    (match.sets || []).forEach((set: any) => {
+    (match.sets || []).forEach((set) => {
       const setData: MatchSummarySet = {
         gamesJugador1: 0,
         gamesJugador2: 0,
@@ -386,7 +434,7 @@ export const createMatchSummary = (matchesList: any[]): MatchSummaryItem[] => {
         tiebreakPlayer2Points: set.tiebreakPlayer2Points ?? null,
       };
 
-      (set.games || []).forEach((game: any) => {
+      (set.games || []).forEach((game) => {
         if (game.winnerId === matchData.player1Id) {
           setData.gamesJugador1++;
         } else {
@@ -420,7 +468,17 @@ export interface PlayerChampionships {
   tournaments: PlayerChampionshipWon[];
 }
 
-export const countTournamentsByPlayer = (tournaments: any[]): PlayerChampionships[] => {
+export interface ChampionshipTournament {
+  id: string;
+  name: string;
+  date?: string | Date | null;
+  champion?: { id?: string | null; name?: string | null } | null;
+  tournamentCategory?: { name?: string | null } | null;
+}
+
+export const countTournamentsByPlayer = (
+  tournaments: ChampionshipTournament[],
+): PlayerChampionships[] => {
   const stats: Record<string, PlayerChampionships> = {};
 
   (tournaments || []).forEach((tournament) => {

@@ -263,6 +263,46 @@ describe('draw generators', () => {
     assert.deepEqual(buildEliminationBracket([]), []);
     assert.deepEqual(buildEliminationBracket([{ id: '1', label: '1' }]), []);
   });
+
+  it('advances a player through one or more BYEs without advancing empty slots', () => {
+    const rounds = buildEliminationBracket([
+      { id: 'a', label: 'Ada' },
+      { id: null, label: 'Vacante' },
+      { id: null, label: 'Vacante' },
+      { id: null, label: 'Vacante' },
+      { id: null, label: 'Vacante' },
+      { id: null, label: 'Vacante' },
+      { id: null, label: 'Vacante' },
+      { id: null, label: 'BYE' },
+    ]);
+
+    assert.deepEqual(rounds[1].matches[0].top, {
+      id: 'a',
+      label: 'Ada',
+      advancedByBye: true,
+    });
+    assert.deepEqual(rounds[1].matches[0].bottom, { id: null, label: 'Cupo libre' });
+    assert.deepEqual(rounds[2].matches[0].top, {
+      id: 'a',
+      label: 'Ada',
+      advancedByBye: true,
+    });
+    assert.deepEqual(rounds[2].matches[0].bottom, { id: null, label: 'Cupo libre' });
+  });
+
+  it('does not resolve a match between two entered players as a BYE', () => {
+    const rounds = buildEliminationBracket([
+      { id: 'a', label: 'Ada' },
+      { id: 'b', label: 'Bea' },
+      { id: 'c', label: 'Cami' },
+      { id: 'd', label: 'Dora' },
+    ]);
+
+    assert.deepEqual(rounds[1].matches[0], {
+      top: { id: null, label: 'Ganador Partido 1' },
+      bottom: { id: null, label: 'Ganador Partido 2' },
+    });
+  });
 });
 
 describe('draw view helpers', () => {
@@ -340,6 +380,30 @@ describe('tournament draw preview', () => {
       { label: 'BYE', filled: false },
       { label: 'BYE', filled: false },
     ]);
+  });
+
+  it('shows a player in the next round after a BYE and excludes the BYE from match count', () => {
+    const preview = buildTournamentDrawPreview({
+      typeName: 'Playoffs',
+      drawSize: 4,
+      qualifiers: 2,
+      playerNames: ['Ada', 'Bea', 'Cami'],
+    });
+    assert.equal(preview.kind, 'playoffs');
+    if (preview.kind !== 'playoffs') return;
+    assert.equal(preview.matchCount, 2);
+    const rounds = buildEliminationBracket(
+      preview.bracketSlots.map((slot, index) => ({
+        id: slot.filled ? `preview-${index}` : null,
+        label: slot.label,
+      })),
+    );
+    assert.deepEqual(rounds[1].matches[0].top, {
+      id: 'preview-0',
+      label: 'Ada',
+      advancedByBye: true,
+    });
+    assert.equal(rounds[1].matches[0].bottom.label, 'Ganador Partido 2');
   });
 
   it('shows the configured qualifier count and pads its bracket separately', () => {

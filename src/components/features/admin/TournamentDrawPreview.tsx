@@ -5,6 +5,7 @@ import {
   getDrawRoundTitle,
   type PreviewSlot,
 } from '@/utils/tournament-draw-preview';
+import { buildEliminationBracket, type DrawSlot } from '@/utils/utils';
 
 type Props = {
   typeName: string;
@@ -50,60 +51,58 @@ function Matrix({ slots }: { slots: PreviewSlot[] }) {
   );
 }
 
-/** Single elimination bracket: seed i meets seed size-1-i, later rounds are placeholders. */
-function Bracket({ slots, size }: { slots: PreviewSlot[]; size: number }) {
-  const firstRound: [PreviewSlot, PreviewSlot][] = [];
-  for (let i = 0; i < size / 2; i++) firstRound.push([slots[i], slots[size - 1 - i]]);
+function isVacant(slot: DrawSlot) {
+  return slot.id === null && ['BYE', 'Vacante', 'Cupo libre'].includes(slot.label);
+}
 
-  const rounds: { title: string; matches: [string, string][] }[] = [];
-  let matchPlayers = size;
-  let matchCount = size / 2;
-  while (matchPlayers >= 2) {
-    if (matchPlayers === size) {
-      rounds.push({ title: getDrawRoundTitle(matchPlayers), matches: [] });
-    } else {
-      rounds.push({
-        title: getDrawRoundTitle(matchPlayers),
-        matches: Array.from({ length: matchCount }, (_, i) => [
-          `Ganador P${i * 2 + 1}`,
-          `Ganador P${i * 2 + 2}`,
-        ]),
-      });
-    }
-    matchPlayers /= 2;
-    matchCount /= 2;
-  }
+function isParticipant(slot: DrawSlot) {
+  return (
+    slot.id !== null ||
+    slot.advancedByBye === true ||
+    (!isVacant(slot) && !slot.label.startsWith('Ganador Partido'))
+  );
+}
+
+function displayLabel(slot: DrawSlot, opponent: DrawSlot) {
+  if (isVacant(slot) && isParticipant(opponent)) return 'BYE';
+  return slot.label.replace(/^Ganador Partido /, 'Ganador P');
+}
+
+function Bracket({ slots, size }: { slots: PreviewSlot[]; size: number }) {
+  const drawSlots: DrawSlot[] = slots.map((slot, index) => ({
+    id: slot.filled ? `preview-${index}` : null,
+    label: slot.label,
+  }));
+  const rounds = buildEliminationBracket(drawSlots);
 
   return (
     <div className="bracket-rounds">
-      <div className="bracket-round">
-        <p className="bracket-round-title">{getDrawRoundTitle(size)}</p>
-        <div className="bracket-round-matches">
-          {firstRound.map(([a, b], i) => (
-            <div key={i} className="bracket-match">
-              {[a, b].map((slot, j) => (
-                <div key={j} className={`bracket-player${slot.filled ? '' : ' draw-slot-empty'}`}>
-                  <span>{slot.label}</span>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-      {rounds.slice(1).map((round) => (
-        <div key={round.title} className="bracket-round">
-          <p className="bracket-round-title">{round.title}</p>
+      {rounds.map((round, roundIndex) => (
+        <div key={roundIndex} className="bracket-round">
+          <p className="bracket-round-title">{getDrawRoundTitle(size / 2 ** roundIndex)}</p>
           <div className="bracket-round-matches">
-            {round.matches.map(([a, b], i) => (
-              <div key={i} className="bracket-match">
-                <div className="bracket-player draw-slot-empty">
-                  <span>{a}</span>
+            {round.matches.map(({ top, bottom }, i) => {
+              const sides = [top, bottom];
+              return (
+                <div key={i} className="bracket-match">
+                  {sides.map((slot, j) => (
+                    <div
+                      key={j}
+                      className={`bracket-player${isParticipant(slot) ? '' : ' draw-slot-empty'}`}
+                    >
+                      <span>
+                        {displayLabel(slot, sides[1 - j])}
+                        {slot.advancedByBye && (
+                          <small className="bracket-bye-note">
+                            Pase directo por BYE · sin puntos por victoria
+                          </small>
+                        )}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-                <div className="bracket-player draw-slot-empty">
-                  <span>{b}</span>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       ))}
@@ -135,7 +134,7 @@ export default function TournamentDrawPreview({
 
   if (preview.kind === 'round-robin' || preview.kind === 'mixed') {
     return (
-      <div className="draw-preview">
+      <div className="tournament-draw-preview">
         <div>
           <p className="prep-box-label">Todos contra todos · {preview.matchCount} partidos</p>
           <Matrix slots={preview.slots} />
@@ -156,7 +155,7 @@ export default function TournamentDrawPreview({
   if (preview.kind !== 'playoffs') return null;
 
   return (
-    <div className="draw-preview">
+    <div className="tournament-draw-preview">
       <Bracket slots={preview.bracketSlots} size={preview.bracketSize} />
     </div>
   );

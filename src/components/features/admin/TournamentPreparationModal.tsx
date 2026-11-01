@@ -464,7 +464,7 @@ export default function TournamentPreparationModal({ tournament, options, onClos
                         setShowTypePicker(false);
                       }}
                     >
-                      <div className="draw-preview" aria-hidden="true">
+                      <div className="draw-preview-illustration" aria-hidden="true">
                         <TournamentTypeVisual typeName={typeName} />
                       </div>
                       <div>

@@ -95,6 +95,6 @@ export function buildTournamentDrawPreview({
     slots,
     bracketSlots,
     bracketSize,
-    matchCount: Math.max(slotCount - 1, 0),
+    matchCount: Math.max(playerNames.length - 1, 0),
   };
 }
