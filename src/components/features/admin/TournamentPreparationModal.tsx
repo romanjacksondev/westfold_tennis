@@ -60,6 +60,7 @@ export default function TournamentPreparationModal({ tournament, options, onClos
     return [];
   }, [tournament.players]);
 
+  const [savedPlayerIds, setSavedPlayerIds] = useState<string[]>(initialPlayers);
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>(initialPlayers);
   const [playerSearch, setPlayerSearch] = useState('');
   const [saving, setSaving] = useState(false);
@@ -92,6 +93,7 @@ export default function TournamentPreparationModal({ tournament, options, onClos
   const targetDrawSize = Number(drawSize) || 0;
   const isDrawExceeded = targetDrawSize > 0 && selectedPlayerIds.length > targetDrawSize;
   const isDrawComplete = targetDrawSize > 0 && selectedPlayerIds.length === targetDrawSize;
+  const isDrawFull = targetDrawSize > 0 && selectedPlayerIds.length >= targetDrawSize;
   const canStart = Boolean(
     name.trim() &&
     venueId &&
@@ -101,17 +103,48 @@ export default function TournamentPreparationModal({ tournament, options, onClos
     targetDrawSize >= 2 &&
     selectedPlayerIds.length >= 2 &&
     !isDrawExceeded &&
-    drawStatus === 'CONFIRMED'
+    drawStatus !== 'NONE'
   );
   const participantsDirty =
-    selectedPlayerIds.length !== initialPlayers.length || selectedPlayerIds.some((id) => !initialPlayers.includes(id));
+    selectedPlayerIds.length !== savedPlayerIds.length || selectedPlayerIds.some((id) => !savedPlayerIds.includes(id));
 
   function addPlayer(id: string) {
-    setSelectedPlayerIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
+    setSelectedPlayerIds((prev) => (prev.includes(id) || (targetDrawSize > 0 && prev.length >= targetDrawSize) ? prev : [...prev, id]));
   }
 
   function removePlayer(id: string) {
     setSelectedPlayerIds((prev) => prev.filter((pId) => pId !== id));
+  }
+
+  function buildPayload(): Record<string, unknown> {
+    return {
+      name: name.trim(),
+      date: date || new Date().toISOString(),
+      venueId: venueId || undefined,
+      surfaceId: surfaceId || undefined,
+      tournamentCategoryId: tournamentCategoryId || undefined,
+      tournamentTypeId: tournamentTypeId || undefined,
+      drawSize: drawSize ? Number(drawSize) : null,
+      qualifiers: isRoundRobinPlusPlayoffs && qualifiers ? Number(qualifiers) : null,
+      playerIds: selectedPlayerIds,
+    };
+  }
+
+  async function saveBasics() {
+    const res = await fetch(`/api/admin/tournaments/${tournament.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(buildPayload()),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message ?? 'Error al guardar los cambios');
+    setSavedPlayerIds(selectedPlayerIds);
+    return data;
+  }
+
+  async function saveBeforeDraw() {
+    if (!name.trim()) throw new Error('El nombre del torneo es obligatorio.');
+    await saveBasics();
   }
 
   async function saveTournament(andStart = false) {
@@ -122,7 +155,7 @@ export default function TournamentPreparationModal({ tournament, options, onClos
     }
 
     if (andStart && !canStart) {
-      setError('Para iniciar el torneo se requiere completar los datos, tener al menos 2 jugadores y confirmar el sorteo.');
+      setError('Para iniciar el torneo se requiere completar los datos, tener al menos 2 jugadores y generar el sorteo.');
       return;
     }
 
@@ -130,26 +163,7 @@ export default function TournamentPreparationModal({ tournament, options, onClos
     else setSaving(true);
 
     try {
-      // 1. Update basic fields and players
-      const payload: Record<string, unknown> = {
-        name: name.trim(),
-        date: date || new Date().toISOString(),
-        venueId: venueId || undefined,
-        surfaceId: surfaceId || undefined,
-        tournamentCategoryId: tournamentCategoryId || undefined,
-        tournamentTypeId: tournamentTypeId || undefined,
-        drawSize: drawSize ? Number(drawSize) : null,
-        qualifiers: isRoundRobinPlusPlayoffs && qualifiers ? Number(qualifiers) : null,
-        playerIds: selectedPlayerIds,
-      };
-
-      const res = await fetch(`/api/admin/tournaments/${tournament.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message ?? 'Error al guardar los cambios');
+      const data = await saveBasics();
 
       // 2. If start requested, trigger transition action
       if (andStart) {
@@ -371,7 +385,8 @@ export default function TournamentPreparationModal({ tournament, options, onClos
                         type="button"
                         className="prep-available-item"
                         onClick={() => addPlayer(player.id)}
-                        title={`Sumar a ${String(player.name ?? player.id)}`}
+                        disabled={isDrawFull}
+                        title={isDrawFull ? 'El cuadro está completo' : `Sumar a ${String(player.name ?? player.id)}`}
                       >
                         <div>
                           <strong>{String(player.name ?? player.id)}</strong>
@@ -391,7 +406,7 @@ export default function TournamentPreparationModal({ tournament, options, onClos
             tournamentId={String(tournament.id)}
             participants={selectedPlayers}
             onStatus={setDrawStatus}
-            disabledReason={participantsDirty ? 'Guardá el borrador para sortear con los participantes actuales.' : null}
+            beforeAct={participantsDirty ? saveBeforeDraw : undefined}
           />
 
           {/* Acciones del Modal */}
@@ -417,7 +432,7 @@ export default function TournamentPreparationModal({ tournament, options, onClos
                 title={
                   canStart
                     ? 'Inicia formalmente la competencia y cambia el estado a En curso'
-                    : 'Para iniciar completá los campos obligatorios, al menos 2 jugadores y confirmá el sorteo'
+                    : 'Para iniciar completá los campos obligatorios, al menos 2 jugadores y generá el sorteo'
                 }
               >
                 {starting ? 'Iniciando...' : '🚀 Iniciar torneo'}

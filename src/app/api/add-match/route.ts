@@ -27,12 +27,13 @@ async function handlePost(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const sets = body.sets as MatchSet[];
+    const walkover = body.walkover === true;
+    const sets = (Array.isArray(body.sets) ? body.sets : []) as MatchSet[];
 
     if (!body.drawMatchId) {
       return NextResponse.json({ message: 'Los partidos se cargan desde el cuadro del torneo: elegí un partido pendiente' }, { status: 400 });
     }
-    if (!body.idPlayer1 || !body.idPlayer2 || !body.winner || !Array.isArray(sets) || sets.length === 0) {
+    if (!body.idPlayer1 || !body.idPlayer2 || !body.winner || (!walkover && sets.length === 0)) {
       return NextResponse.json({ message: 'Datos incompletos' }, { status: 400 });
     }
 
@@ -61,7 +62,8 @@ async function handlePost(request: NextRequest) {
       return NextResponse.json({ message: 'El ganador de cada set debe ser uno de los dos jugadores' }, { status: 400 });
     }
     const setsWon = sets.filter((set) => set.winner === body.winner).length;
-    if (setsWon * 2 <= sets.length) {
+    // On a walkover (no-show or retirement) the partial score is kept but does not decide the winner.
+    if (!walkover && setsWon * 2 <= sets.length) {
       return NextResponse.json({ message: 'El ganador del partido debe haber ganado más sets que su rival' }, { status: 400 });
     }
 
@@ -108,6 +110,7 @@ async function handlePost(request: NextRequest) {
           player2: { connect: { id: body.idPlayer2 } },
           winner: { connect: { id: body.winner } },
           stage,
+          walkover,
           playedAt: playedAt ?? slot.tournament.date,
           sets: { create: setData },
         },
@@ -121,7 +124,7 @@ async function handlePost(request: NextRequest) {
       entity: 'Match',
       entityId: match.id,
       actor: actorFromSession(session),
-      after: { drawMatchId: slot.id, tournamentId: match.tournamentId, player1Id: match.player1Id, player2Id: match.player2Id, winnerId: match.winnerId, stage: match.stage, playedAt: match.playedAt, sets: setData.length },
+      after: { drawMatchId: slot.id, tournamentId: match.tournamentId, player1Id: match.player1Id, player2Id: match.player2Id, winnerId: match.winnerId, stage: match.stage, playedAt: match.playedAt, sets: setData.length, walkover },
     });
     return NextResponse.json(match, { status: 201 });
   } catch (error) {

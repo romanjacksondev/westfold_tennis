@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { NavBar } from '@/components/ui/NavBar';
+import SiteContent from '@/components/ui/SiteContent';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -22,10 +23,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <NextAuthSessionProvider>
           <NavBar />
-          <div className="site-content">
+          <SiteContent>
             {children}
             <SiteFooter />
-          </div>
+          </SiteContent>
         </NextAuthSessionProvider>
       </body>
     </html>

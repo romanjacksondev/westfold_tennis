@@ -154,8 +154,6 @@ test('admin creates, starts, scores, and finishes a playoff tournament from the 
   await drawPanel.getByRole('button', { name: 'Generar sorteo' }).click();
   await expect(drawPanel.getByTestId('draw-status')).toHaveText('Borrador');
   await expect(drawPanel).toContainText('BYE');
-  await drawPanel.getByRole('button', { name: 'Confirmar sorteo' }).click();
-  await expect(drawPanel.getByTestId('draw-status')).toHaveText('Oficial');
 
   await setupDialog.getByRole('button', { name: /Iniciar torneo/ }).click();
   await expect(setupDialog).toBeHidden();
@@ -164,18 +162,27 @@ test('admin creates, starts, scores, and finishes a playoff tournament from the 
   await page.locator('.record-row').filter({ hasText: tournamentName }).getByRole('button', { name: 'Resultados' }).click();
   const resultsDialog = page.getByRole('dialog', { name: tournamentName });
 
-  // Plays the first pending slot; player 1 of the slot wins. Returns the winner's name.
-  async function playFirstPending(stage: string, tiebreak?: [string, string]) {
-    await expect(resultsDialog.getByLabel('Partido pendiente').locator('option').nth(1)).toContainText(stage);
-    await resultsDialog.getByLabel('Partido pendiente').selectOption({ index: 1 });
-    const text = (await resultsDialog.getByLabel('Partido pendiente').locator('option:checked').textContent()) ?? '';
-    const winner = text.split('·')[1].split(' vs ')[0].trim();
-    await resultsDialog.getByLabel('Games jugador 1 - set 1').fill(tiebreak ? '7' : '6');
-    await resultsDialog.getByLabel('Games jugador 2 - set 1').fill(tiebreak ? '6' : '4');
-    if (tiebreak) {
-      await resultsDialog.getByLabel('Tie-break').check();
-      await resultsDialog.getByLabel('Tie-break jugador 1 - set 1').fill(tiebreak[0]);
-      await resultsDialog.getByLabel('Tie-break jugador 2 - set 1').fill(tiebreak[1]);
+  // Clicks the first unplayed match card; player 1 of the card wins. Returns the winner's name.
+  async function playFirstPending(options: { tiebreak?: [string, string]; walkover?: boolean } = {}) {
+    const card = resultsDialog.locator('.draw-match-card.is-clickable:not(.is-played)').first();
+    await expect(card).toBeVisible();
+    const label = (await card.locator('.draw-slot-label').first().textContent()) ?? '';
+    const winner = label.replace(/^\(\d+\)\s*/, '').trim();
+    await card.click();
+    const resultDialog = page.getByRole('dialog', { name: 'Resultado del partido' });
+    await expect(resultDialog).toBeVisible();
+    if (options.walkover) {
+      await resultDialog.getByLabel(/W\.O\./).first().check();
+      await resultDialog.getByLabel('Ganador por W.O.').selectOption({ index: 1 });
+    } else {
+      const { tiebreak } = options;
+      await resultDialog.getByLabel('Games jugador 1 - set 1').fill(tiebreak ? '7' : '6');
+      await resultDialog.getByLabel('Games jugador 2 - set 1').fill(tiebreak ? '6' : '4');
+      if (tiebreak) {
+        await resultDialog.getByLabel('Tie-break', { exact: true }).check();
+        await resultDialog.getByLabel('Tie-break jugador 1 - set 1').fill(tiebreak[0]);
+        await resultDialog.getByLabel('Tie-break jugador 2 - set 1').fill(tiebreak[1]);
+      }
     }
     const matchResponse = page.waitForResponse(
       (response) =>
@@ -183,16 +190,18 @@ test('admin creates, starts, scores, and finishes a playoff tournament from the 
         response.request().method() === 'POST' &&
         response.status() === 201,
     );
-    await resultsDialog.getByRole('button', { name: 'Guardar resultado' }).click();
+    await resultDialog.getByRole('button', { name: options.walkover ? 'Registrar W.O.' : 'Guardar resultado' }).click();
     await matchResponse;
+    await expect(resultDialog).toBeHidden();
     return winner;
   }
 
-  await playFirstPending('Semifinal');
-  const champion = await playFirstPending('Final', ['7', '5']);
+  await playFirstPending({ walkover: true });
+  await expect(resultsDialog.locator('.draw-wo-pill')).toHaveCount(1);
+  const champion = await playFirstPending({ tiebreak: ['7', '5'] });
 
-  page.once('dialog', (dialog) => dialog.accept());
   await resultsDialog.getByRole('button', { name: /Cerrar torneo/ }).click();
+  await page.getByRole('alertdialog', { name: '¿Finalizar torneo?' }).getByRole('button', { name: 'Finalizar torneo' }).click();
   await expect(resultsDialog).toBeHidden();
   await expect(page.locator('.record-row').filter({ hasText: tournamentName })).toContainText('Terminado');
 

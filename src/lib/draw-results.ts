@@ -1,5 +1,5 @@
 import { logger } from '@/lib/logger';
-import { formatSetScore } from '@/utils/utils';
+import { calculatePlayerStats, formatSetScore } from '@/utils/utils';
 import { advanceWinner, drawKey, revertAdvance } from '@/utils/draw-engine';
 import {
   affectedPlayedNodes,
@@ -152,7 +152,7 @@ export async function getDrawView(db: Db, tournamentId: string) {
     include: {
       player1: { select: { id: true, name: true } },
       player2: { select: { id: true, name: true } },
-      match: { select: { id: true, winnerId: true, player1Id: true, playedAt: true, sets: { include: { games: true }, orderBy: { id: 'asc' } } } },
+      match: { select: { id: true, winnerId: true, player1Id: true, playedAt: true, walkover: true, sets: { include: { games: true }, orderBy: { id: 'asc' } } } },
     },
     orderBy: [{ phase: 'asc' }, { round: 'asc' }, { position: 'asc' }],
   });
@@ -183,11 +183,38 @@ export async function getDrawView(db: Db, tournamentId: string) {
       player2: row.player2,
       matchId: row.matchId,
       winnerId: row.match?.winnerId ?? null,
+      walkover: row.match?.walkover ?? false,
       score,
     };
   });
+  const kind = tournamentKind(tournament);
+  let standings: ReturnType<typeof calculatePlayerStats> = [];
+  let liveChampionId: string | null = null;
+  if (kind !== 'PLAYOFFS') {
+    const played = await db.match.findMany({
+      where: { tournamentId, deletedAt: null, OR: [{ stage: null }, { stage: 'GROUP' }] },
+      include: { player1: { select: { name: true } }, player2: { select: { name: true } }, sets: { include: { games: true } } },
+    });
+    standings = calculatePlayerStats(played);
+    const listed = new Set(standings.map((stat) => stat.id));
+    for (const row of rows) {
+      if (row.phase !== 'GROUP') continue;
+      for (const player of [row.player1, row.player2]) {
+        if (player && !listed.has(player.id)) {
+          listed.add(player.id);
+          standings.push({ id: player.id, name: player.name ?? '', matchesWon: 0, matchesLost: 0, gamesWon: 0, setsWon: 0, setsLost: 0, gamesLost: 0 });
+        }
+      }
+    }
+    const groupDone = rows.filter((row) => row.phase === 'GROUP').every((row) => row.isBye || row.matchId);
+    if (kind === 'ROUND_ROBIN' && groupDone && played.length > 0) {
+      liveChampionId = championFromNodes({ kind, matches: played, manualOrder: tournament.drawGroupOrder }).championId;
+    }
+  }
   return {
-    kind: tournamentKind(tournament),
+    kind,
+    standings,
+    liveChampionId,
     status: tournament.status,
     drawStatus: tournament.drawStatus,
     seed: tournament.drawSeed,

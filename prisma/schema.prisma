@@ -195,6 +195,7 @@ model Match {
   sets         Set[]
   stage        MatchStage?
   playedAt     DateTime?
+  walkover     Boolean     @default(false)
   deletedAt    DateTime?
   drawMatch    DrawMatch?
 }

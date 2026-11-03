@@ -1725,6 +1725,7 @@ export const MatchScalarFieldEnum = {
   player2Id: 'player2Id',
   stage: 'stage',
   playedAt: 'playedAt',
+  walkover: 'walkover',
   deletedAt: 'deletedAt'
 } as const
 

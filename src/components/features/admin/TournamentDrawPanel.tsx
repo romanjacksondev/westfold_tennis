@@ -16,6 +16,7 @@ type Props = {
   tournamentId: string;
   participants: RecordItem[];
   disabledReason?: string | null;
+  beforeAct?: () => Promise<void>;
   onChanged?: () => void;
   onStatus?: (status: 'NONE' | 'DRAFT' | 'CONFIRMED') => void;
 };
@@ -34,7 +35,7 @@ async function call(url: string, init?: RequestInit) {
   return data;
 }
 
-export default function TournamentDrawPanel({ tournamentId, participants, disabledReason, onChanged, onStatus }: Props) {
+export default function TournamentDrawPanel({ tournamentId, participants, disabledReason, beforeAct, onChanged, onStatus }: Props) {
   const [view, setView] = useState<DrawView | null>(null);
   const [seedMode, setSeedMode] = useState('NONE');
   const [seedCount, setSeedCount] = useState('');
@@ -63,6 +64,7 @@ export default function TournamentDrawPanel({ tournamentId, participants, disabl
     setBusy(true);
     setError(null);
     try {
+      await beforeAct?.();
       await call(`/api/admin/draws/${tournamentId}`, { method: 'POST', body: JSON.stringify(body) });
       setSelected(null);
       await load();
@@ -134,7 +136,7 @@ export default function TournamentDrawPanel({ tournamentId, participants, disabl
               </div>
             </div>
           )}
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          <div className="draw-panel-actions" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
             <button
               type="button"
               className="secondary-button"
@@ -145,12 +147,6 @@ export default function TournamentDrawPanel({ tournamentId, participants, disabl
             </button>
             {view.drawStatus === 'DRAFT' && (
               <>
-                <button type="button" className="secondary-button" disabled={busy || Boolean(disabledReason)} onClick={() => act({ action: 'reshuffle' })}>
-                  Re-sortear
-                </button>
-                <button type="button" className="primary-button" disabled={busy || Boolean(disabledReason)} onClick={() => act({ action: 'confirm' })}>
-                  Confirmar sorteo
-                </button>
                 <button type="button" className="danger-button" disabled={busy} onClick={() => act({ action: 'discard' })}>
                   Descartar
                 </button>
@@ -162,7 +158,7 @@ export default function TournamentDrawPanel({ tournamentId, participants, disabl
 
       {view.drawStatus === 'DRAFT' && (
         <p className="muted" style={{ fontSize: 13 }}>
-          Tocá dos jugadores de la primera ronda para intercambiarlos. El sorteo no es oficial hasta confirmarlo.
+          Tocá dos jugadores de la primera ronda para intercambiarlos. El sorteo se confirma al iniciar el torneo.
         </p>
       )}
       {view.drawStatus === 'CONFIRMED' && (

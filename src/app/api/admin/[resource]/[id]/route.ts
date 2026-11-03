@@ -8,6 +8,7 @@ import { auditActionFor, auditAdminMutation, snapshotRecord } from '@/lib/admin-
 import { logger } from '@/lib/logger';
 import { withApiLogging } from '@/lib/api-logging';
 import { DrawError } from '@/lib/draw-persistence';
+import { confirmDraw } from '@/lib/draw-service';
 import { changeDrawWinner, closeTournament, refreshChampion, unlinkDrawResult } from '@/lib/draw-results';
 import { audit } from '@/lib/audit';
 
@@ -121,9 +122,10 @@ async function updateRecord(request: NextRequest, context: Context) {
         if (tournament.players.length > tournament.drawSize) {
           return NextResponse.json({ message: `Los jugadores confirmados (${tournament.players.length}) superan el tamaño del cuadro (${tournament.drawSize})` }, { status: 400 });
         }
-        if (tournament.drawStatus !== 'CONFIRMED') {
-          return NextResponse.json({ message: 'Sorteá y confirmá el cuadro antes de iniciar el torneo' }, { status: 400 });
+        if (tournament.drawStatus === 'NONE') {
+          return NextResponse.json({ message: 'Generá el sorteo del cuadro antes de iniciar el torneo' }, { status: 400 });
         }
+        if (tournament.drawStatus === 'DRAFT') await confirmDraw(id, actorFromSession(session));
         const updated = await prisma.tournament.update({
           where: { id },
           data: { status: 'IN_PROGRESS' },

@@ -358,6 +358,7 @@ type DrawViewMatch = {
   round: number;
   position: number;
   isBye: boolean;
+  walkover?: boolean;
   seed1: number | null;
   seed2: number | null;
   player1: { id: string } | null;
@@ -405,7 +406,7 @@ const playSlot = (slot: DrawViewMatch, winnerId: string, role: 'ADMIN' | 'USER' 
 };
 
 describe('official draw', () => {
-  it('only lets admins draw, and does not start without a confirmed draw', async () => {
+  it('only lets admins draw, and does not start without a draw', async () => {
     assert.equal((await drawAction('it-draw-playoffs', { action: 'generate' }, 'USER')).status, 403);
     const start = await request('/api/admin/tournaments/it-draw-playoffs', {
       role: 'ADMIN',
@@ -413,7 +414,7 @@ describe('official draw', () => {
       body: { action: 'start' },
     });
     assert.equal(start.status, 400);
-    assert.match((await json(start)).message, /Sorte/);
+    assert.match((await json(start)).message, /sorteo/);
   });
 
   it('generates a seeded draft, reshuffles, swaps and confirms it', async () => {
@@ -505,6 +506,23 @@ describe('official draw', () => {
     const pending = await json(await request('/api/admin/draws/it-draw-playoffs/pending', { role: 'ADMIN' }));
     assert.equal(pending.pending.length, 1);
 
+    const woWinner = semifinalTwo.player2!.id;
+    const woNoWinner = await request('/api/add-match', {
+      role: 'ADMIN',
+      method: 'POST',
+      body: { drawMatchId: semifinalTwo.id, idPlayer1: semifinalTwo.player1!.id, idPlayer2: woWinner, winner: 'it-draw-outsider', sets: [], walkover: true },
+    });
+    assert.equal(woNoWinner.status, 400);
+    const wo = await request('/api/add-match', {
+      role: 'ADMIN',
+      method: 'POST',
+      body: { drawMatchId: semifinalTwo.id, idPlayer1: semifinalTwo.player1!.id, idPlayer2: woWinner, winner: woWinner, sets: [], walkover: true },
+    });
+    assert.equal(wo.status, 201);
+    const afterWo = await drawView('it-draw-playoffs');
+    assert.equal(afterWo.matches.find((m) => m.id === semifinalTwo.id)!.walkover, true);
+    assert.equal(afterWo.matches.find((m) => m.phase === 'PLAYOFF' && m.round === 2)!.player2?.id, woWinner);
+
     const finish = await request('/api/admin/tournaments/it-draw-playoffs', {
       role: 'ADMIN',
       method: 'PATCH',
@@ -525,8 +543,6 @@ describe('official draw', () => {
     const changedPlayers = await request(`/api/admin/matches/${matchId}`, { role: 'ADMIN', method: 'PATCH', body: { player1Id: 'it-rival' } });
     assert.equal(changedPlayers.status, 400);
 
-    const semifinalTwo = await slotOf('it-draw-playoffs', 'PLAYOFF', 1, 1);
-    assert.equal((await playSlot(semifinalTwo, semifinalTwo.player1!.id)).status, 201);
     const finalSlot = await slotOf('it-draw-playoffs', 'PLAYOFF', 2, 0);
     assert.equal((await playSlot(finalSlot, finalSlot.player1!.id)).status, 201);
 
@@ -575,11 +591,11 @@ describe('official draw', () => {
 
   it('fills the playoff from the group table in a round robin with playoffs', async () => {
     assert.equal((await drawAction('it-draw-mixed', { action: 'generate' })).status, 200);
-    assert.equal((await drawAction('it-draw-mixed', { action: 'confirm' })).status, 200);
     assert.equal(
       (await request('/api/admin/tournaments/it-draw-mixed', { role: 'ADMIN', method: 'PATCH', body: { action: 'start' } })).status,
       200,
     );
+    assert.equal((await drawView('it-draw-mixed')).drawStatus, 'CONFIRMED');
 
     const groupMatches = (await drawView('it-draw-mixed')).matches.filter((m) => m.phase === 'GROUP');
     assert.equal(groupMatches.length, 3);

@@ -9,6 +9,7 @@ import TournamentTypeVisual from '@/components/features/admin/TournamentTypeVisu
 import TournamentResultsModal from '@/components/features/admin/TournamentResultsModal';
 import TournamentPreparationModal from '@/components/features/admin/TournamentPreparationModal';
 import PlayerPhotoEditor from '@/components/ui/PlayerPhoto/PlayerPhotoEditor';
+import { useConfirm } from '@/components/ui/ConfirmDialog';
 import AuditLogPanel from '@/components/features/admin/AuditLogPanel';
 
 type Resource = 'tournaments' | 'tournament-types' | 'tournament-categories' | 'players' | 'surfaces' | 'venues' | 'matches' | 'users' | 'levels';
@@ -111,6 +112,7 @@ async function requestJson(url: string, options?: RequestInit) {
 // export default function DashboardConsole({ userName }: { userName: string }) {
 export default function DashboardConsole() {
   const { data: session } = useSession();
+  const { confirm, dialog: confirmDialog } = useConfirm();
   const userName = session?.user?.name ?? session?.user?.email ?? 'Administrador';
   const [resource, setResource] = useState<Resource>('tournaments');
   const [showAudit, setShowAudit] = useState(false);
@@ -153,7 +155,7 @@ export default function DashboardConsole() {
   }
 
   async function autoUnify() {
-    if (!window.confirm('¿Deseas vincular automáticamente jugadores y usuarios que compartan el mismo email?')) return;
+    if (!(await confirm({ title: 'Unificar usuarios', message: '¿Deseas vincular automáticamente jugadores y usuarios que compartan el mismo email?', confirmLabel: 'Vincular' }))) return;
     setUnifying(true);
     setMessage(null);
     try {
@@ -330,7 +332,7 @@ export default function DashboardConsole() {
   }
 
   async function archive(item: RecordItem) {
-    if (!window.confirm(`¿Archivar ${item.name ?? 'este registro'}?`)) return;
+    if (!(await confirm({ title: 'Archivar', message: `¿Archivar ${item.name ?? 'este registro'}?`, confirmLabel: 'Archivar', danger: true }))) return;
     setMessage(null);
     try {
       const result = await requestJson(`/api/admin/${resource}/${item.id}`, { method: 'DELETE' });
@@ -343,7 +345,7 @@ export default function DashboardConsole() {
 
   async function toggleTournamentStatus(item: RecordItem) {
     const cancelling = item.status !== 'CANCELLED';
-    if (!window.confirm(cancelling ? `¿Cancelar el torneo “${item.name}”?` : `¿Reactivar el torneo “${item.name}”?`)) return;
+    if (!(await confirm({ title: cancelling ? 'Cancelar torneo' : 'Reactivar torneo', message: cancelling ? `¿Cancelar el torneo “${item.name}”?` : `¿Reactivar el torneo “${item.name}”?`, confirmLabel: cancelling ? 'Cancelar torneo' : 'Reactivar', danger: cancelling }))) return;
     setMessage(null);
     try {
       const result = await requestJson(`/api/admin/tournaments/${item.id}`, {
@@ -360,6 +362,7 @@ export default function DashboardConsole() {
 
   return (
     <main className="admin-shell">
+      {confirmDialog}
       <aside className="admin-sidebar">
         <Link href="/" className="brand-mark" aria-label="Volver a Westfold Tennis" title="Volver a Westfold Tennis">
           <span>WT</span>
@@ -797,9 +800,14 @@ export default function DashboardConsole() {
                               <input
                                 type="checkbox"
                                 checked={checked}
+                                disabled={!checked && Number(form.drawSize) > 0 && selectedPlayerIds.length >= Number(form.drawSize)}
                                 onChange={() =>
                                   setSelectedPlayerIds((current) =>
-                                    checked ? current.filter((pid) => pid !== player.id) : [...current, player.id]
+                                    checked
+                                      ? current.filter((pid) => pid !== player.id)
+                                      : Number(form.drawSize) > 0 && current.length >= Number(form.drawSize)
+                                        ? current
+                                        : [...current, player.id]
                                   )
                                 }
                               />
