@@ -158,7 +158,7 @@ export default function TournamentDrawPanel({ tournamentId, participants, disabl
 
       {view.drawStatus === 'DRAFT' && (
         <p className="muted" style={{ fontSize: 13 }}>
-          Tocá dos jugadores de la primera ronda para intercambiarlos. El sorteo se confirma al iniciar el torneo.
+          {firstPlayoffRound === Infinity ? 'Los resultados se cargan una vez iniciado el torneo; el sorteo se confirma al iniciarlo.' : 'Tocá dos jugadores de la primera ronda para intercambiarlos. El sorteo se confirma al iniciar el torneo.'}
         </p>
       )}
       {view.drawStatus === 'CONFIRMED' && (

@@ -37,30 +37,36 @@ async function handleGet(_request: Request, context: RouteContext) {
     const gameStats: Counter = { played: 0, won: 0, lost: 0 };
     const opponents = new Map<string, Counter & { name: string }>();
     const surfaces = new Map<string, Counter & { name: string }>();
+    // Every aggregate covers the whole history; only the "recent" list is limited to 10.
+    for (const match of matches) {
+      const won = match.winnerId === id;
+      const opponent = match.player1.id === id ? match.player2 : match.player1;
+      const opponentName = `${opponent.name} ${opponent.lastname ?? ''}`.trim();
+      const opponentStats = opponents.get(opponent.id) ?? { name: opponentName, played: 0, won: 0, lost: 0 };
+      opponentStats.played += 1;
+      if (won) opponentStats.won += 1; else opponentStats.lost += 1;
+      opponents.set(opponent.id, opponentStats);
+      if (match.tournament?.surface) {
+        const surfaceStats = surfaces.get(match.tournament.surface.name) ?? { name: match.tournament.surface.name, played: 0, won: 0, lost: 0 };
+        surfaceStats.played += 1;
+        if (won) surfaceStats.won += 1; else surfaceStats.lost += 1;
+        surfaces.set(surfaceStats.name, surfaceStats);
+      }
+      match.sets.forEach((set) => {
+        setStats.played += 1;
+        if (set.winnerId === id) setStats.won += 1; else setStats.lost += 1;
+        set.games.forEach((game) => {
+          gameStats.played += 1;
+          if (game.winnerId === id) gameStats.won += 1; else gameStats.lost += 1;
+        });
+      });
+      if (won) matchStats.won += 1; else matchStats.lost += 1;
+    }
     const recentMatches = matches.slice(0, 10).map((match) => {
       const won = match.winnerId === id;
       const isPlayer1 = match.player1.id === id;
       const opponent = isPlayer1 ? match.player2 : match.player1;
       const opponentName = `${opponent.name} ${opponent.lastname ?? ''}`.trim();
-      const opponentStats = opponents.get(opponent.id) ?? { name: opponentName, played: 0, won: 0, lost: 0 };
-      opponentStats.played += 1;
-      won ? opponentStats.won += 1 : opponentStats.lost += 1;
-      opponents.set(opponent.id, opponentStats);
-      if (match.tournament?.surface) {
-        const surfaceStats = surfaces.get(match.tournament.surface.name) ?? { name: match.tournament.surface.name, played: 0, won: 0, lost: 0 };
-        surfaceStats.played += 1;
-        won ? surfaceStats.won += 1 : surfaceStats.lost += 1;
-        surfaces.set(surfaceStats.name, surfaceStats);
-      }
-      match.sets.forEach((set) => {
-        setStats.played += 1;
-        set.winnerId === id ? setStats.won += 1 : setStats.lost += 1;
-        set.games.forEach((game) => {
-          gameStats.played += 1;
-          game.winnerId === id ? gameStats.won += 1 : gameStats.lost += 1;
-        });
-      });
-      if (won) matchStats.won += 1; else matchStats.lost += 1;
       return {
         id: match.id,
         opponent: opponentName,

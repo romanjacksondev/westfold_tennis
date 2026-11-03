@@ -11,6 +11,9 @@ export default function CardComponent({
   nickname,
   stats,
 }: CardComponentType) {
+  const matches = (stats?.matchesWon ?? 0) + (stats?.matchesLost ?? 0);
+  const sets = (stats?.setsWon ?? 0) + (stats?.setsLost ?? 0);
+  const percent = (part: number, total: number) => (total > 0 ? Math.round((part / total) * 100) : 0);
   return (
     <Link href={`/players/${id}`} className="player-card-link" aria-label={`Ver estadísticas de ${name} ${lastname}`}>
       <Card className="player-card" key={id}>
@@ -19,9 +22,16 @@ export default function CardComponent({
         <p className="player-card-name">{name} {lastname}</p>
         <p className="player-card-nickname">“{nickname}”</p>
         <div className="player-card-stats">
-          <span><strong>{(stats?.matchesWon ?? 0) + (stats?.matchesLost ?? 0)}</strong> partidos</span>
-          <span><strong>{stats && stats.matchesWon + stats.matchesLost > 0 ? Math.round((stats.matchesWon / (stats.matchesWon + stats.matchesLost)) * 100) : 0}%</strong> victorias</span>
-          <span><strong>{(stats?.gamesWon ?? 0) - (stats?.gamesLost ?? 0) >= 0 ? '+' : ''}{(stats?.gamesWon ?? 0) - (stats?.gamesLost ?? 0)}</strong> games</span>
+          {[
+            { label: 'Partidos', played: matches, won: stats?.matchesWon ?? 0, lost: stats?.matchesLost ?? 0 },
+            { label: 'Sets', played: sets, won: stats?.setsWon ?? 0, lost: stats?.setsLost ?? 0 },
+          ].map((row) => (
+            <div className="player-card-stat-row" key={row.label}>
+              <span><strong>{row.played}</strong> {row.label} jugados</span>
+              <span><strong>{percent(row.won, row.played)}%</strong> ganados</span>
+              <span><strong>{percent(row.lost, row.played)}%</strong> perdidos</span>
+            </div>
+          ))}
         </div>
       </div>
       </Card>

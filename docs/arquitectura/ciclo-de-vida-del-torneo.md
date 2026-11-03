@@ -44,7 +44,7 @@ Este documento describe la especificación funcional y técnica del ciclo de vid
   2. Cuadro y participantes listos:
      - Se debe contar con al menos 2 jugadores confirmados.
      - La cantidad de jugadores confirmados no puede exceder el `drawSize`.
-     - El sorteo debe estar **confirmado** (`drawStatus = CONFIRMED`); si no, `start` responde 400.
+     - El sorteo debe estar **generado** (`drawStatus` distinto de `NONE`); si no, `start` responde 400. Al iniciar, un sorteo en borrador (`DRAFT`) se **confirma automáticamente**: no hay paso aparte de «Confirmar sorteo» ni «Re-sortear» (solo «Generar de nuevo» antes de iniciar).
 * **Operaciones habilitadas**:
   - Carga de resultados **solo sobre un casillero pendiente del cuadro** (`drawMatchId` obligatorio en `POST /api/add-match`, solo admin). No existen partidos fuera del cuadro; los amistosos quedan para más adelante.
   - El ganador avanza solo al siguiente casillero; en `Round Robin + Playoffs` los clasificados salen de la tabla. Ante un empate se define el orden manual (`set-group-order`).
@@ -60,7 +60,8 @@ Este documento describe la especificación funcional y técnica del ciclo de vid
   1. Todos los casilleros del cuadro deben tener resultado (acción `finish`, sin empate pendiente en la tabla).
   2. El **campeón** se calcula (ganador de la final; en Round Robin, 1º de la tabla) y se guarda en `championId`. No se edita a mano.
   3. Se registra automáticamente la fecha de finalización (`finishedAt = new Date()`).
-* **Correcciones posteriores**: un admin puede corregir un resultado con motivo obligatorio; el campeón se recalcula, la UI advierte el cambio y se audita `TOURNAMENT_CORRECTION` (con `championChanged`).
+* **W.O.**: un partido puede marcarse como walkover (`Match.walkover`) indicando el ganador; no requiere sets.
+* **Correcciones posteriores**: un admin puede corregir un resultado, incluidos los sets, con motivo obligatorio. No se puede si el partido siguiente ya se jugó (409). El campeón se recalcula, la UI advierte el cambio y se audita `TOURNAMENT_CORRECTION` (con `championChanged`).
 * **Impacto en el sistema**:
   - El torneo pasa a computar formalmente para el **Leaderboard / Ranking anual y de los últimos 12 meses**.
   - Otorga los puntos correspondientes a la categoría (`TournamentCategoryPoints`) al campeón y finalistas según la escala configurada.
@@ -93,7 +94,7 @@ stateDiagram-v2
         AsignarJugadores --> Configurar: Ajustar formato y tamaño de cuadro
     }
 
-    PREPARATION --> IN_PROGRESS: Iniciar torneo (Todo configurado + sorteo confirmado)
+    PREPARATION --> IN_PROGRESS: Iniciar torneo (Todo configurado + sorteo generado; iniciar lo confirma)
     
     state IN_PROGRESS {
         [*] --> DisputarPartidos

@@ -274,6 +274,22 @@ describe('player-level API data', () => {
   });
 });
 
+describe('player stats totals', () => {
+  it('counts the whole history, not only the recent matches', async () => {
+    const before = await json(await request('/api/players/it-alex-one/stats', { role: 'USER' }));
+    for (let i = 0; i < 12; i += 1) {
+      await prisma.match.create({
+        data: { player1Id: 'it-alex-one', player2Id: 'it-rival', winnerId: 'it-alex-one', playedAt: new Date() },
+      });
+    }
+    const after = await json(await request('/api/players/it-alex-one/stats', { role: 'USER' }));
+    assert.equal(after.summary.matches.played, before.summary.matches.played + 12);
+    assert.equal(after.summary.matches.won, before.summary.matches.won + 12);
+    assert.equal(after.summary.matches.won + after.summary.matches.lost, after.summary.matches.played);
+    assert.equal(after.recentMatches.length, 10);
+  });
+});
+
 describe('health, audit trail and logging', () => {
   const auditFor = (entityId: string) => prisma.auditLog.findMany({ where: { entityId }, orderBy: { createdAt: 'asc' } });
 

@@ -243,7 +243,7 @@ export default function DrawBracket(props: Props) {
   return (
     <div className="draw-mixed-container">
       {group.length > 0 && (
-        <div className="draw-rr-container">
+        <div className="draw-rr-container" style={{ marginTop: 12 }}>
           {playoff.length > 0 && <p className="eyebrow">Fase regular</p>}
           <GroupRounds nodes={group} props={props} />
           {props.standings && props.standings.length > 0 && (

@@ -29,11 +29,25 @@ async function handleGet(request: NextRequest) {
       },
     });
 
-    if (matches.length === 0) {
+    if (matches.length === 0 && !tournamentId) {
       return NextResponse.json({ matchSummary: [], playerStats: [], tournamentData: null });
     }
 
-    const tournament = matches[0].tournament;
+    // A tournament without results yet (preparation or just started) still has to render its page.
+    const tournament =
+      matches[0]?.tournament ??
+      (await prisma.tournament.findFirst({
+        where: { id: tournamentId!, deletedAt: null },
+        select: {
+          name: true,
+          champion: { select: { name: true, gender: true } },
+          tournamentType: { select: { name: true } },
+          tournamentCategory: { select: { name: true } },
+          level: { select: { name: true, order: true } },
+          date: true,
+        },
+      }));
+    if (!tournament) return NextResponse.json({ matchSummary: [], playerStats: [], tournamentData: null });
     const tournamentData = tournament
       ? {
           champion: tournament.champion?.name ?? null,

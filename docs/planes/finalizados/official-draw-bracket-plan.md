@@ -110,7 +110,7 @@ Resultados:
 - `POST /api/add-match` acepta `drawMatchId`. Con él: valida que el casillero esté listo, que `idPlayer1/2` coincidan, que el ganador sea uno de los dos y que no tenga ya `matchId`; fuerza `tournamentId` y `stage` del casillero; en una **transacción** crea el `Match`, enlaza `DrawMatch.matchId` y avanza al ganador. **`drawMatchId` es obligatorio**: solo se cargan partidos de torneo; sin él ⇒ 400. Los amistosos no se pueden cargar por ahora.
 - Edición y archivado de partidos (`PATCH/DELETE /api/admin/matches/[id]`): si cambia el ganador o se archiva, se aplica `revertAdvance`; si el siguiente partido ya tiene resultado ⇒ **409** con mensaje («primero corregí el partido siguiente»).
 
-Ciclo de vida (`PATCH /api/admin/tournaments/[id]` `action: 'start'`): además de las validaciones actuales exige `drawStatus === 'CONFIRMED'`. Actualizar `docs/tournament-lifecycle-states.md`.
+Ciclo de vida (`PATCH /api/admin/tournaments/[id]` `action: 'start'`): además de las validaciones actuales exige `drawStatus === 'CONFIRMED'`. Actualizar `docs/arquitectura/ciclo-de-vida-del-torneo.md`.
 
 Campeón:
 - **Se calcula desde el torneo** (ganador de la final; en round robin, 1.º de la tabla con `compareStandings`) mediante una función pura `computeChampion`.
@@ -143,7 +143,7 @@ Campeón:
 2. Migración + servicio de sorteo + endpoints admin + auditoría.
 3. Carga de resultados enlazada, avance, reversión y bloqueos 409.
 4. UI: asistente de sorteo, pendientes, cuadro público con resultados.
-5. Ciclo de vida (`start`, cierre con campeón sugerido), actualización de `tournament-lifecycle-states.md`, moverlo a `docs/finished/`.
+5. Ciclo de vida (`start`, cierre con campeón sugerido), actualización de `docs/arquitectura/ciclo-de-vida-del-torneo.md`, moverlo a `docs/planes/finalizados/`.
 
 ## Seed y datos consistentes
 

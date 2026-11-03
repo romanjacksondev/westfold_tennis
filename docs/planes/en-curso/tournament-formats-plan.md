@@ -23,7 +23,7 @@ Estado: **Pendiente de revisión**. Interesante, no es prioridad inmediata.
 ## Diseño general
 
 - Pasar de reconocer el formato por **nombre** a una configuración explícita: `TournamentType.engine` (`ELIMINATION`, `ROUND_ROBIN`, `GROUPS_PLAYOFFS`…) + parámetros (`groupCount`, `qualifiersPerGroup`, `consolation: boolean`, `matchFormat`).
-- Apoyarse en el motor de sorteo persistido de `finished/official-draw-bracket-plan.md`: cada formato nuevo es un **generador de `DrawMatch`** distinto (consolación = segunda rama con `nextDrawMatchId` de perdedores: agregar `loserNextDrawMatchId`).
+- Apoyarse en el motor de sorteo persistido de `../finalizados/official-draw-bracket-plan.md`: cada formato nuevo es un **generador de `DrawMatch`** distinto (consolación = segunda rama con `nextDrawMatchId` de perdedores: agregar `loserNextDrawMatchId`).
 - **Elegibilidad**: `Tournament.minLevelId/maxLevelId`, `gender`; validar en la inscripción y al armar el sorteo.
 - **Dobles**: nueva entidad `Team` (2 jugadores) y `Match.team1Id/team2Id`; ranking separado. Requiere revisar estadísticas, H2H y puntos; tratarlo como proyecto aparte.
 - **Puntos**: cada formato define su tabla de posiciones finales (ver `ranking-points-plan.md`).

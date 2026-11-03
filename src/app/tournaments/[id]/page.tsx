@@ -263,9 +263,11 @@ function TournamentDetailsContent() {
                         <tr key={player.id} className={player.name === data.tournamentData?.champion ? 'is-champion' : undefined}>
                           <td className="tournament-pos">{index + 1}</td>
                           <td className="tournament-player">
-                            {player.name}
+                            <span className="tournament-player-name">
+                              {player.name === data.tournamentData?.champion && <LuTrophy className="tournament-player-trophy" aria-label={data.tournamentData?.championGender === 'FEMALE' ? 'Campeona' : 'Campeón'} />}
+                              {player.name}
+                            </span>
                             {player.levelNote && <small className="level-gap" title="Nivel declarado del jugador respecto al del torneo">{player.levelNote}</small>}
-                            {player.name === data.tournamentData?.champion && <LuTrophy aria-label={data.tournamentData?.championGender === 'FEMALE' ? 'Campeona' : 'Campeón'} />}
                           </td>
                           <td>{player.matchesWon}</td>
                           <td>{player.matchesLost}</td>

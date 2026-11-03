@@ -9,5 +9,7 @@ export type CardComponentType = {
     matchesLost: number;
     gamesWon: number;
     gamesLost: number;
+    setsWon?: number;
+    setsLost?: number;
   };
 };

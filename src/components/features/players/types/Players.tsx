@@ -15,5 +15,7 @@ export type TennisPlayerProps = {
     matchesLost: number;
     gamesWon: number;
     gamesLost: number;
+    setsWon?: number;
+    setsLost?: number;
   };
 };

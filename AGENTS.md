@@ -11,5 +11,9 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 # Reglas del Proyecto
 
 ## Gestión de Planes de Trabajo
-- **Creación de planes**: Cada vez que se cree un plan de implementación, registrarlo como archivo Markdown dentro de la carpeta `docs/` (por ejemplo: `docs/<nombre-del-plan>.md`).
-- **Implementación de planes**: Cuando el plan se implemente y verifique con éxito, mover el archivo a la carpeta `docs/finished/` (por ejemplo: `docs/finished/<nombre-del-plan>.md`) y actualizar su estado a **Implementado**.
+- **Creación de planes**: Cada vez que se cree un plan de implementación, registrarlo como archivo Markdown en `docs/planes/en-curso/` (por ejemplo: `docs/planes/en-curso/<nombre-del-plan>.md`).
+- **Implementación de planes**: Cuando el plan se implemente y verifique con éxito, mover el archivo a `docs/planes/finalizados/` y actualizar su estado a **Implementado** (y el índice `docs/planes/roadmap-club-tournaments.md`).
+
+## Documentación
+- `docs/arquitectura/`: arquitectura de la app (stack, librerías, despliegue, ciclo de vida del torneo). Mantenerla actualizada.
+- `docs/reglas/`: reglas de UI/UX, producto y flujo de trabajo. Leerlas antes de cambiar pantallas y agregar las nuevas que se definan.

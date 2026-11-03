@@ -129,6 +129,13 @@ export default function DashboardConsole() {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState('');
   const [matchFilters, setMatchFilters] = useState({ player: '', tournament: '', from: '', to: '' });
+  const emptyMatchFilters = { player: '', tournament: '', from: '', to: '' };
+  const activeFilters = [query.trim(), filter, ...(resource === 'matches' ? Object.values(matchFilters) : [])].filter(Boolean).length;
+  const clearFilters = () => {
+    setQuery('');
+    setFilter('');
+    setMatchFilters(emptyMatchFilters);
+  };
   const [options, setOptions] = useState<Options>({ players: [], venues: [], surfaces: [], categories: [], types: [], tournaments: [], users: [], levels: [] });
   const [showTournamentTypeInfo, setShowTournamentTypeInfo] = useState(false);
   const [prepTournament, setPrepTournament] = useState<RecordItem | null>(null);
@@ -445,42 +452,66 @@ export default function DashboardConsole() {
                     {unifying ? 'Vinculando...' : '⚡ Auto-vincular por email'}
                   </button>
                 )}
-                {filterOptions.length > 0 && (
-                  <select className="search-input" value={filter} onChange={(event) => setFilter(event.target.value)} aria-label="Filtrar registros">
+              </div>
+            </div>
+
+            <div className="admin-filters" role="search">
+              <label className="admin-filter admin-filter-search">
+                <span>Buscar</span>
+                <input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Escribí para buscar…"
+                  aria-label="Buscar registros"
+                />
+              </label>
+              {filterOptions.length > 0 && (
+                <label className="admin-filter">
+                  <span>{resource === 'matches' ? 'Fase' : 'Estado'}</span>
+                  <select value={filter} onChange={(event) => setFilter(event.target.value)} aria-label="Filtrar registros">
                     <option value="">{resource === 'matches' ? 'Todas las fases' : 'Todos los estados'}</option>
                     {filterOptions.map(([value, label]) => (
                       <option key={value} value={value}>{label}</option>
                     ))}
                   </select>
-                )}
-                <input
-                  className="search-input"
-                  value={query}
-                  onChange={(event) => setQuery(event.target.value)}
-                  placeholder="Buscar..."
-                  aria-label="Buscar registros"
-                />
-              </div>
+                </label>
+              )}
+              {resource === 'matches' && (
+                <>
+                  <label className="admin-filter">
+                    <span>Jugador</span>
+                    <select value={matchFilters.player} onChange={(event) => setMatchFilters((current) => ({ ...current, player: event.target.value }))} aria-label="Filtrar por jugador">
+                      <option value="">Todos los jugadores</option>
+                      {options.players.map((player) => (
+                        <option key={player.id} value={player.id}>{String(player.name)}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="admin-filter">
+                    <span>Torneo</span>
+                    <select value={matchFilters.tournament} onChange={(event) => setMatchFilters((current) => ({ ...current, tournament: event.target.value }))} aria-label="Filtrar por torneo">
+                      <option value="">Todos los torneos</option>
+                      {options.tournaments.map((tournament) => (
+                        <option key={tournament.id} value={tournament.id}>{String(tournament.name)}</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="admin-filter admin-filter-date">
+                    <span>Desde</span>
+                    <input type="date" value={matchFilters.from} onChange={(event) => setMatchFilters((current) => ({ ...current, from: event.target.value }))} aria-label="Fecha desde" />
+                  </label>
+                  <label className="admin-filter admin-filter-date">
+                    <span>Hasta</span>
+                    <input type="date" value={matchFilters.to} onChange={(event) => setMatchFilters((current) => ({ ...current, to: event.target.value }))} aria-label="Fecha hasta" />
+                  </label>
+                </>
+              )}
+              {activeFilters > 0 && (
+                <button type="button" className="admin-filters-clear" onClick={clearFilters}>
+                  Limpiar filtros <b>{activeFilters}</b>
+                </button>
+              )}
             </div>
-
-            {resource === 'matches' && (
-              <div className="tournament-filters">
-                <select className="search-input" value={matchFilters.player} onChange={(event) => setMatchFilters((current) => ({ ...current, player: event.target.value }))} aria-label="Filtrar por jugador">
-                  <option value="">Todos los jugadores</option>
-                  {options.players.map((player) => (
-                    <option key={player.id} value={player.id}>{String(player.name)}</option>
-                  ))}
-                </select>
-                <select className="search-input" value={matchFilters.tournament} onChange={(event) => setMatchFilters((current) => ({ ...current, tournament: event.target.value }))} aria-label="Filtrar por torneo">
-                  <option value="">Todos los torneos</option>
-                  {options.tournaments.map((tournament) => (
-                    <option key={tournament.id} value={tournament.id}>{String(tournament.name)}</option>
-                  ))}
-                </select>
-                <input className="search-input" type="date" value={matchFilters.from} onChange={(event) => setMatchFilters((current) => ({ ...current, from: event.target.value }))} aria-label="Fecha desde" title="Fecha desde" />
-                <input className="search-input" type="date" value={matchFilters.to} onChange={(event) => setMatchFilters((current) => ({ ...current, to: event.target.value }))} aria-label="Fecha hasta" title="Fecha hasta" />
-              </div>
-            )}
 
             {loading ? (
               <div className="empty-state">Cargando registros...</div>
@@ -545,10 +576,10 @@ export default function DashboardConsole() {
                           {item.status === 'FINISHED' ? 'Corregir resultados' : 'Resultados'}
                         </button>
                       )}
-                      {resource === 'tournaments' && item.status === 'FINISHED' && (
+                      {resource === 'tournaments' && item.status === 'FINISHED' && !item.levelId && (
                         <select
                           aria-label="Nivel del torneo"
-                          title="Nivel del torneo (los torneos terminados solo permiten cambiar el nivel)"
+                          title="Asignar el nivel del torneo (se puede asignar una sola vez)"
                           value={String(item.levelId ?? '')}
                           onChange={async (event) => {
                             try {
@@ -564,7 +595,7 @@ export default function DashboardConsole() {
                             }
                           }}
                         >
-                          <option value="">Sin nivel</option>
+                          <option value="">Asignar nivel…</option>
                           {options.levels.map((level) => (
                             <option key={level.id} value={level.id}>{String(level.name)}</option>
                           ))}

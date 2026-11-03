@@ -49,5 +49,5 @@ Durante la compilación de producción en Vercel (`next build`), el verificador 
 
 ## Plan de Verificación
 - Ejecutar `npx tsc --noEmit` y asegurar 0 errores de TypeScript.
-- Una vez verificado, mover este plan a `docs/finished/fix-build-typescript-errors.md` y marcar como **Implementado**.
+- Una vez verificado, mover este plan a `docs/planes/finalizados/fix-build-typescript-errors.md` y marcar como **Implementado**.
 

@@ -52,7 +52,7 @@ model TournamentRegistration {
 - Notificaciones de confirmación/lista de espera dependen de `notifications-and-share-images-plan.md`.
 - Auditoría: `REGISTRATION_CREATE/CONFIRM/WITHDRAW` con actor.
 - Privacidad: no exponer mail/teléfono de otros inscriptos.
-- Debe cerrarse (o congelarse) al confirmar el sorteo oficial (`finished/official-draw-bracket-plan.md`).
+- Debe cerrarse (o congelarse) al confirmar el sorteo oficial (`../finalizados/official-draw-bracket-plan.md`).
 
 ## Preguntas para cuando se retome
 
