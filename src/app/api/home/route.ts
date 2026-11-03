@@ -8,6 +8,7 @@ import { prisma } from '@/utils/prisma';
 
 const STAGE_LABELS: Record<string, string> = {
   GROUP: 'Fase de grupos',
+  ROUND_OF_32: '16avos',
   ROUND_OF_16: 'Octavos',
   QUARTERFINAL: 'Cuartos',
   SEMIFINAL: 'Semifinal',

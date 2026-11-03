@@ -2,6 +2,7 @@ import { logger } from '@/lib/logger';
 import { withApiLogging } from '@/lib/api-logging';
 import { prisma } from '@/utils/prisma';
 import { NextRequest, NextResponse } from 'next/server';
+import { getDrawView } from '@/lib/draw-results';
 import { buildEliminationBracket, generateDraw, DrawSlot } from '@/utils/utils';
 
 type Context = { params: Promise<{ id: string }> };
@@ -20,6 +21,12 @@ async function handleGet(_request: NextRequest, context: Context) {
   const { id } = await context.params;
 
   try {
+    const official = await prisma.tournament.findFirst({ where: { id, deletedAt: null, drawStatus: 'CONFIRMED' }, select: { id: true } });
+    if (official) {
+      const view = await getDrawView(prisma, id);
+      return NextResponse.json({ configured: true, official: true, ...view, seed: undefined });
+    }
+
     const tournament = await prisma.tournament.findUnique({
       where: { id },
       select: {
@@ -36,7 +43,7 @@ async function handleGet(_request: NextRequest, context: Context) {
 
     const typeName = tournament.tournamentType?.name ?? null;
     const drawSize = tournament.drawSize ?? null;
-    logger.info('draw.generated', { tournamentId: id, type: typeName, drawSize, players: tournament.players.length });
+    logger.info('draw.previewed', { tournamentId: id, type: typeName, drawSize, players: tournament.players.length });
 
     // Missing configuration — return a clear non-error response
     if (!typeName || !drawSize) {

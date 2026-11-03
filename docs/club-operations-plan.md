@@ -13,7 +13,7 @@ Estado: **Pendiente de revisión**.
 ## Propuestas
 
 1. **Rol de organizador**: `UserRole.ORGANIZER` (o permisos por torneo): puede cargar/corregir resultados, gestionar inscriptos y el sorteo de sus torneos, sin tocar usuarios, niveles ni configuración global. Centralizar la autorización en `src/lib/require-session.ts` (`requireOrganizer(tournamentId)`) y auditar cada acción.
-2. **Corrección de resultados con trazabilidad**: acción «Corregir resultado» con motivo obligatorio, reversión del avance del cuadro (ver `official-draw-bracket-plan.md`) y recálculo de puntos; todo en `AuditLog` con before/after.
+2. **Corrección de resultados con trazabilidad**: acción «Corregir resultado» con motivo obligatorio, reversión del avance del cuadro (ver `finished/official-draw-bracket-plan.md`) y recálculo de puntos; todo en `AuditLog` con before/after.
 3. **Reapertura de torneos terminados** (solo admin, con motivo): vuelve a `IN_PROGRESS`, revierte puntos y snapshot; documentar en `docs/tournament-lifecycle-states.md`.
 4. **Sedes y canchas**: entidad `Court` (sede, nombre, superficie, activa). Base necesaria para la futura programación de partidos (fuera de alcance hoy).
 5. **Plantillas de torneo**: «Duplicar torneo» con sede, superficie, categoría, tipo, tamaño y nivel; sin jugadores ni fechas.

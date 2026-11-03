@@ -56,6 +56,7 @@ async function listRecords(_request: NextRequest, context: Context) {
               player2: { select: { name: true } },
               winner: { select: { name: true } },
               tournament: { select: { name: true, date: true } },
+              drawMatch: { select: { id: true } },
               sets: { include: { games: true } },
             }
           : resource === 'players'
@@ -185,7 +186,7 @@ async function createRecord(request: NextRequest, context: Context) {
         venueId,
         surfaceId,
         levelId,
-        championId,
+        championId: _championId,
         tournamentCategoryId,
         tournamentTypeId,
         playerIds,
@@ -208,7 +209,6 @@ async function createRecord(request: NextRequest, context: Context) {
         venue: { connect: { id: venueId } },
         surface: { connect: { id: surfaceId } },
         level: levelId ? { connect: { id: levelId } } : undefined,
-        champion: championId ? { connect: { id: championId } } : undefined,
         tournamentCategory: { connect: { id: tournamentCategoryId } },
         tournamentType: tournamentTypeId ? { connect: { id: tournamentTypeId } } : undefined,
         players: Array.isArray(playerIds)
@@ -228,19 +228,10 @@ async function createRecord(request: NextRequest, context: Context) {
     if (resource === 'levels') data.order = Number(data.order);
 
     if (resource === 'matches') {
-      const { tournamentId, player1Id, player2Id, winnerId } = data;
-      if (!tournamentId || !player1Id || !player2Id || !winnerId)
-        throw new Error('Faltan datos del partido');
-      Object.assign(data, {
-        tournament: { connect: { id: tournamentId } },
-        player1: { connect: { id: player1Id } },
-        player2: { connect: { id: player2Id } },
-        winner: { connect: { id: winnerId } },
-      });
-      delete data.tournamentId;
-      delete data.player1Id;
-      delete data.player2Id;
-      delete data.winnerId;
+      return NextResponse.json(
+        { message: 'Los partidos se cargan desde el cuadro del torneo (POST /api/add-match con drawMatchId)' },
+        { status: 400 },
+      );
     }
 
     const created = await (prisma as any)[models[resource]].create({ data });

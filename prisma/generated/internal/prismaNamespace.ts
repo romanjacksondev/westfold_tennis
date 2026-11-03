@@ -398,6 +398,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Tournament: 'Tournament',
+  DrawMatch: 'DrawMatch',
   Surface: 'Surface',
   Venue: 'Venue',
   Player: 'Player',
@@ -426,7 +427,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "tournament" | "surface" | "venue" | "player" | "level" | "playerLevelHistory" | "tournamentCategory" | "tournamentType" | "tournamentCategoryPoints" | "match" | "set" | "game" | "user" | "auditLog"
+    modelProps: "tournament" | "drawMatch" | "surface" | "venue" | "player" | "level" | "playerLevelHistory" | "tournamentCategory" | "tournamentType" | "tournamentCategoryPoints" | "match" | "set" | "game" | "user" | "auditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -501,6 +502,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.TournamentCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.TournamentCountAggregateOutputType> | number
+        }
+      }
+    }
+    DrawMatch: {
+      payload: Prisma.$DrawMatchPayload<ExtArgs>
+      fields: Prisma.DrawMatchFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DrawMatchFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DrawMatchPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DrawMatchFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DrawMatchPayload>
+        }
+        findFirst: {
+          args: Prisma.DrawMatchFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DrawMatchPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DrawMatchFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DrawMatchPayload>
+        }
+        findMany: {
+          args: Prisma.DrawMatchFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DrawMatchPayload>[]
+        }
+        create: {
+          args: Prisma.DrawMatchCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DrawMatchPayload>
+        }
+        createMany: {
+          args: Prisma.DrawMatchCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DrawMatchCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DrawMatchPayload>[]
+        }
+        delete: {
+          args: Prisma.DrawMatchDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DrawMatchPayload>
+        }
+        update: {
+          args: Prisma.DrawMatchUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DrawMatchPayload>
+        }
+        deleteMany: {
+          args: Prisma.DrawMatchDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DrawMatchUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DrawMatchUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DrawMatchPayload>[]
+        }
+        upsert: {
+          args: Prisma.DrawMatchUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DrawMatchPayload>
+        }
+        aggregate: {
+          args: Prisma.DrawMatchAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDrawMatch>
+        }
+        groupBy: {
+          args: Prisma.DrawMatchGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DrawMatchGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DrawMatchCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DrawMatchCountAggregateOutputType> | number
         }
       }
     }
@@ -1520,10 +1595,37 @@ export const TournamentScalarFieldEnum = {
   drawSize: 'drawSize',
   qualifiers: 'qualifiers',
   levelId: 'levelId',
-  deletedAt: 'deletedAt'
+  deletedAt: 'deletedAt',
+  drawStatus: 'drawStatus',
+  drawSeed: 'drawSeed',
+  drawSeedMode: 'drawSeedMode',
+  drawConfirmedAt: 'drawConfirmedAt',
+  drawGroupOrder: 'drawGroupOrder'
 } as const
 
 export type TournamentScalarFieldEnum = (typeof TournamentScalarFieldEnum)[keyof typeof TournamentScalarFieldEnum]
+
+
+export const DrawMatchScalarFieldEnum = {
+  id: 'id',
+  tournamentId: 'tournamentId',
+  phase: 'phase',
+  round: 'round',
+  position: 'position',
+  stage: 'stage',
+  player1Id: 'player1Id',
+  player2Id: 'player2Id',
+  seed1: 'seed1',
+  seed2: 'seed2',
+  source1: 'source1',
+  source2: 'source2',
+  isBye: 'isBye',
+  nextDrawMatchId: 'nextDrawMatchId',
+  nextSlot: 'nextSlot',
+  matchId: 'matchId'
+} as const
+
+export type DrawMatchScalarFieldEnum = (typeof DrawMatchScalarFieldEnum)[keyof typeof DrawMatchScalarFieldEnum]
 
 
 export const SurfaceScalarFieldEnum = {
@@ -1787,16 +1889,30 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'Gender'
+ * Reference to a field of type 'DrawStatus'
  */
-export type EnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender'>
+export type EnumDrawStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DrawStatus'>
     
 
 
 /**
- * Reference to a field of type 'Gender[]'
+ * Reference to a field of type 'DrawStatus[]'
  */
-export type ListEnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender[]'>
+export type ListEnumDrawStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DrawStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DrawPhase'
+ */
+export type EnumDrawPhaseFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DrawPhase'>
+    
+
+
+/**
+ * Reference to a field of type 'DrawPhase[]'
+ */
+export type ListEnumDrawPhaseFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DrawPhase[]'>
     
 
 
@@ -1815,9 +1931,37 @@ export type ListEnumMatchStageFieldRefInput<$PrismaModel> = FieldRefInputType<$P
 
 
 /**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'Gender'
+ */
+export type EnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender'>
+    
+
+
+/**
+ * Reference to a field of type 'Gender[]'
+ */
+export type ListEnumGenderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Gender[]'>
     
 
 
@@ -1832,20 +1976,6 @@ export type EnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'UserRole[]'
  */
 export type ListEnumUserRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UserRole[]'>
-    
-
-
-/**
- * Reference to a field of type 'Json'
- */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-/**
- * Reference to a field of type 'QueryMode'
- */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -2014,6 +2144,7 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   tournament?: Prisma.TournamentOmit
+  drawMatch?: Prisma.DrawMatchOmit
   surface?: Prisma.SurfaceOmit
   venue?: Prisma.VenueOmit
   player?: Prisma.PlayerOmit

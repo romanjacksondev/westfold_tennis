@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import Pagination, { paginate } from '@/components/ui/Pagination/Pagination';
 import SiteFooter from '@/components/features/SiteFooter';
 import TournamentTypeVisual from '@/components/features/admin/TournamentTypeVisual';
+import TournamentResultsModal from '@/components/features/admin/TournamentResultsModal';
 import TournamentPreparationModal from '@/components/features/admin/TournamentPreparationModal';
 import PlayerPhotoEditor from '@/components/ui/PlayerPhoto/PlayerPhotoEditor';
 import AuditLogPanel from '@/components/features/admin/AuditLogPanel';
@@ -72,7 +73,7 @@ type MatchRecord = {
   sets?: { hasTiebreak?: boolean; tiebreakPlayer1Points?: number | null; tiebreakPlayer2Points?: number | null; games?: { winnerId: string }[] }[];
 };
 
-const matchStageLabels: Record<string, string> = { GROUP: 'Fase de grupos', ROUND_OF_16: 'Octavos de final', QUARTERFINAL: 'Cuartos de final', SEMIFINAL: 'Semifinal', FINAL: 'Final' };
+const matchStageLabels: Record<string, string> = { GROUP: 'Fase de grupos', ROUND_OF_32: '16avos de final', ROUND_OF_16: 'Octavos de final', QUARTERFINAL: 'Cuartos de final', SEMIFINAL: 'Semifinal', FINAL: 'Final' };
 
 const matchTitle = (match: MatchRecord) => `${match.player1?.name ?? 'Jugador 1'} vs ${match.player2?.name ?? 'Jugador 2'}`;
 
@@ -99,8 +100,6 @@ const matchDetails = (match: MatchRecord) => {
 const PAGE_SIZE = 20;
 
 const formatShortDate = (value?: string | null) => (value ? new Date(value).toLocaleDateString('es-AR') : null);
-type MatchSetForm = { gamesPlayer1: string; gamesPlayer2: string; hasTiebreak: boolean; tiebreakPlayer1: string; tiebreakPlayer2: string };
-const emptyMatchSet = (): MatchSetForm => ({ gamesPlayer1: '', gamesPlayer2: '', hasTiebreak: false, tiebreakPlayer1: '', tiebreakPlayer2: '' });
 
 async function requestJson(url: string, options?: RequestInit) {
   const response = await fetch(url, options);
@@ -131,9 +130,7 @@ export default function DashboardConsole() {
   const [options, setOptions] = useState<Options>({ players: [], venues: [], surfaces: [], categories: [], types: [], tournaments: [], users: [], levels: [] });
   const [showTournamentTypeInfo, setShowTournamentTypeInfo] = useState(false);
   const [prepTournament, setPrepTournament] = useState<RecordItem | null>(null);
-  const [matchSets, setMatchSets] = useState<MatchSetForm[]>([emptyMatchSet()]);
-  const [matchStage, setMatchStage] = useState('');
-  const [matchPlayedAt, setMatchPlayedAt] = useState('');
+  const [resultsTournament, setResultsTournament] = useState<RecordItem | null>(null);
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
   const isSimple = resource !== 'tournaments' && resource !== 'matches';
   const newTournamentForm = () => ({ name: '', date: todayInputValue(), venueId: options.venues.find((venue) => venue.name === 'Kauri Club')?.id ?? '', surfaceId: options.surfaces.find((surface) => surface.name === 'Polvo de Ladrillo')?.id ?? '', role: 'USER' });
@@ -175,8 +172,6 @@ export default function DashboardConsole() {
     setModalError(null);
     setEditing(null);
     setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER', gender: 'MALE' });
-    setMatchSets([emptyMatchSet()]);
-    setMatchStage('');
     setMessage(null);
     load();
     if (resource === 'tournaments' || resource === 'matches' || resource === 'users' || resource === 'players') {
@@ -238,22 +233,16 @@ export default function DashboardConsole() {
     setMatchFilters({ player: '', tournament: '', from: '', to: '' });
   }, [resource]);
   const relationOptions: Record<string, RecordItem[]> = { venueId: options.venues, surfaceId: options.surfaces, championId: options.players, tournamentCategoryId: options.categories, tournamentTypeId: options.types, tournamentId: options.tournaments, player1Id: options.players, player2Id: options.players, winnerId: options.players, playerId: options.players, userId: options.users, levelId: options.levels };
-  const matchTournamentType = options.tournaments.find((tournament) => tournament.id === form.tournamentId)?.tournamentType as { name?: string } | null | undefined;
-  const matchHasPlayoffs = /playoff/i.test(matchTournamentType?.name ?? '');
-  const matchStageOptions = [['GROUP', 'Fase de grupos'], ['ROUND_OF_16', 'Octavos de final'], ['QUARTERFINAL', 'Cuartos de final'], ['SEMIFINAL', 'Semifinal'], ['FINAL', 'Final']];
   const selectedTournamentTypeName = options.types.find((t) => t.id === form.tournamentTypeId)?.name ?? '';
   const isRoundRobinPlusPlayoffs = String(selectedTournamentTypeName).trim().toLowerCase() === 'round robin + playoffs';
   const levelChanged = resource === 'players' && Boolean(editing) && (form.levelId ?? '') !== String(editing?.levelId ?? '');
-  const fields = isSimple ? [...simpleFields[resource as Exclude<Resource, 'tournaments' | 'matches'>], ...(levelChanged ? ['levelReason'] : [])] : resource === 'tournaments' ? ['name', 'date', 'venueId', 'surfaceId', 'tournamentCategoryId', 'tournamentTypeId', 'levelId', 'drawSize', ...(isRoundRobinPlusPlayoffs ? ['qualifiers'] : []), ...(editing ? ['championId'] : [])] : resource === 'matches' && !editing ? ['tournamentId', 'player1Id', 'player2Id'] : ['tournamentId', 'player1Id', 'player2Id', 'winnerId'];
+  const fields = isSimple ? [...simpleFields[resource as Exclude<Resource, 'tournaments' | 'matches'>], ...(levelChanged ? ['levelReason'] : [])] : resource === 'tournaments' ? ['name', 'date', 'venueId', 'surfaceId', 'tournamentCategoryId', 'tournamentTypeId', 'levelId', 'drawSize', ...(isRoundRobinPlusPlayoffs ? ['qualifiers'] : [])] : ['tournamentId', 'player1Id', 'player2Id', 'winnerId'];
   const requiredFields = resource === 'users' ? ['email', 'role', ...(!editing ? ['password'] : [])] : fields.filter((field) => field !== 'date' && field !== 'championId' && field !== 'drawSize' && field !== 'qualifiers' && field !== 'userId' && field !== 'levelId' && field !== 'levelReason' && field !== 'playerId' && field !== 'nickname' && field !== 'lastname' && field !== 'mail' && field !== 'phone');
   const selectedTournamentType = options.types.find((option) => option.id === form.tournamentTypeId);
 
   function openCreateModal() {
     setEditing(null);
     setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER', gender: 'MALE' });
-    setMatchSets([emptyMatchSet()]);
-    setMatchStage('');
-    setMatchPlayedAt('');
     setSelectedPlayerIds([]);
     setModalError(null);
     setIsFormModalOpen(true);
@@ -303,14 +292,8 @@ export default function DashboardConsole() {
     setEditing(null);
     setPrepTournament(null);
     setForm(resource === 'tournaments' ? newTournamentForm() : { name: '', role: 'USER', gender: 'MALE' });
-    setMatchSets([emptyMatchSet()]);
-    setMatchStage('');
     setSelectedPlayerIds([]);
     setModalError(null);
-  }
-
-  function updateMatchSet(index: number, patch: Partial<MatchSetForm>) {
-    setMatchSets((current) => current.map((set, setIndex) => (setIndex === index ? { ...set, ...patch } : set)));
   }
 
   async function submit(event: FormEvent) {
@@ -318,58 +301,6 @@ export default function DashboardConsole() {
     const missingField = requiredFields.find((field) => !form[field]?.trim());
     if (missingField) {
       setModalError(`El campo ${labels[missingField] ?? missingField} es obligatorio.`);
-      return;
-    }
-    if (resource === 'matches' && !editing) {
-      if (form.player1Id === form.player2Id) {
-        setModalError('Jugador 1 y Jugador 2 deben ser distintos.');
-        return;
-      }
-      if (matchHasPlayoffs && !matchStage) {
-        setModalError('Elegí la fase del partido.');
-        return;
-      }
-      const invalidSet = matchSets.find((set) => {
-        const gamesPlayer1 = Number(set.gamesPlayer1);
-        const gamesPlayer2 = Number(set.gamesPlayer2);
-        if (!Number.isInteger(gamesPlayer1) || !Number.isInteger(gamesPlayer2) || gamesPlayer1 === gamesPlayer2) return true;
-        return set.hasTiebreak && (set.tiebreakPlayer1.trim() === '' || set.tiebreakPlayer2.trim() === '');
-      });
-      if (invalidSet) {
-        setModalError('Completá el resultado de cada set con un ganador claro.');
-        return;
-      }
-      setSaving(true);
-      setModalError(null);
-      setMessage(null);
-      try {
-        const sets = matchSets.map((set) => {
-          const gamesPlayer1 = Number(set.gamesPlayer1);
-          const gamesPlayer2 = Number(set.gamesPlayer2);
-          return {
-            gamesPlayer1,
-            gamesPlayer2,
-            winner: gamesPlayer1 > gamesPlayer2 ? form.player1Id : form.player2Id,
-            hasTiebreak: set.hasTiebreak,
-            tiebreakPlayer1Points: set.hasTiebreak ? Number(set.tiebreakPlayer1) : null,
-            tiebreakPlayer2Points: set.hasTiebreak ? Number(set.tiebreakPlayer2) : null,
-          };
-        });
-        const setsWonByPlayer1 = sets.filter((set) => set.winner === form.player1Id).length;
-        const winner = setsWonByPlayer1 > sets.length - setsWonByPlayer1 ? form.player1Id : form.player2Id;
-        await requestJson('/api/add-match', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ idPlayer1: form.player1Id, idPlayer2: form.player2Id, tournamentId: form.tournamentId, winner, sets, stage: matchHasPlayoffs ? matchStage : null, playedAt: matchPlayedAt || undefined }),
-        });
-        setMessage({ type: 'success', text: 'Partido creado correctamente' });
-        closeFormModal();
-        await load();
-      } catch (error) {
-        setModalError(error instanceof Error ? error.message : 'No se pudo guardar');
-      } finally {
-        setSaving(false);
-      }
       return;
     }
     setSaving(true);
@@ -492,14 +423,14 @@ export default function DashboardConsole() {
                 </h2>
               </div>
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-                <button
+                {resource !== 'matches' && <button
                   type="button"
                   className="primary-button admin-create-button"
                   onClick={openCreateModal}
                   title={`Crear nuevo registro de ${resourceInfo[resource].singular}`}
                 >
                   {resourceInfo[resource].newBtn}
-                </button>
+                </button>}
                 {(resource === 'users' || resource === 'players') && (
                   <button
                     type="button"
@@ -593,7 +524,7 @@ export default function DashboardConsole() {
                     </div>
                     )}
                     <div className="row-actions">
-                      {!(resource === 'tournaments' && item.status === 'FINISHED') && (
+                      {resource !== 'matches' && !(resource === 'tournaments' && item.status === 'FINISHED') && (
                         <button
                           className="text-button"
                           onClick={() => startEdit(item)}
@@ -604,6 +535,11 @@ export default function DashboardConsole() {
                           }
                         >
                           Editar
+                        </button>
+                      )}
+                      {resource === 'tournaments' && (item.status === 'IN_PROGRESS' || item.status === 'FINISHED') && (
+                        <button className="text-button" onClick={() => setResultsTournament(item)} title="Cargar resultados del cuadro, cerrar el torneo o corregir resultados">
+                          {item.status === 'FINISHED' ? 'Corregir resultados' : 'Resultados'}
                         </button>
                       )}
                       {resource === 'tournaments' && item.status === 'FINISHED' && (
@@ -876,111 +812,6 @@ export default function DashboardConsole() {
                   </div>
                 )}
 
-                {resource === 'matches' && !editing && matchHasPlayoffs && (
-                  <label className="field">
-                    <span>
-                      Fase <b aria-hidden="true"> *</b>
-                    </span>
-                    <select required value={matchStage} onChange={(event) => setMatchStage(event.target.value)}>
-                      <option value="">Seleccionar fase...</option>
-                      {matchStageOptions.map(([value, label]) => (
-                        <option key={value} value={value}>{label}</option>
-                      ))}
-                    </select>
-                  </label>
-                )}
-
-                {resource === 'matches' && !editing && (
-                  <label className="field">
-                    <span>Fecha del partido</span>
-                    <input type="date" value={matchPlayedAt} onChange={(event) => setMatchPlayedAt(event.target.value)} />
-                    <small>Opcional. Por defecto, la fecha de inicio.</small>
-                  </label>
-                )}
-
-                {resource === 'matches' && !editing && (
-                  <div className="match-sets-editor">
-                    <span className="match-sets-heading">
-                      Resultado del partido <b aria-hidden="true"> *</b>
-                    </span>
-                    {matchSets.map((set, index) => (
-                      <div className="match-set-row" key={index}>
-                        <strong>Set {index + 1}</strong>
-                        <div className="match-set-scores">
-                          <input
-                            type="number"
-                            min={0}
-                            required
-                            value={set.gamesPlayer1}
-                            onChange={(event) => updateMatchSet(index, { gamesPlayer1: event.target.value })}
-                            placeholder="Games J1"
-                            aria-label={`Games jugador 1 - set ${index + 1}`}
-                          />
-                          <span>-</span>
-                          <input
-                            type="number"
-                            min={0}
-                            required
-                            value={set.gamesPlayer2}
-                            onChange={(event) => updateMatchSet(index, { gamesPlayer2: event.target.value })}
-                            placeholder="Games J2"
-                            aria-label={`Games jugador 2 - set ${index + 1}`}
-                          />
-                        </div>
-                        <label className="match-set-tiebreak">
-                          <input
-                            type="checkbox"
-                            checked={set.hasTiebreak}
-                            onChange={(event) => updateMatchSet(index, { hasTiebreak: event.target.checked })}
-                          />{' '}
-                          Tiebreak
-                        </label>
-                        {set.hasTiebreak && (
-                          <div className="match-set-scores">
-                            <input
-                              type="number"
-                              min={0}
-                              required
-                              value={set.tiebreakPlayer1}
-                              onChange={(event) => updateMatchSet(index, { tiebreakPlayer1: event.target.value })}
-                              placeholder="Puntos J1"
-                              aria-label={`Puntos tiebreak jugador 1 - set ${index + 1}`}
-                            />
-                            <span>-</span>
-                            <input
-                              type="number"
-                              min={0}
-                              required
-                              value={set.tiebreakPlayer2}
-                              onChange={(event) => updateMatchSet(index, { tiebreakPlayer2: event.target.value })}
-                              placeholder="Puntos J2"
-                              aria-label={`Puntos tiebreak jugador 2 - set ${index + 1}`}
-                            />
-                          </div>
-                        )}
-                        {matchSets.length > 1 && (
-                          <button
-                            type="button"
-                            className="text-button"
-                            onClick={() => setMatchSets((current) => current.filter((_, setIndex) => setIndex !== index))}
-                          >
-                            Quitar set
-                          </button>
-                        )}
-                      </div>
-                    ))}
-                    {matchSets.length < 5 && (
-                      <button
-                        type="button"
-                        className="text-button"
-                        onClick={() => setMatchSets((current) => [...current, emptyMatchSet()])}
-                      >
-                        + Agregar set
-                      </button>
-                    )}
-                  </div>
-                )}
-
                 {resource === 'users' && !editing && (
                   <label className="legal-consent">
                     <input type="checkbox" required />{' '}
@@ -1059,6 +890,17 @@ export default function DashboardConsole() {
               </div>
             </section>
           </div>
+        )}
+
+        {resultsTournament && (
+          <TournamentResultsModal
+            tournament={{ id: resultsTournament.id, name: String(resultsTournament.name ?? ''), status: String(resultsTournament.status) }}
+            onClose={() => setResultsTournament(null)}
+            onChanged={(msg) => {
+              setMessage({ type: 'success', text: msg });
+              load();
+            }}
+          />
         )}
 
         {prepTournament && (

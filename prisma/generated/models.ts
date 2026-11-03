@@ -9,6 +9,7 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/Tournament.ts'
+export type * from './models/DrawMatch.ts'
 export type * from './models/Surface.ts'
 export type * from './models/Venue.ts'
 export type * from './models/Player.ts'

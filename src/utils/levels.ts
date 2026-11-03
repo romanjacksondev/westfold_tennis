@@ -16,10 +16,11 @@ export const SUGGESTION_STREAK = 5;
 const sortLevels = (levels: LevelRef[]) => [...levels].sort((a, b) => a.order - b.order);
 const MATCH_STAGE_ORDER: Record<string, number> = {
   GROUP: 0,
-  ROUND_OF_16: 1,
-  QUARTERFINAL: 2,
-  SEMIFINAL: 3,
-  FINAL: 4,
+  ROUND_OF_32: 1,
+  ROUND_OF_16: 2,
+  QUARTERFINAL: 3,
+  SEMIFINAL: 4,
+  FINAL: 5,
 };
 
 export type MatchForLevelSort = {

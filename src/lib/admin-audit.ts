@@ -10,6 +10,7 @@ const TOURNAMENT_ACTIONS: Record<string, AuditAction> = {
   start: 'TOURNAMENT_START',
   cancel: 'TOURNAMENT_CANCEL',
   reactivate: 'TOURNAMENT_REACTIVATE',
+  finish: 'TOURNAMENT_FINISH',
 };
 
 export const auditActionFor = (resource: string, action: unknown): AuditAction =>

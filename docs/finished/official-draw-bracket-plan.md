@@ -1,6 +1,6 @@
 # Plan: Sorteo oficial guardado y cuadro que avanza con los resultados
 
-Estado: **Pendiente** (listo para implementar).
+Estado: **Implementado**.
 
 ## Contexto y problema
 
@@ -31,7 +31,7 @@ Horarios y canchas (el `DrawMatch` queda listo para sumar `scheduledAt`/`courtId
 | Fases | `GROUP` (todos contra todos, por jornada) y `PLAYOFF` (eliminación). Round Robin + Playoffs usa ambas; los `qualifiers` (default 2) definen el tamaño del playoff. |
 | Avance | Cada `DrawMatch` apunta a `nextDrawMatchId` + `nextSlot` (1 o 2). Al cargar un resultado se asigna el ganador al siguiente casillero. Los BYEs se resuelven al confirmar. |
 | Playoff tras grupos | Los casilleros se llenan con `PlayerSource = GROUP_POSITION n`. Cuando todos los partidos de grupo tienen resultado se calcula la tabla (con `compareStandings` de `src/utils/scoring.ts`) y se asignan 1.º, 2.º… Empate irresoluble ⇒ el admin elige el orden (acción `set-group-order`). |
-| Torneos existentes | `drawStatus = NONE` (modo legado): se mantiene el comportamiento actual (vista previa + `add-match` libre). No hay backfill. |
+| Torneos existentes | **Sin modo legado.** `drawStatus = NONE` solo significa «todavía sin sorteo» (torneos en preparación). Todo torneo `IN_PROGRESS`/`FINISHED` debe tener sorteo `CONFIRMED` y partidos enlazados. Como la app no tiene uso productivo, se actualiza `prisma/seed.ts` para generar `DrawMatch` consistentes con los partidos de prueba (ver «Seed y datos consistentes»). |
 | Etapas profundas | `MatchStage` llega hasta `ROUND_OF_16`. Un cuadro de 32 (que `MAX_PREVIEW_SLOTS` ya permite) necesita `ROUND_OF_32`: agregar el valor al enum, a `PLAYOFF_STAGE_RANK`/`ELIMINATED_POSITION` (posición 17) en `scoring.ts` y a `DRAW_STAGE_ORDER`. |
 
 ## Modelo de datos (Prisma)
@@ -107,15 +107,21 @@ Lectura:
 - `GET /api/admin/tournaments/[id]/draw/pending`: partidos listos para jugar (ambos jugadores definidos y sin `matchId`).
 
 Resultados:
-- `POST /api/add-match` acepta `drawMatchId`. Con él: valida que el casillero esté listo, que `idPlayer1/2` coincidan, que el ganador sea uno de los dos y que no tenga ya `matchId`; fuerza `tournamentId` y `stage` del casillero; en una **transacción** crea el `Match`, enlaza `DrawMatch.matchId` y avanza al ganador. Sin `drawMatchId` en torneos con sorteo confirmado ⇒ 400 (salvo admin con motivo, queda auditado).
+- `POST /api/add-match` acepta `drawMatchId`. Con él: valida que el casillero esté listo, que `idPlayer1/2` coincidan, que el ganador sea uno de los dos y que no tenga ya `matchId`; fuerza `tournamentId` y `stage` del casillero; en una **transacción** crea el `Match`, enlaza `DrawMatch.matchId` y avanza al ganador. **`drawMatchId` es obligatorio**: solo se cargan partidos de torneo; sin él ⇒ 400. Los amistosos no se pueden cargar por ahora.
 - Edición y archivado de partidos (`PATCH/DELETE /api/admin/matches/[id]`): si cambia el ganador o se archiva, se aplica `revertAdvance`; si el siguiente partido ya tiene resultado ⇒ **409** con mensaje («primero corregí el partido siguiente»).
 
-Ciclo de vida (`PATCH /api/admin/tournaments/[id]` `action: 'start'`): además de las validaciones actuales exige `drawStatus === 'CONFIRMED'` cuando el tipo lo usa. Cierre: al completarse la final (o toda la tabla en round robin) la consola ofrece «Cerrar torneo» con el campeón precargado; el admin confirma (`championId` + `FINISHED`). Actualizar `docs/tournament-lifecycle-states.md`.
+Ciclo de vida (`PATCH /api/admin/tournaments/[id]` `action: 'start'`): además de las validaciones actuales exige `drawStatus === 'CONFIRMED'`. Actualizar `docs/tournament-lifecycle-states.md`.
+
+Campeón:
+- **Se calcula desde el torneo** (ganador de la final; en round robin, 1.º de la tabla con `compareStandings`) mediante una función pura `computeChampion`.
+- Al cerrar el torneo (`FINISHED`) se **guarda** en `championId` como caché para consultas rápidas; el cálculo es la fuente de verdad.
+- **Corrección posterior** (poco frecuente, por error de carga): el admin puede corregir un resultado de un torneo terminado. Al hacerlo se recalcula el campeón y se actualiza `championId` en la misma transacción. La UI exige un **motivo**, muestra una advertencia explícita («este torneo ya terminó; la corrección puede cambiar el campeón y los puntos del ranking») con el campeón anterior y el nuevo, y se registra en `AuditLog` (`TOURNAMENT_CORRECTION`, before/after de partido, campeón y motivo). Las reglas de 409 por partidos siguientes siguen valiendo.
+- Un test verifica que `championId` guardado == `computeChampion` para todos los torneos terminados.
 
 ## UI
 
 - **Preparación** (`TournamentPreparationModal` / `TournamentDrawPreview`): pasos Participantes → Siembra → Vista del sorteo (re-sortear, intercambiar, ver semilla) → Confirmar. Mostrar claramente «Borrador» vs «Oficial».
-- **Carga de resultados** (`DashboardConsole`): en torneos con sorteo oficial, el formulario de nuevo partido elige de la lista de **pendientes del cuadro** (ya trae jugadores y fase); el formulario libre queda para torneos legados y amistosos.
+- **Carga de resultados** (`DashboardConsole`): en torneos con sorteo oficial, el formulario de nuevo partido elige de la lista de **pendientes del cuadro** (ya trae jugadores y fase); se elimina el formulario libre (no hay amistosos ni torneos legados).
 - **Cuadro público** (`/draws`, `/tournaments/[id]`): cuadro oficial con marcadores y ganador resaltado, jornadas y tabla de posiciones; reutilizar `src/utils/draw-view.ts` (`buildGroupMatrix`, `getSideSetScores`).
 
 ## Auditoría y logging
@@ -139,14 +145,40 @@ Ciclo de vida (`PATCH /api/admin/tournaments/[id]` `action: 'start'`): además d
 4. UI: asistente de sorteo, pendientes, cuadro público con resultados.
 5. Ciclo de vida (`start`, cierre con campeón sugerido), actualización de `tournament-lifecycle-states.md`, moverlo a `docs/finished/`.
 
+## Seed y datos consistentes
+
+- `prisma/seed.ts` (≈5000 líneas, torneos y partidos fijos) se actualiza para que cada torneo `IN_PROGRESS`/`FINISHED` tenga `drawStatus = CONFIRMED`, `drawSeed`, y `DrawMatch` vinculados a cada `Match` (por `stage` y jugadores), con el `championId` coherente con la final.
+- Se agrega un helper en el seed que **reconstruye el cuadro a partir de los partidos existentes** (usando `draw-engine.ts`), en vez de escribir `DrawMatch` a mano; falla si los datos no cierran (ganador que no avanza, partido sin casillero, campeón ≠ ganador de la final). Donde los datos de prueba sean inconsistentes se corrigen o se eliminan partidos.
+- Torneos en `PREPARATION` quedan sin sorteo (`NONE`); se incluye al menos uno con sorteo `DRAFT` para probar la UI.
+- `prisma/seed.test.ts` agrega verificaciones de consistencia: cada partido de torneo con sorteo tiene un `DrawMatch`, el ganador figura en el casillero siguiente y el campeón coincide con `computeChampion`.
+- Esto se hace en el PR 2 (migración), y los tests de integración usan los mismos helpers.
+
 ## Riesgos
 
 - Reglas de edición de partidos con avance en cadena (resuelto con 409 y mensaje claro).
-- Compatibilidad con torneos antiguos (modo legado explícito, sin backfill).
+- Datos de prueba antiguos que no cierran como cuadro (se corrigen en el seed; ver «Seed y datos consistentes»).
 - Cálculo de puntos: sigue basándose en `Match.stage` y ganador, que se conservan; cubrir con tests que el puntaje de un torneo con sorteo coincide con el cálculo actual.
 
 ## Decisiones abiertas (con propuesta)
 
-- ¿Permitir cargar un partido «fuera de cuadro» en un torneo con sorteo oficial? Propuesta: no, salvo admin con motivo auditado.
-- ¿El campeón se asigna solo al terminar la final? Propuesta: se precarga y el admin confirma.
-- ¿Semillas por ranking usan la ventana anual o 12 meses? Propuesta: la que muestre el leaderboard por defecto.
+- ~~Partidos fuera de cuadro / amistosos~~ **Decidido**: por ahora solo partidos de torneo, siempre ligados a un casillero del cuadro. Los amistosos se evaluarán más adelante con un diseño coherente (`Match.tournamentId` sigue nullable en el esquema, pero la API no lo permite).
+- ~~Campeón~~ **Decidido**: se calcula, se guarda al cerrar y se recalcula con corrección auditada y advertencia.
+- ~~Torneos existentes~~ **Decidido**: sin modo legado; el seed se actualiza para ser consistente.
+- ~~Semillas por ranking~~ **Decidido**: `RANKING` usa los puntos del ranking (`calculatePlayerPoints`), y el seed de datos de prueba debe dejar un ranking poblado para que la siembra por ranking funcione desde el inicio.
+
+## Resultado
+
+Implementado en 5 etapas (sin commits al cierre de este documento):
+
+- **Motor y esquema**: `src/utils/draw-engine.ts` (con tests), `ROUND_OF_32`, modelo `DrawMatch`, `DrawStatus`/`DrawPhase`, campos `draw*` en `Tournament`.
+- **Backend**: `src/lib/draw-persistence.ts`, `draw-service.ts`, `draw-results.ts`; endpoints `api/admin/draws/[id]` (generate, reshuffle, swap, confirm, discard, set-group-order) y `…/pending`; `GET /api/tournaments/[id]/draw` devuelve el sorteo oficial; `add-match` exige `drawMatchId`; acción `finish`; correcciones con motivo y `TOURNAMENT_CORRECTION`.
+- **Seeds**: todos los torneos en curso/terminados tienen sorteo confirmado y partidos vinculados; demos en curso y en borrador; ranking poblado para la siembra `RANKING`.
+- **UI**: `TournamentDrawPanel` (sorteo en el modal de preparación), `TournamentResultsModal` (pendientes, cierre, orden de tabla, correcciones), `DrawBracket` (admin y público).
+- **Tests**: unit (`draw-engine`), integración (`describe('official draw')`) y e2e del flujo completo.
+
+### Desvíos respecto del plan
+
+- Los endpoints de admin viven en `api/admin/draws/[id]` (no `admin/tournaments/[id]/draw`) para no chocar con `admin/[resource]`.
+- `add-match` pasó a requerir rol admin.
+- Se eliminó la carga libre de partidos y la edición manual del campeón.
+- La siembra `RANKING` usa la ventana móvil de 12 meses del leaderboard; jugadores con 0 puntos quedan sin sembrar.

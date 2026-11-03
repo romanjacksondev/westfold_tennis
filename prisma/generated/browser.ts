@@ -23,6 +23,11 @@ export * from './enums.ts';
  */
 export type Tournament = Prisma.TournamentModel
 /**
+ * Model DrawMatch
+ * 
+ */
+export type DrawMatch = Prisma.DrawMatchModel
+/**
  * Model Surface
  * 
  */

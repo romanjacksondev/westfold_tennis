@@ -36,7 +36,7 @@ Objetivo: generar piezas gráficas listas para WhatsApp/Instagram sin diseñarla
 
 ### Esfuerzo estimado
 
-Promo y resultado de partido: **1–2 días**. Cuadro y podio: **2–3 días**. PDF/CSV: **1 día**. Depende de `official-draw-bracket-plan.md` para el cuadro con datos reales.
+Promo y resultado de partido: **1–2 días**. Cuadro y podio: **2–3 días**. PDF/CSV: **1 día**. Depende de `finished/official-draw-bracket-plan.md` para el cuadro con datos reales.
 
 ## 2. Notificaciones a jugadores (viabilidad)
 
@@ -75,6 +75,6 @@ Eventos candidatos: sorteo publicado, «tu próximo rival es X», partido progra
 
 ## Dependencias
 
-- `official-draw-bracket-plan.md` (cuadro y resultados confiables).
+- `finished/official-draw-bracket-plan.md` (cuadro y resultados confiables).
 - Programación de partidos (hoy fuera de alcance) para promos con horario/cancha y recordatorios.
 - `player-public-experience-plan.md` (páginas públicas a las que apuntan los enlaces).

@@ -134,121 +134,76 @@ test('admin creates, starts, scores, and finishes a playoff tournament from the 
   const tournamentRow = page.locator('.record-row').filter({ hasText: tournamentName });
   await expect(tournamentRow).toContainText('En preparación');
   await tournamentRow.getByRole('button', { name: 'Editar' }).click();
-  const setupDialog = page.getByRole('dialog', { name: /Configurar/ });
+  let setupDialog = page.getByRole('dialog', { name: /Configurar/ });
 
   for (const playerName of ['E2E Player One', 'E2E Player Two', 'E2E Player Three']) {
     await setupDialog.locator('.prep-available-item').filter({ hasText: playerName }).click();
-    await expect(
-      setupDialog.locator('.tournament-draw-preview').getByText(playerName, { exact: true }),
-    ).toBeVisible();
   }
-  const preview = setupDialog.getByRole('region', { name: 'Vista previa del cuadro' });
-  await expect(preview).toContainText('BYE');
-  const finalRound = preview.locator('.bracket-round').nth(1);
-  await expect(
-    finalRound.locator('.bracket-player').filter({ hasText: 'E2E Player One' }),
-  ).toBeVisible();
-  await expect(finalRound).toContainText('Pase directo por BYE · sin puntos por victoria');
   await expect(setupDialog.locator('.prep-slots-badge')).toContainText('3 / 3 cupos');
+  await setupDialog.getByRole('button', { name: 'Guardar borrador' }).click();
+  await expect(setupDialog).toBeHidden();
+
+  await page.locator('.record-row').filter({ hasText: tournamentName }).getByRole('button', { name: 'Editar' }).click();
+  setupDialog = page.getByRole('dialog', { name: /Configurar/ });
+  const drawPanel = setupDialog.getByRole('region', { name: 'Sorteo del cuadro' });
+  await expect(drawPanel.getByTestId('draw-status')).toHaveText('Sin sortear');
+  await expect(setupDialog.getByRole('button', { name: /Iniciar torneo/ })).toBeDisabled();
+
+  await drawPanel.getByLabel('Modo de siembra').selectOption({ label: 'Manual' });
+  await drawPanel.getByRole('button', { name: 'E2E Player One' }).click();
+  await drawPanel.getByRole('button', { name: 'Generar sorteo' }).click();
+  await expect(drawPanel.getByTestId('draw-status')).toHaveText('Borrador');
+  await expect(drawPanel).toContainText('BYE');
+  await drawPanel.getByRole('button', { name: 'Confirmar sorteo' }).click();
+  await expect(drawPanel.getByTestId('draw-status')).toHaveText('Oficial');
+
   await setupDialog.getByRole('button', { name: /Iniciar torneo/ }).click();
   await expect(setupDialog).toBeHidden();
   await expect(page.getByRole('status')).toContainText('Torneo iniciado');
 
-  const adminNavigation = page.getByRole('navigation', { name: 'Secciones administrativas' });
-  await adminNavigation.getByRole('button', { name: /Partidos/ }).click();
+  await page.locator('.record-row').filter({ hasText: tournamentName }).getByRole('button', { name: 'Resultados' }).click();
+  const resultsDialog = page.getByRole('dialog', { name: tournamentName });
 
-  async function createPlayoffMatch({
-    playerOne,
-    playerTwo,
-    stage,
-    gamesOne,
-    gamesTwo,
-    tiebreakOne,
-    tiebreakTwo,
-  }: {
-    playerOne: string;
-    playerTwo: string;
-    stage: 'Semifinal' | 'Final';
-    gamesOne: string;
-    gamesTwo: string;
-    tiebreakOne?: string;
-    tiebreakTwo?: string;
-  }) {
-    await page.getByRole('button', { name: '+ Nuevo Partido' }).click();
-    const matchDialog = page.getByRole('dialog', { name: 'Nuevo Partido' });
-    await matchDialog.getByLabel('Torneo').selectOption({ label: tournamentName });
-    await matchDialog
-      .locator('label.field')
-      .filter({ hasText: 'Jugador 1' })
-      .locator('select')
-      .selectOption({ label: playerOne });
-    await matchDialog
-      .locator('label.field')
-      .filter({ hasText: 'Jugador 2' })
-      .locator('select')
-      .selectOption({ label: playerTwo });
-    await matchDialog.getByLabel('Fase').selectOption({ label: stage });
-    await matchDialog.getByLabel('Games jugador 1 - set 1').fill(gamesOne);
-    await matchDialog.getByLabel('Games jugador 2 - set 1').fill(gamesTwo);
-
-    if (tiebreakOne !== undefined && tiebreakTwo !== undefined) {
-      await matchDialog.getByLabel('Tiebreak').check();
-      await matchDialog.getByLabel('Puntos tiebreak jugador 1 - set 1').fill(tiebreakOne);
-      await matchDialog.getByLabel('Puntos tiebreak jugador 2 - set 1').fill(tiebreakTwo);
+  // Plays the first pending slot; player 1 of the slot wins. Returns the winner's name.
+  async function playFirstPending(stage: string, tiebreak?: [string, string]) {
+    await expect(resultsDialog.getByLabel('Partido pendiente').locator('option').nth(1)).toContainText(stage);
+    await resultsDialog.getByLabel('Partido pendiente').selectOption({ index: 1 });
+    const text = (await resultsDialog.getByLabel('Partido pendiente').locator('option:checked').textContent()) ?? '';
+    const winner = text.split('·')[1].split(' vs ')[0].trim();
+    await resultsDialog.getByLabel('Games jugador 1 - set 1').fill(tiebreak ? '7' : '6');
+    await resultsDialog.getByLabel('Games jugador 2 - set 1').fill(tiebreak ? '6' : '4');
+    if (tiebreak) {
+      await resultsDialog.getByLabel('Tie-break').check();
+      await resultsDialog.getByLabel('Tie-break jugador 1 - set 1').fill(tiebreak[0]);
+      await resultsDialog.getByLabel('Tie-break jugador 2 - set 1').fill(tiebreak[1]);
     }
-
     const matchResponse = page.waitForResponse(
       (response) =>
         response.url().endsWith('/api/add-match') &&
         response.request().method() === 'POST' &&
         response.status() === 201,
     );
-    await matchDialog.getByLabel('Fecha del partido').fill('2026-03-15');
-    await matchDialog.getByRole('button', { name: 'Crear registro' }).click();
-    const created = await (await matchResponse).json();
-    expect(String(created.playedAt)).toContain('2026-03-15');
-    await expect(matchDialog).toBeHidden();
-    await expect(page.getByRole('status')).toContainText('Partido creado correctamente');
+    await resultsDialog.getByRole('button', { name: 'Guardar resultado' }).click();
+    await matchResponse;
+    return winner;
   }
 
-  await createPlayoffMatch({
-    playerOne: 'E2E Player Two',
-    playerTwo: 'E2E Player Three',
-    stage: 'Semifinal',
-    gamesOne: '6',
-    gamesTwo: '4',
-  });
-  await createPlayoffMatch({
-    playerOne: 'E2E Player Three',
-    playerTwo: 'E2E Player One',
-    stage: 'Final',
-    gamesOne: '7',
-    gamesTwo: '6',
-    tiebreakOne: '7',
-    tiebreakTwo: '5',
-  });
+  await playFirstPending('Semifinal');
+  const champion = await playFirstPending('Final', ['7', '5']);
 
-  await adminNavigation.getByRole('button', { name: /Torneos/ }).click();
-  const inProgressRow = page.locator('.record-row').filter({ hasText: tournamentName });
-  await expect(inProgressRow).toContainText('En curso');
-  await inProgressRow.getByRole('button', { name: 'Editar' }).click();
-  const finishDialog = page.getByRole('dialog', { name: 'Editar Torneo' });
-  await finishDialog.getByLabel('Campeón').selectOption({ label: 'E2E Player Three' });
-  await finishDialog.getByRole('button', { name: 'Guardar cambios' }).click();
-  await expect(finishDialog).toBeHidden();
-  await expect(page.locator('.record-row').filter({ hasText: tournamentName })).toContainText(
-    'Terminado',
-  );
+  page.once('dialog', (dialog) => dialog.accept());
+  await resultsDialog.getByRole('button', { name: /Cerrar torneo/ }).click();
+  await expect(resultsDialog).toBeHidden();
+  await expect(page.locator('.record-row').filter({ hasText: tournamentName })).toContainText('Terminado');
 
   await page.goto(`/tournaments/${tournamentId}`);
   await expect(page.getByRole('heading', { name: tournamentName })).toBeVisible();
   await expect(page.locator('.tournament-champion')).toContainText('Campeón');
-  await expect(page.locator('.tournament-champion')).toContainText('E2E Player Three');
+  await expect(page.locator('.tournament-champion')).toContainText(champion);
   await page.getByRole('tab', { name: 'Partidos' }).click();
   await expect(page.getByText('7(7)-6(5)', { exact: true })).toBeVisible();
   await page.getByRole('tab', { name: 'Cuadro' }).click();
-  await expect(page.getByText('Semifinal', { exact: true })).toBeVisible();
-  await expect(page.getByText('Final', { exact: true })).toBeVisible();
-  await expect(page.locator('.bracket-round').getByText('E2E Player Three').first()).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Semifinal' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Final', exact: true })).toBeVisible();
   assertNoRenderRegressions();
 });

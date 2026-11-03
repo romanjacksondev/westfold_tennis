@@ -385,14 +385,6 @@ export type LevelUpdateOneWithoutPlayersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.LevelUpdateToOneWithWhereWithoutPlayersInput, Prisma.LevelUpdateWithoutPlayersInput>, Prisma.LevelUncheckedUpdateWithoutPlayersInput>
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type LevelCreateNestedOneWithoutHistoryInput = {
   create?: Prisma.XOR<Prisma.LevelCreateWithoutHistoryInput, Prisma.LevelUncheckedCreateWithoutHistoryInput>
   connectOrCreate?: Prisma.LevelCreateOrConnectWithoutHistoryInput

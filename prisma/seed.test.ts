@@ -1,6 +1,7 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from './generated/client';
 import { hash } from 'bcryptjs';
+import { confirmDrawFromMatches } from '../src/lib/draw-persistence.ts';
 
 const databaseUrl = process.env.TEST_DATABASE_URL;
 const schema = process.env.TEST_DATABASE_SCHEMA;
@@ -57,6 +58,7 @@ async function main() {
     data: [
       { id: 'it-round-robin', name: 'Round Robin' },
       { id: 'it-playoffs', name: 'Playoffs' },
+      { id: 'it-mixed', name: 'Round Robin + Playoffs' },
     ],
   });
 
@@ -69,6 +71,10 @@ async function main() {
       { id: 'it-e2e-player-one', name: 'E2E Player One', gender: 'MALE', levelId: levelIds.B },
       { id: 'it-e2e-player-two', name: 'E2E Player Two', gender: 'MALE', levelId: levelIds.B },
       { id: 'it-e2e-player-three', name: 'E2E Player Three', gender: 'MALE', levelId: levelIds.B },
+      { id: 'it-draw-p1', name: 'Draw Player 1', gender: 'MALE', levelId: levelIds.A },
+      { id: 'it-draw-p2', name: 'Draw Player 2', gender: 'MALE', levelId: levelIds.B },
+      { id: 'it-draw-p3', name: 'Draw Player 3', gender: 'MALE', levelId: levelIds.B },
+      { id: 'it-draw-p4', name: 'Draw Player 4', gender: 'MALE' },
     ],
   });
   await prisma.user.createMany({
@@ -169,6 +175,27 @@ async function main() {
         drawSize: 2,
         status: 'PREPARATION',
       },
+      {
+        id: 'it-draw-playoffs',
+        name: 'Draw playoffs',
+        venueId: 'it-venue',
+        surfaceId: 'it-surface',
+        tournamentCategoryId: 'it-category',
+        tournamentTypeId: 'it-playoffs',
+        drawSize: 8,
+        status: 'PREPARATION',
+      },
+      {
+        id: 'it-draw-mixed',
+        name: 'Draw round robin and playoffs',
+        venueId: 'it-venue',
+        surfaceId: 'it-surface',
+        tournamentCategoryId: 'it-category',
+        tournamentTypeId: 'it-mixed',
+        drawSize: 4,
+        qualifiers: 2,
+        status: 'PREPARATION',
+      },
     ],
   });
 
@@ -181,6 +208,15 @@ async function main() {
     data: {
       players: { connect: [{ id: 'it-alex-one' }, { id: 'it-alex-two' }, { id: 'it-rival' }] },
     },
+  });
+
+  await prisma.tournament.update({
+    where: { id: 'it-draw-playoffs' },
+    data: { players: { connect: ['it-draw-p1', 'it-draw-p2', 'it-draw-p3', 'it-draw-p4'].map((id) => ({ id })) } },
+  });
+  await prisma.tournament.update({
+    where: { id: 'it-draw-mixed' },
+    data: { players: { connect: ['it-draw-p1', 'it-draw-p2', 'it-draw-p3'].map((id) => ({ id })) } },
   });
 
   await prisma.match.createMany({
@@ -257,6 +293,11 @@ async function main() {
       },
     },
   });
+
+  // Tournaments that already started get a confirmed draw holding their matches.
+  for (const id of ['it-tournament-b', 'it-tournament-b-old', 'it-tournament-a', 'it-tournament-none', 'it-tournament-open']) {
+    await confirmDrawFromMatches(prisma, id);
+  }
 }
 
 try {

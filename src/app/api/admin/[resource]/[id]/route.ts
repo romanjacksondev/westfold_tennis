@@ -7,6 +7,9 @@ import { actorFromSession } from '@/lib/audit';
 import { auditActionFor, auditAdminMutation, snapshotRecord } from '@/lib/admin-audit';
 import { logger } from '@/lib/logger';
 import { withApiLogging } from '@/lib/api-logging';
+import { DrawError } from '@/lib/draw-persistence';
+import { changeDrawWinner, closeTournament, refreshChampion, unlinkDrawResult } from '@/lib/draw-results';
+import { audit } from '@/lib/audit';
 
 const models = {
   players: 'player',
@@ -23,7 +26,7 @@ const models = {
 type Context = { params: Promise<{ resource: string; id: string }> };
 
 async function updateRecord(request: NextRequest, context: Context) {
-  const { response } = await requireAdmin();
+  const { session, response } = await requireAdmin();
   if (response) return response;
 
   const { resource, id } = await context.params;
@@ -35,6 +38,64 @@ async function updateRecord(request: NextRequest, context: Context) {
     const data = { ...body };
     delete data.id;
     delete data.deletedAt;
+    if (resource === 'matches') {
+      const current = await prisma.match.findFirst({
+        where: { id, deletedAt: null },
+        include: { drawMatch: { select: { id: true } }, tournament: { select: { id: true, status: true, championId: true } } },
+      });
+      if (current?.drawMatch && current.tournament) {
+        const changed = (['tournamentId', 'player1Id', 'player2Id', 'stage'] as const).filter(
+          (key) => key in data && (data[key] || null) !== (current[key] ?? null),
+        );
+        if (changed.length > 0) {
+          return NextResponse.json({ message: 'Los jugadores, el torneo y la fase de un partido del cuadro no se pueden modificar' }, { status: 400 });
+        }
+        const { status, championId: championBefore } = current.tournament;
+        if (status !== 'IN_PROGRESS' && status !== 'FINISHED') {
+          return NextResponse.json({ message: 'Solo se pueden corregir partidos de torneos en curso o finalizados' }, { status: 409 });
+        }
+        const finished = status === 'FINISHED';
+        const reason = typeof data.reason === 'string' ? data.reason.trim() : '';
+        if (finished && !reason) {
+          return NextResponse.json({ message: 'Corregir un torneo finalizado requiere indicar el motivo' }, { status: 400 });
+        }
+        const winnerId = data.winnerId ? String(data.winnerId) : current.winnerId;
+        if (winnerId !== current.player1Id && winnerId !== current.player2Id) {
+          return NextResponse.json({ message: 'El ganador debe ser uno de los dos jugadores del partido' }, { status: 400 });
+        }
+        const playedAt = data.playedAt ? new Date(data.playedAt) : current.playedAt;
+        if (playedAt && Number.isNaN(playedAt.getTime())) {
+          return NextResponse.json({ message: 'La fecha del partido es inválida' }, { status: 400 });
+        }
+        const outcome = await prisma.$transaction(async (tx) => {
+          const updated = await tx.match.update({ where: { id }, data: { winnerId, playedAt } });
+          if (winnerId !== current.winnerId) await changeDrawWinner(tx, current.drawMatch!.id, winnerId);
+          let championAfter = championBefore;
+          if (finished) {
+            championAfter = await refreshChampion(tx, current.tournament!.id);
+            if (championAfter !== championBefore) await tx.tournament.update({ where: { id: current.tournament!.id }, data: { championId: championAfter } });
+          }
+          return { updated, championAfter };
+        });
+        if (finished) {
+          await audit({
+            action: 'TOURNAMENT_CORRECTION',
+            entity: 'Tournament',
+            entityId: current.tournament.id,
+            actor: actorFromSession(session),
+            before: { championId: championBefore, winnerId: current.winnerId },
+            after: { championId: outcome.championAfter, winnerId },
+            metadata: { reason, matchId: id, championChanged: outcome.championAfter !== championBefore },
+          });
+        }
+        const championChanged = finished && outcome.championAfter !== championBefore;
+        return NextResponse.json({
+          data: outcome.updated,
+          championChanged,
+          message: championChanged ? 'Resultado corregido. Atención: el campeón del torneo cambió' : 'Resultado corregido correctamente',
+        });
+      }
+    }
     if (resource === 'tournaments' && data.action) {
       const action = data.action;
       if (action === 'start') {
@@ -60,11 +121,18 @@ async function updateRecord(request: NextRequest, context: Context) {
         if (tournament.players.length > tournament.drawSize) {
           return NextResponse.json({ message: `Los jugadores confirmados (${tournament.players.length}) superan el tamaño del cuadro (${tournament.drawSize})` }, { status: 400 });
         }
+        if (tournament.drawStatus !== 'CONFIRMED') {
+          return NextResponse.json({ message: 'Sorteá y confirmá el cuadro antes de iniciar el torneo' }, { status: 400 });
+        }
         const updated = await prisma.tournament.update({
           where: { id },
           data: { status: 'IN_PROGRESS' },
         });
         return NextResponse.json({ data: updated, message: '¡Torneo iniciado con éxito! Estado: En curso' });
+      }
+      if (action === 'finish') {
+        const updated = await closeTournament(prisma, id);
+        return NextResponse.json({ data: updated, message: 'Torneo cerrado. El campeón se calculó a partir de los resultados' });
       }
       if (action === 'cancel') {
         const updated = await prisma.tournament.update({ where: { id }, data: { status: 'CANCELLED' } });
@@ -172,6 +240,22 @@ async function updateRecord(request: NextRequest, context: Context) {
       if (currentTournament?.status === 'FINISHED' && !onlyLevel) {
         return NextResponse.json({ message: 'Los torneos terminados no pueden ser editados' }, { status: 400 });
       }
+      delete data.championId; // the champion is computed from the results (see the "finish" action)
+      const drawState = await prisma.tournament.findUnique({
+        where: { id },
+        select: { drawStatus: true, tournamentTypeId: true, qualifiers: true, players: { select: { id: true } } },
+      });
+      if (drawState && drawState.drawStatus !== 'NONE') {
+        const sameIds = (a: string[], b: string[]) => a.length === b.length && a.every((value) => b.includes(value));
+        const nextQualifiers = 'qualifiers' in data ? (data.qualifiers !== '' && data.qualifiers != null ? Number(data.qualifiers) : null) : drawState.qualifiers;
+        const locked =
+          ('playerIds' in data && !sameIds(Array.isArray(data.playerIds) ? data.playerIds : [], drawState.players.map((p) => p.id))) ||
+          ('tournamentTypeId' in data && (data.tournamentTypeId || null) !== drawState.tournamentTypeId) ||
+          (nextQualifiers ?? 0) !== (drawState.qualifiers ?? 0);
+        if (locked) {
+          return NextResponse.json({ message: 'El torneo ya tiene un sorteo: anulalo para cambiar los participantes, el formato o los clasificados' }, { status: 409 });
+        }
+      }
       // Handle drawSize / qualifiers as nullable integers
       if ('drawSize' in data) {
         data.drawSize = data.drawSize !== undefined && data.drawSize !== '' ? Number(data.drawSize) : null;
@@ -190,27 +274,12 @@ async function updateRecord(request: NextRequest, context: Context) {
         delete data.levelId;
         data.level = levelValue ? { connect: { id: levelValue } } : { disconnect: true };
       }
-      const relations = ['venueId', 'surfaceId', 'championId', 'tournamentCategoryId', 'tournamentTypeId'] as const;
-      const championValue = data.championId;
+      const relations = ['venueId', 'surfaceId', 'tournamentCategoryId', 'tournamentTypeId'] as const;
       for (const relation of relations) {
         if (!(relation in data)) continue;
         const value = data[relation];
         delete data[relation];
-        if (relation === 'championId') {
-          data.champion = value ? { connect: { id: value } } : { disconnect: true };
-          continue;
-        }
         if (value) data[relation.replace('Id', '')] = { connect: { id: value } };
-      }
-      if (championValue !== undefined) {
-        const current = await prisma.tournament.findUnique({ where: { id }, select: { status: true, finishedAt: true } });
-        if (championValue) {
-          data.status = 'FINISHED';
-          data.finishedAt = current?.finishedAt ?? new Date();
-        } else if (current?.status === 'FINISHED') {
-          data.status = 'IN_PROGRESS';
-          data.finishedAt = null;
-        }
       }
     }
     if (resource === 'matches') {
@@ -228,6 +297,7 @@ async function updateRecord(request: NextRequest, context: Context) {
     });
     return NextResponse.json({ data: updated, message: 'Registro actualizado correctamente' });
   } catch (error) {
+    if (error instanceof DrawError) return NextResponse.json({ message: error.message }, { status: error.status });
     logger.warn('admin.update_failed', { err: error, resource, id });
     return NextResponse.json({ message: error instanceof Error ? error.message : 'No se pudo actualizar el registro' }, { status: 400 });
   }
@@ -242,6 +312,22 @@ async function archiveRecord(_request: NextRequest, context: Context) {
   if (!modelName) return NextResponse.json({ message: 'Recurso inválido' }, { status: 404 });
 
   try {
+    if (resource === 'matches') {
+      const linked = await prisma.match.findFirst({
+        where: { id, deletedAt: null },
+        include: { drawMatch: { select: { id: true } }, tournament: { select: { status: true } } },
+      });
+      if (linked?.drawMatch) {
+        if (linked.tournament?.status !== 'IN_PROGRESS') {
+          return NextResponse.json({ message: 'No se puede archivar un partido de un torneo finalizado: corregí su resultado' }, { status: 409 });
+        }
+        await prisma.$transaction(async (tx) => {
+          await tx.match.update({ where: { id }, data: { deletedAt: new Date() } });
+          await unlinkDrawResult(tx, linked.drawMatch!.id);
+        });
+        return NextResponse.json({ message: 'Resultado archivado. El partido volvió a estar pendiente en el cuadro' });
+      }
+    }
     if (resource === 'users') {
       const target = await prisma.user.findUnique({ where: { id }, select: { role: true, isActive: true, player: { select: { id: true } } } });
       if (target?.role === 'ADMIN' && target.isActive && await prisma.user.count({ where: { role: 'ADMIN', isActive: true, deletedAt: null } }) <= 1) {
@@ -257,6 +343,7 @@ async function archiveRecord(_request: NextRequest, context: Context) {
     await (prisma as any)[modelName].update({ where: { id }, data: { deletedAt: new Date() } });
     return NextResponse.json({ message: 'Registro archivado correctamente' });
   } catch (error) {
+    if (error instanceof DrawError) return NextResponse.json({ message: error.message }, { status: error.status });
     logger.warn('admin.archive_failed', { err: error, resource, id });
     return NextResponse.json({ message: 'No se pudo archivar el registro' }, { status: 400 });
   }

@@ -1,13 +1,12 @@
 // schema.prisma
 generator client {
   provider = "prisma-client"
-    output   = "./generated"
+  output   = "./generated"
 }
 
 datasource db {
   provider = "postgresql"
 }
-
 
 model Tournament {
   id                   String             @id @default(cuid())
@@ -26,13 +25,58 @@ model Tournament {
   tournamentCategory   TournamentCategory @relation(fields: [tournamentCategoryId], references: [id])
   tournamentCategoryId String
   tournamentTypeId     String?
-  tournamentType       TournamentType?   @relation(fields: [tournamentTypeId], references: [id])
+  tournamentType       TournamentType?    @relation(fields: [tournamentTypeId], references: [id])
   players              Player[]           @relation("participations")
   drawSize             Int?
   qualifiers           Int?
   levelId              String?
   level                Level?             @relation(fields: [levelId], references: [id])
   deletedAt            DateTime?
+  drawStatus           DrawStatus         @default(NONE)
+  drawSeed             String?
+  drawSeedMode         String?
+  drawConfirmedAt      DateTime?
+  drawGroupOrder       String[]           @default([])
+  drawMatches          DrawMatch[]
+}
+
+enum DrawStatus {
+  NONE
+  DRAFT
+  CONFIRMED
+}
+
+enum DrawPhase {
+  GROUP
+  PLAYOFF
+}
+
+model DrawMatch {
+  id              String      @id @default(cuid())
+  tournamentId    String
+  tournament      Tournament  @relation(fields: [tournamentId], references: [id], onDelete: Cascade)
+  phase           DrawPhase
+  round           Int
+  position        Int
+  stage           MatchStage
+  player1Id       String?
+  player1         Player?     @relation("DrawPlayer1", fields: [player1Id], references: [id])
+  player2Id       String?
+  player2         Player?     @relation("DrawPlayer2", fields: [player2Id], references: [id])
+  seed1           Int?
+  seed2           Int?
+  source1         Json?
+  source2         Json?
+  isBye           Boolean     @default(false)
+  nextDrawMatchId String?
+  nextDrawMatch   DrawMatch?  @relation("DrawNext", fields: [nextDrawMatchId], references: [id], onDelete: SetNull)
+  previousMatches DrawMatch[] @relation("DrawNext")
+  nextSlot        Int?
+  matchId         String?     @unique
+  match           Match?      @relation(fields: [matchId], references: [id], onDelete: SetNull)
+
+  @@unique([tournamentId, phase, round, position])
+  @@index([tournamentId])
 }
 
 enum Gender {
@@ -64,7 +108,7 @@ model Venue {
 }
 
 model Player {
-  id             String       @id @default(cuid())
+  id             String               @id @default(cuid())
   name           String
   nickname       String?
   lastname       String?
@@ -75,28 +119,30 @@ model Player {
   photoThumbUrl  String?
   games          Game[]
   sets           Set[]
-  tournaments    Tournament[] @relation("participations")
-  winnerMatches  Match[]      @relation("Winner")
-  player1Matches Match[]      @relation("Player1")
-  player2Matches Match[]      @relation("Player2")
-  wonTournaments Tournament[] @relation("champion") // Relación uno a muchos (torneos ganados)
+  tournaments    Tournament[]         @relation("participations")
+  winnerMatches  Match[]              @relation("Winner")
+  player1Matches Match[]              @relation("Player1")
+  player2Matches Match[]              @relation("Player2")
+  drawPlayer1    DrawMatch[]          @relation("DrawPlayer1")
+  drawPlayer2    DrawMatch[]          @relation("DrawPlayer2")
+  wonTournaments Tournament[]         @relation("champion") // Relación uno a muchos (torneos ganados)
   deletedAt      DateTime?
-  userId         String?  @unique
-  user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId         String?              @unique
+  user           User?                @relation(fields: [userId], references: [id], onDelete: SetNull)
   levelId        String?
-  level          Level?   @relation(fields: [levelId], references: [id])
+  level          Level?               @relation(fields: [levelId], references: [id])
   levelHistory   PlayerLevelHistory[]
 }
 
 // Niveles ordenados de menor a mayor (`order`); son una referencia orientativa, no una restricción.
 model Level {
-  id         String   @id @default(cuid())
-  name       String   @unique
-  order      Int
-  players    Player[]
+  id          String               @id @default(cuid())
+  name        String               @unique
+  order       Int
+  players     Player[]
   tournaments Tournament[]
-  history    PlayerLevelHistory[]
-  deletedAt  DateTime?
+  history     PlayerLevelHistory[]
+  deletedAt   DateTime?
 }
 
 model PlayerLevelHistory {
@@ -150,10 +196,12 @@ model Match {
   stage        MatchStage?
   playedAt     DateTime?
   deletedAt    DateTime?
+  drawMatch    DrawMatch?
 }
 
 enum MatchStage {
   GROUP
+  ROUND_OF_32
   ROUND_OF_16
   QUARTERFINAL
   SEMIFINAL

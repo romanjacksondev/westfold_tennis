@@ -5,7 +5,7 @@
 | # | Tema | Documento | Estado |
 |---|---|---|---|
 | – | Auditoría y logging | [finished/audit-logging-plan.md](./finished/audit-logging-plan.md) | Implementado |
-| 2 | Cuadro/sorteo oficial guardado | [official-draw-bracket-plan.md](./official-draw-bracket-plan.md) | Pendiente, listo para implementar |
+| 2 | Cuadro/sorteo oficial guardado | [finished/official-draw-bracket-plan.md](./finished/official-draw-bracket-plan.md) | Implementado |
 | 1 | Inscripción de jugadores | [player-registration-plan.md](./player-registration-plan.md) | Idea a futuro |
 | 4 | Notificaciones e imágenes para compartir | [notifications-and-share-images-plan.md](./notifications-and-share-images-plan.md) | Viabilidad, fuera de alcance |
 | – | Formatos de torneo | [tournament-formats-plan.md](./tournament-formats-plan.md) | Para revisar |

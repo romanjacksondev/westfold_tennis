@@ -1,6 +1,6 @@
 // Pure scoring rules. Keep this file free of imports so it can be unit tested with `node --test`.
 
-export type MatchStage = 'GROUP' | 'ROUND_OF_16' | 'QUARTERFINAL' | 'SEMIFINAL' | 'FINAL';
+export type MatchStage = 'GROUP' | 'ROUND_OF_32' | 'ROUND_OF_16' | 'QUARTERFINAL' | 'SEMIFINAL' | 'FINAL';
 export type TournamentKind = 'ROUND_ROBIN' | 'ROUND_ROBIN_PLAYOFFS' | 'PLAYOFFS';
 
 export interface PositionPoints {
@@ -39,14 +39,16 @@ export interface PlayerTournamentPoints {
 
 // Stages ordered from the earliest to the latest playoff round.
 const PLAYOFF_STAGE_RANK: Record<Exclude<MatchStage, 'GROUP'>, number> = {
-  ROUND_OF_16: 1,
-  QUARTERFINAL: 2,
-  SEMIFINAL: 3,
-  FINAL: 4,
+  ROUND_OF_32: 1,
+  ROUND_OF_16: 2,
+  QUARTERFINAL: 3,
+  SEMIFINAL: 4,
+  FINAL: 5,
 };
 
 // Final position used to look up the points of a player eliminated in each stage.
 const ELIMINATED_POSITION: Record<Exclude<MatchStage, 'GROUP'>, number> = {
+  ROUND_OF_32: 17,
   ROUND_OF_16: 9,
   QUARTERFINAL: 5,
   SEMIFINAL: 3,

@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Tournament: 'Tournament',
+  DrawMatch: 'DrawMatch',
   Surface: 'Surface',
   Venue: 'Venue',
   Player: 'Player',
@@ -98,10 +99,37 @@ export const TournamentScalarFieldEnum = {
   drawSize: 'drawSize',
   qualifiers: 'qualifiers',
   levelId: 'levelId',
-  deletedAt: 'deletedAt'
+  deletedAt: 'deletedAt',
+  drawStatus: 'drawStatus',
+  drawSeed: 'drawSeed',
+  drawSeedMode: 'drawSeedMode',
+  drawConfirmedAt: 'drawConfirmedAt',
+  drawGroupOrder: 'drawGroupOrder'
 } as const
 
 export type TournamentScalarFieldEnum = (typeof TournamentScalarFieldEnum)[keyof typeof TournamentScalarFieldEnum]
+
+
+export const DrawMatchScalarFieldEnum = {
+  id: 'id',
+  tournamentId: 'tournamentId',
+  phase: 'phase',
+  round: 'round',
+  position: 'position',
+  stage: 'stage',
+  player1Id: 'player1Id',
+  player2Id: 'player2Id',
+  seed1: 'seed1',
+  seed2: 'seed2',
+  source1: 'source1',
+  source2: 'source2',
+  isBye: 'isBye',
+  nextDrawMatchId: 'nextDrawMatchId',
+  nextSlot: 'nextSlot',
+  matchId: 'matchId'
+} as const
+
+export type DrawMatchScalarFieldEnum = (typeof DrawMatchScalarFieldEnum)[keyof typeof DrawMatchScalarFieldEnum]
 
 
 export const SurfaceScalarFieldEnum = {

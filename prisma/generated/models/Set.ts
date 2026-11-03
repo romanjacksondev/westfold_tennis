@@ -487,10 +487,6 @@ export type SetUncheckedUpdateManyWithoutMatchNestedInput = {
   deleteMany?: Prisma.SetScalarWhereInput | Prisma.SetScalarWhereInput[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type SetCreateNestedOneWithoutGamesInput = {
   create?: Prisma.XOR<Prisma.SetCreateWithoutGamesInput, Prisma.SetUncheckedCreateWithoutGamesInput>
   connectOrCreate?: Prisma.SetCreateOrConnectWithoutGamesInput

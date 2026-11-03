@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "start": "next start",
     "postinstall": "prisma generate",
-    "test": "node --test src/utils/levels.test.ts src/utils/scoring.test.ts src/utils/utils.test.ts src/lib/log-sanitize.test.ts src/lib/audit-diff.test.ts",
+    "test": "node --test src/utils/levels.test.ts src/utils/scoring.test.ts src/utils/utils.test.ts src/utils/draw-engine.test.ts src/lib/log-sanitize.test.ts src/lib/audit-diff.test.ts",
     "test:coverage": "node --test --experimental-test-coverage --test-coverage-include=src/utils/scoring.ts --test-coverage-include=src/utils/levels.ts --test-coverage-include=src/utils/utils.ts --test-coverage-lines=80 --test-coverage-functions=80 src/utils/levels.test.ts src/utils/scoring.test.ts src/utils/utils.test.ts src/lib/log-sanitize.test.ts src/lib/audit-diff.test.ts",
     "test:e2e": "node scripts/run-integration.mjs --e2e",
     "test:integration": "node scripts/run-integration.mjs",

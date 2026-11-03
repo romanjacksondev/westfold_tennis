@@ -3,6 +3,7 @@ import 'dotenv/config';
 import { env } from 'prisma/config';
 import { PrismaClient } from './generated/client';
 import type { Gender } from './generated/client';
+import { buildDrawNodes, confirmDrawFromMatches, persistNodes } from '../src/lib/draw-persistence.ts';
 
 const adapter = new PrismaPg({ connectionString: env('DATABASE_URL') });
 const prisma = new PrismaClient({ adapter });
@@ -5025,6 +5026,98 @@ async function main() {
   await prisma.tournament.updateMany({ where: { tournamentTypeId: null }, data: { tournamentTypeId: roundRobin.id } });
 
   await seedDemoLeaderboard();
+  await seedLiveDemoTournaments();
+  await seedOfficialDraws();
+}
+
+// Every tournament that started has a confirmed draw whose slots hold its matches, and its champion is the computed one.
+async function seedOfficialDraws() {
+  await prisma.match.updateMany({ where: { stage: null, tournamentId: { not: null } }, data: { stage: 'GROUP' } });
+  const withChampion = await prisma.tournament.findMany({
+    where: { championId: { not: null }, status: { not: 'FINISHED' }, deletedAt: null },
+    select: { id: true, date: true },
+  });
+  for (const tournament of withChampion) {
+    await prisma.tournament.update({ where: { id: tournament.id }, data: { status: 'FINISHED', finishedAt: tournament.date } });
+  }
+  const started = await prisma.tournament.findMany({
+    where: { deletedAt: null, OR: [{ status: { in: ['FINISHED', 'IN_PROGRESS'] } }, { matches: { some: {} } }] },
+    select: { id: true, status: true, championId: true, matches: { select: { id: true }, take: 1 } },
+  });
+  for (const tournament of started) {
+    if (tournament.status === 'PREPARATION' && tournament.matches.length > 0) {
+      await prisma.tournament.update({ where: { id: tournament.id }, data: { status: 'IN_PROGRESS' } });
+    }
+    const seededIds = DEMO_SEED_ORDERS.get(tournament.id) ?? [];
+    const { champion } = await confirmDrawFromMatches(prisma, tournament.id, { seededIds });
+    if (tournament.status === 'FINISHED' && tournament.championId && champion !== tournament.championId) {
+      console.warn(`Torneo ${tournament.id}: el campeón guardado (${tournament.championId}) difiere del calculado (${champion})`);
+    }
+  }
+}
+
+const DEMO_SEED_ORDERS = new Map<string, string[]>();
+
+// An open tournament with one semifinal played and one in preparation with a draft draw, to try the whole flow.
+async function seedLiveDemoTournaments() {
+  const playoffs = await prisma.tournamentType.findUniqueOrThrow({ where: { name: 'Playoffs' } });
+  const common = {
+    venueId: DEMO_VENUE_ID,
+    surfaceId: DEMO_SURFACE_ID,
+    tournamentCategoryId: DEMO_CATEGORIES[0],
+    tournamentTypeId: playoffs.id,
+    levelId: null,
+    qualifiers: null,
+    championId: null,
+    finishedAt: null,
+    deletedAt: null,
+  };
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  const openIds = DEMO_MALE_IDS.slice(0, 4);
+  const open = { ...common, name: 'Demo Abierto (en curso)', date: today, drawSize: 4, status: 'IN_PROGRESS' as const };
+  await prisma.tournament.upsert({
+    where: { id: 'demo-tournament-open' },
+    create: { id: 'demo-tournament-open', ...open, players: { connect: openIds.map((id) => ({ id })) } },
+    update: { ...open, players: { set: openIds.map((id) => ({ id })) } },
+  });
+  DEMO_SEED_ORDERS.set('demo-tournament-open', openIds);
+  const semifinal = await prisma.match.create({
+    data: {
+      id: 'demo-match-open-sf1',
+      tournamentId: 'demo-tournament-open',
+      player1Id: openIds[0],
+      player2Id: openIds[3],
+      winnerId: openIds[0],
+      stage: 'SEMIFINAL',
+      playedAt: today,
+    },
+  });
+  for (const [index, [first, second]] of [[6, 3], [6, 4]].entries()) {
+    const set = await prisma.set.create({ data: { id: `${semifinal.id}-s${index + 1}`, matchId: semifinal.id, winnerId: openIds[0] } });
+    await prisma.game.createMany({
+      data: [
+        ...Array.from({ length: first }, (_, g) => ({ id: `${set.id}-w${g}`, setId: set.id, winnerId: openIds[0] })),
+        ...Array.from({ length: second }, (_, g) => ({ id: `${set.id}-l${g}`, setId: set.id, winnerId: openIds[3] })),
+      ],
+    });
+  }
+
+  const draftIds = DEMO_FEMALE_IDS;
+  const draft = { ...common, name: 'Demo Sorteo en borrador', date: today, drawSize: 8, status: 'PREPARATION' as const };
+  await prisma.tournament.upsert({
+    where: { id: 'demo-tournament-draft' },
+    create: { id: 'demo-tournament-draft', ...draft, players: { connect: draftIds.map((id) => ({ id })) } },
+    update: { ...draft, players: { set: draftIds.map((id) => ({ id })) } },
+  });
+  const drawSeed = 'demo-draft-seed';
+  const nodes = buildDrawNodes({ kind: 'PLAYOFFS', playerIds: draftIds, seededIds: draftIds.slice(0, 4), seedCount: 4, qualifiers: null, seed: drawSeed });
+  await persistNodes(prisma, 'demo-tournament-draft', nodes);
+  await prisma.tournament.update({
+    where: { id: 'demo-tournament-draft' },
+    data: { drawStatus: 'DRAFT', drawSeed, drawSeedMode: 'RANKING', drawConfirmedAt: null, drawGroupOrder: [] },
+  });
 }
 
 type DemoPlayer = { id: string; name: string; lastname: string; nickname: string; gender: Gender; mail: string };
@@ -5187,7 +5280,7 @@ async function seedDemoLeaderboard() {
         surfaceId: DEMO_SURFACE_ID,
         tournamentCategoryId: DEMO_CATEGORIES[t % DEMO_CATEGORIES.length],
         tournamentTypeId: typeIdByName.get(kind),
-        drawSize: null,
+        drawSize: group.ids.length,
         qualifiers: kind === 'Round Robin + Playoffs' ? 4 : null,
         championId: hasPlayoffs ? finalWinner : order[0],
         date,
@@ -5196,7 +5289,12 @@ async function seedDemoLeaderboard() {
         deletedAt: null,
       };
       // Upsert so dates are refreshed relative to the day the seed runs.
-      await prisma.tournament.upsert({ where: { id: tournamentId }, create: { id: tournamentId, ...data }, update: data });
+      await prisma.tournament.upsert({
+        where: { id: tournamentId },
+        create: { id: tournamentId, ...data, players: { connect: group.ids.map((id) => ({ id })) } },
+        update: { ...data, players: { set: group.ids.map((id) => ({ id })) } },
+      });
+      DEMO_SEED_ORDERS.set(tournamentId, order);
 
       const prefix = `demo-match-${group.key}-${t + 1}`;
 

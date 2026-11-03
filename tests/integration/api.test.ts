@@ -351,3 +351,266 @@ describe('health, audit trail and logging', () => {
 after(async () => {
   await prisma.$disconnect();
 });
+
+type DrawViewMatch = {
+  id: string;
+  phase: 'GROUP' | 'PLAYOFF';
+  round: number;
+  position: number;
+  isBye: boolean;
+  seed1: number | null;
+  seed2: number | null;
+  player1: { id: string } | null;
+  player2: { id: string } | null;
+  matchId: string | null;
+  winnerId: string | null;
+};
+
+const drawView = async (tournamentId: string) =>
+  json(await request(`/api/admin/draws/${tournamentId}`, { role: 'ADMIN' })) as Promise<{
+    drawStatus: string;
+    matches: DrawViewMatch[];
+    groupOrder: string[];
+  }>;
+
+const drawAction = (tournamentId: string, body: Record<string, unknown>, role: 'ADMIN' | 'USER' = 'ADMIN') =>
+  request(`/api/admin/draws/${tournamentId}`, { role, method: 'POST', body });
+
+const slotOf = async (tournamentId: string, phase: 'GROUP' | 'PLAYOFF', round: number, position: number) => {
+  const found = (await drawView(tournamentId)).matches.find(
+    (match) => match.phase === phase && match.round === round && match.position === position,
+  );
+  assert.ok(found, `missing draw match ${phase}:${round}:${position}`);
+  return found;
+};
+
+const playSlot = (slot: DrawViewMatch, winnerId: string, role: 'ADMIN' | 'USER' = 'ADMIN') => {
+  const [first, second] = [slot.player1!.id, slot.player2!.id];
+  const winsFirst = winnerId === first;
+  return request('/api/add-match', {
+    role,
+    method: 'POST',
+    body: {
+      drawMatchId: slot.id,
+      idPlayer1: first,
+      idPlayer2: second,
+      winner: winnerId,
+      sets: [1, 2].map(() => ({
+        gamesPlayer1: winsFirst ? 6 : 3,
+        gamesPlayer2: winsFirst ? 3 : 6,
+        winner: winnerId,
+      })),
+    },
+  });
+};
+
+describe('official draw', () => {
+  it('only lets admins draw, and does not start without a confirmed draw', async () => {
+    assert.equal((await drawAction('it-draw-playoffs', { action: 'generate' }, 'USER')).status, 403);
+    const start = await request('/api/admin/tournaments/it-draw-playoffs', {
+      role: 'ADMIN',
+      method: 'PATCH',
+      body: { action: 'start' },
+    });
+    assert.equal(start.status, 400);
+    assert.match((await json(start)).message, /Sorte/);
+  });
+
+  it('generates a seeded draft, reshuffles, swaps and confirms it', async () => {
+    const generated = await drawAction('it-draw-playoffs', { action: 'generate', seedMode: 'LEVEL' });
+    assert.equal(generated.status, 200);
+    let view = await drawView('it-draw-playoffs');
+    assert.equal(view.drawStatus, 'DRAFT');
+    assert.equal(view.matches.length, 3);
+    const seeds = view.matches.filter((m) => m.round === 1).flatMap((m) => [m.seed1, m.seed2]);
+    assert.ok(seeds.includes(1), 'the strongest player is seed 1');
+    const seedOne = view.matches.find((m) => m.seed1 === 1 || m.seed2 === 1)!;
+    assert.equal(seedOne.seed1 === 1 ? seedOne.player1!.id : seedOne.player2!.id, 'it-draw-p1');
+
+    assert.equal((await drawAction('it-draw-playoffs', { action: 'reshuffle' })).status, 200);
+    view = await drawView('it-draw-playoffs');
+    const [first, second] = view.matches.filter((m) => m.round === 1);
+    const swapped = await drawAction('it-draw-playoffs', {
+      action: 'swap',
+      a: { drawMatchId: first.id, slot: 1 },
+      b: { drawMatchId: second.id, slot: 2 },
+    });
+    assert.equal(swapped.status, 200);
+    const after = await drawView('it-draw-playoffs');
+    assert.equal(after.matches.find((m) => m.id === first.id)!.player1!.id, second.player2!.id);
+    assert.equal(after.matches.find((m) => m.id === second.id)!.player2!.id, first.player1!.id);
+
+    assert.equal((await drawAction('it-draw-playoffs', { action: 'confirm' })).status, 200);
+    assert.equal((await drawView('it-draw-playoffs')).drawStatus, 'CONFIRMED');
+    assert.equal((await drawAction('it-draw-playoffs', { action: 'reshuffle' })).status, 409);
+
+    const audits = await prisma.auditLog.findMany({
+      where: { entityId: 'it-draw-playoffs', action: { in: ['DRAW_GENERATE', 'DRAW_RESHUFFLE', 'DRAW_SWAP', 'DRAW_CONFIRM'] } },
+    });
+    assert.equal(new Set(audits.map((entry) => entry.action)).size, 4);
+  });
+
+  it('locks participants, format and qualifiers once the draw exists', async () => {
+    const locked = await request('/api/admin/tournaments/it-draw-playoffs', {
+      role: 'ADMIN',
+      method: 'PATCH',
+      body: { playerIds: ['it-draw-p1', 'it-draw-p2'] },
+    });
+    assert.equal(locked.status, 409);
+    const sameParticipants = await request('/api/admin/tournaments/it-draw-playoffs', {
+      role: 'ADMIN',
+      method: 'PATCH',
+      body: { playerIds: ['it-draw-p4', 'it-draw-p3', 'it-draw-p2', 'it-draw-p1'], drawSize: 8 },
+    });
+    assert.equal(sameParticipants.status, 200);
+  });
+
+  it('only accepts results through a pending draw match and advances the winner', async () => {
+    const started = await request('/api/admin/tournaments/it-draw-playoffs', {
+      role: 'ADMIN',
+      method: 'PATCH',
+      body: { action: 'start' },
+    });
+    assert.equal(started.status, 200);
+
+    const semifinalOne = await slotOf('it-draw-playoffs', 'PLAYOFF', 1, 0);
+    const semifinalTwo = await slotOf('it-draw-playoffs', 'PLAYOFF', 1, 1);
+    const free = await request('/api/add-match', {
+      role: 'ADMIN',
+      method: 'POST',
+      body: { idPlayer1: 'it-draw-p1', idPlayer2: 'it-draw-p2', winner: 'it-draw-p1', sets: [{ gamesPlayer1: 6, gamesPlayer2: 1, winner: 'it-draw-p1' }] },
+    });
+    assert.equal(free.status, 400);
+    assert.equal((await playSlot(semifinalOne, semifinalOne.player1!.id, 'USER')).status, 403);
+
+    const wrongPlayers = await request('/api/add-match', {
+      role: 'ADMIN',
+      method: 'POST',
+      body: {
+        drawMatchId: semifinalOne.id,
+        idPlayer1: semifinalOne.player1!.id,
+        idPlayer2: semifinalTwo.player1!.id,
+        winner: semifinalOne.player1!.id,
+        sets: [{ gamesPlayer1: 6, gamesPlayer2: 1, winner: semifinalOne.player1!.id }],
+      },
+    });
+    assert.equal(wrongPlayers.status, 400);
+    const finalSlot = await slotOf('it-draw-playoffs', 'PLAYOFF', 2, 0);
+    assert.equal((await playSlot({ ...finalSlot, player1: semifinalOne.player1, player2: semifinalOne.player2 }, semifinalOne.player1!.id)).status, 409);
+
+    assert.equal((await playSlot(semifinalOne, semifinalOne.player1!.id)).status, 201);
+    assert.equal((await playSlot(semifinalOne, semifinalOne.player1!.id)).status, 409);
+    assert.equal((await slotOf('it-draw-playoffs', 'PLAYOFF', 2, 0)).player1?.id, semifinalOne.player1!.id);
+
+    const pending = await json(await request('/api/admin/draws/it-draw-playoffs/pending', { role: 'ADMIN' }));
+    assert.equal(pending.pending.length, 1);
+
+    const finish = await request('/api/admin/tournaments/it-draw-playoffs', {
+      role: 'ADMIN',
+      method: 'PATCH',
+      body: { action: 'finish' },
+    });
+    assert.equal(finish.status, 409);
+  });
+
+  it('corrects a result while the next match is pending and blocks it once the next match is played', async () => {
+    const semifinalOne = await slotOf('it-draw-playoffs', 'PLAYOFF', 1, 0);
+    const matchId = semifinalOne.matchId!;
+    const otherPlayer = semifinalOne.player2!.id;
+
+    const corrected = await request(`/api/admin/matches/${matchId}`, { role: 'ADMIN', method: 'PATCH', body: { winnerId: otherPlayer } });
+    assert.equal(corrected.status, 200);
+    assert.equal((await slotOf('it-draw-playoffs', 'PLAYOFF', 2, 0)).player1?.id, otherPlayer);
+
+    const changedPlayers = await request(`/api/admin/matches/${matchId}`, { role: 'ADMIN', method: 'PATCH', body: { player1Id: 'it-rival' } });
+    assert.equal(changedPlayers.status, 400);
+
+    const semifinalTwo = await slotOf('it-draw-playoffs', 'PLAYOFF', 1, 1);
+    assert.equal((await playSlot(semifinalTwo, semifinalTwo.player1!.id)).status, 201);
+    const finalSlot = await slotOf('it-draw-playoffs', 'PLAYOFF', 2, 0);
+    assert.equal((await playSlot(finalSlot, finalSlot.player1!.id)).status, 201);
+
+    const blocked = await request(`/api/admin/matches/${matchId}`, { role: 'ADMIN', method: 'PATCH', body: { winnerId: semifinalOne.player1!.id } });
+    assert.equal(blocked.status, 409);
+    const archiveBlocked = await request(`/api/admin/matches/${matchId}`, { role: 'ADMIN', method: 'DELETE' });
+    assert.equal(archiveBlocked.status, 409);
+  });
+
+  it('closes the tournament with the computed champion and audits corrections after it finished', async () => {
+    const finalSlot = await slotOf('it-draw-playoffs', 'PLAYOFF', 2, 0);
+    const finish = await request('/api/admin/tournaments/it-draw-playoffs', {
+      role: 'ADMIN',
+      method: 'PATCH',
+      body: { action: 'finish' },
+    });
+    assert.equal(finish.status, 200);
+    const tournament = await prisma.tournament.findUniqueOrThrow({ where: { id: 'it-draw-playoffs' } });
+    assert.equal(tournament.status, 'FINISHED');
+    assert.equal(tournament.championId, finalSlot.winnerId);
+
+    const ignored = await request('/api/admin/tournaments/it-draw-playoffs', {
+      role: 'ADMIN',
+      method: 'PATCH',
+      body: { championId: 'it-rival' },
+    });
+    assert.equal(ignored.status, 400);
+    assert.equal((await prisma.tournament.findUniqueOrThrow({ where: { id: 'it-draw-playoffs' } })).championId, finalSlot.winnerId);
+
+    const loser = finalSlot.player1!.id === finalSlot.winnerId ? finalSlot.player2!.id : finalSlot.player1!.id;
+    const withoutReason = await request(`/api/admin/matches/${finalSlot.matchId}`, { role: 'ADMIN', method: 'PATCH', body: { winnerId: loser } });
+    assert.equal(withoutReason.status, 400);
+    const corrected = await request(`/api/admin/matches/${finalSlot.matchId}`, {
+      role: 'ADMIN',
+      method: 'PATCH',
+      body: { winnerId: loser, reason: 'Error de carga' },
+    });
+    assert.equal(corrected.status, 200);
+    assert.equal((await json(corrected)).championChanged, true);
+    assert.equal((await prisma.tournament.findUniqueOrThrow({ where: { id: 'it-draw-playoffs' } })).championId, loser);
+
+    const entry = await prisma.auditLog.findFirst({ where: { action: 'TOURNAMENT_CORRECTION', entityId: 'it-draw-playoffs' } });
+    assert.ok(entry);
+    assert.equal((entry.metadata as { reason: string }).reason, 'Error de carga');
+  });
+
+  it('fills the playoff from the group table in a round robin with playoffs', async () => {
+    assert.equal((await drawAction('it-draw-mixed', { action: 'generate' })).status, 200);
+    assert.equal((await drawAction('it-draw-mixed', { action: 'confirm' })).status, 200);
+    assert.equal(
+      (await request('/api/admin/tournaments/it-draw-mixed', { role: 'ADMIN', method: 'PATCH', body: { action: 'start' } })).status,
+      200,
+    );
+
+    const groupMatches = (await drawView('it-draw-mixed')).matches.filter((m) => m.phase === 'GROUP');
+    assert.equal(groupMatches.length, 3);
+    const ranking = ['it-draw-p1', 'it-draw-p2', 'it-draw-p3'];
+    for (const slot of groupMatches) {
+      const winner = ranking.find((id) => id === slot.player1!.id || id === slot.player2!.id)!;
+      assert.equal((await playSlot(slot, winner)).status, 201);
+    }
+    const finalSlot = await slotOf('it-draw-mixed', 'PLAYOFF', 1, 0);
+    assert.deepEqual([finalSlot.player1?.id, finalSlot.player2?.id].sort(), ['it-draw-p1', 'it-draw-p2']);
+
+    assert.equal((await playSlot(finalSlot, 'it-draw-p1')).status, 201);
+    assert.equal(
+      (await request('/api/admin/tournaments/it-draw-mixed', { role: 'ADMIN', method: 'PATCH', body: { action: 'finish' } })).status,
+      200,
+    );
+    assert.equal((await prisma.tournament.findUniqueOrThrow({ where: { id: 'it-draw-mixed' } })).championId, 'it-draw-p1');
+  });
+
+  it('exposes the official draw to signed-in users and keeps seeded data consistent', async () => {
+    const publicResponse = await request('/api/tournaments/it-draw-mixed/draw', { role: 'USER' });
+    const publicDraw = await json(publicResponse);
+    assert.equal(publicResponse.status, 200, JSON.stringify(publicDraw));
+    assert.equal(publicDraw.official, true);
+    assert.ok(publicDraw.matches.length >= 4);
+
+    const finished = await prisma.tournament.findMany({ where: { status: { in: ['FINISHED', 'IN_PROGRESS'] } } });
+    for (const tournament of finished) {
+      assert.equal(tournament.drawStatus, 'CONFIRMED', tournament.id);
+      const matches = await prisma.match.findMany({ where: { tournamentId: tournament.id, deletedAt: null }, include: { drawMatch: true } });
+      assert.ok(matches.every((match) => match.drawMatch), `${tournament.id} has matches outside the draw`);
+    }
+  });
+});

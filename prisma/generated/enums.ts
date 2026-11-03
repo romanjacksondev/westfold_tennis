@@ -9,6 +9,23 @@
 * 🟢 You can import this file directly.
 */
 
+export const DrawStatus = {
+  NONE: 'NONE',
+  DRAFT: 'DRAFT',
+  CONFIRMED: 'CONFIRMED'
+} as const
+
+export type DrawStatus = (typeof DrawStatus)[keyof typeof DrawStatus]
+
+
+export const DrawPhase = {
+  GROUP: 'GROUP',
+  PLAYOFF: 'PLAYOFF'
+} as const
+
+export type DrawPhase = (typeof DrawPhase)[keyof typeof DrawPhase]
+
+
 export const Gender = {
   MALE: 'MALE',
   FEMALE: 'FEMALE'
@@ -29,6 +46,7 @@ export type TournamentStatus = (typeof TournamentStatus)[keyof typeof Tournament
 
 export const MatchStage = {
   GROUP: 'GROUP',
+  ROUND_OF_32: 'ROUND_OF_32',
   ROUND_OF_16: 'ROUND_OF_16',
   QUARTERFINAL: 'QUARTERFINAL',
   SEMIFINAL: 'SEMIFINAL',

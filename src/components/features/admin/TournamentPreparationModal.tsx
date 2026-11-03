@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, FormEvent } from 'react';
-import TournamentDrawPreview from './TournamentDrawPreview';
+import TournamentDrawPanel from './TournamentDrawPanel';
 import TournamentTypeVisual from './TournamentTypeVisual';
 
 type RecordItem = { id: string; name?: string; [key: string]: unknown };
@@ -66,6 +66,7 @@ export default function TournamentPreparationModal({ tournament, options, onClos
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showTypePicker, setShowTypePicker] = useState(false);
+  const [drawStatus, setDrawStatus] = useState<'NONE' | 'DRAFT' | 'CONFIRMED'>('NONE');
 
   const selectedType = options.types.find((t) => t.id === tournamentTypeId);
   const isRoundRobinPlusPlayoffs = String(selectedType?.name).trim().toLowerCase() === 'round robin + playoffs';
@@ -99,8 +100,11 @@ export default function TournamentPreparationModal({ tournament, options, onClos
     tournamentTypeId &&
     targetDrawSize >= 2 &&
     selectedPlayerIds.length >= 2 &&
-    !isDrawExceeded
+    !isDrawExceeded &&
+    drawStatus === 'CONFIRMED'
   );
+  const participantsDirty =
+    selectedPlayerIds.length !== initialPlayers.length || selectedPlayerIds.some((id) => !initialPlayers.includes(id));
 
   function addPlayer(id: string) {
     setSelectedPlayerIds((prev) => (prev.includes(id) ? prev : [...prev, id]));
@@ -118,7 +122,7 @@ export default function TournamentPreparationModal({ tournament, options, onClos
     }
 
     if (andStart && !canStart) {
-      setError('Para iniciar el torneo se requiere completar sede, superficie, categoría, formato, tamaño de cuadro y al menos 2 jugadores.');
+      setError('Para iniciar el torneo se requiere completar los datos, tener al menos 2 jugadores y confirmar el sorteo.');
       return;
     }
 
@@ -383,18 +387,12 @@ export default function TournamentPreparationModal({ tournament, options, onClos
             </div>
           </div>
 
-          <section className="prep-draw-section" aria-label="Vista previa del cuadro">
-            <h3 className="prep-section-title">Cuadro</h3>
-            <p className="muted" style={{ margin: '2px 0 12px', fontSize: '13px' }}>
-              Se completa a medida que sumás jugadores. Los cruces siguen el orden de confirmación.
-            </p>
-            <TournamentDrawPreview
-              typeName={String(selectedType?.name ?? '')}
-              drawSize={targetDrawSize}
-              qualifiers={Number(qualifiers) || 2}
-              playerNames={selectedPlayers.map((player) => String(player.nickname || player.name || player.id))}
-            />
-          </section>
+          <TournamentDrawPanel
+            tournamentId={String(tournament.id)}
+            participants={selectedPlayers}
+            onStatus={setDrawStatus}
+            disabledReason={participantsDirty ? 'Guardá el borrador para sortear con los participantes actuales.' : null}
+          />
 
           {/* Acciones del Modal */}
           <div className="prep-modal-footer">
@@ -419,7 +417,7 @@ export default function TournamentPreparationModal({ tournament, options, onClos
                 title={
                   canStart
                     ? 'Inicia formalmente la competencia y cambia el estado a En curso'
-                    : 'Para iniciar completá todos los campos obligatorios y al menos 2 jugadores'
+                    : 'Para iniciar completá los campos obligatorios, al menos 2 jugadores y confirmá el sorteo'
                 }
               >
                 {starting ? 'Iniciando...' : '🚀 Iniciar torneo'}

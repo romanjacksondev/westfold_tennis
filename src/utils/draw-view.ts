@@ -19,7 +19,7 @@ export type DrawViewPlayer = { id: string; name: string };
 export type GroupCell =
   { kind: 'self' } | { kind: 'empty' } | { kind: 'match'; won: boolean; sets: DrawViewSet[] };
 
-export const DRAW_STAGE_ORDER = ['GROUP', 'ROUND_OF_16', 'QUARTERFINAL', 'SEMIFINAL', 'FINAL'];
+export const DRAW_STAGE_ORDER = ['GROUP', 'ROUND_OF_32', 'ROUND_OF_16', 'QUARTERFINAL', 'SEMIFINAL', 'FINAL'];
 
 export function getDrawStageRank(stage?: string | null): number {
   const index = stage ? DRAW_STAGE_ORDER.indexOf(stage) : -1;

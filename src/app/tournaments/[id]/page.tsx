@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { Fragment, Suspense, useEffect, useState } from 'react';
 import { LuGitFork, LuListOrdered, LuSwords, LuTrophy } from 'react-icons/lu';
 import { formatSetScore } from '@/utils/utils';
+import DrawBracket, { type DrawNode } from '@/components/features/DrawBracket';
 import { buildGroupMatrix, buildPlayoffRounds, getSideSetScores, sortDrawMatches } from '@/utils/draw-view';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -32,6 +33,7 @@ type TournamentData = {
 
 const STAGE_LABELS: Record<string, string> = {
   GROUP: 'Fase de grupos',
+  ROUND_OF_32: '16avos',
   ROUND_OF_16: 'Octavos',
   QUARTERFINAL: 'Cuartos',
   SEMIFINAL: 'Semifinal',
@@ -136,12 +138,13 @@ function PlayoffBracket({ matches }: { matches: Match[] }) {
   );
 }
 
-function DrawSection({ data }: { data: TournamentResponse }) {
+function DrawSection({ data, official }: { data: TournamentResponse; official: DrawNode[] | null }) {
+  const officialPlayoffs = (official ?? []).filter((node) => node.phase === 'PLAYOFF');
   const typeName = (data.tournamentData?.type ?? '').toLowerCase();
   const groupMatches = data.matchSummary.filter((m) => !m.stage || m.stage === 'GROUP');
   const playoffMatches = data.matchSummary.filter((m) => m.stage && m.stage !== 'GROUP');
   const showGroup = groupMatches.length > 0 && (typeName.includes('round robin') || playoffMatches.length === 0 || !typeName);
-  const showPlayoffs = playoffMatches.length > 0;
+  const showPlayoffs = playoffMatches.length > 0 || officialPlayoffs.length > 0;
 
   if (!showGroup && !showPlayoffs) return <p className="empty-state">Todavía no hay partidos jugados para armar el cuadro.</p>;
 
@@ -158,7 +161,7 @@ function DrawSection({ data }: { data: TournamentResponse }) {
         <section className="tournament-detail-panel">
           <p className="eyebrow">Cuadro{showGroup ? ' · Playoffs' : ''}</p>
           <h2>Llave de playoffs</h2>
-          <PlayoffBracket matches={playoffMatches} />
+          {officialPlayoffs.length > 0 ? <DrawBracket matches={officialPlayoffs} /> : <PlayoffBracket matches={playoffMatches} />}
         </section>
       )}
     </>
@@ -173,6 +176,7 @@ function TournamentDetailsContent() {
   const [data, setData] = useState<TournamentResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [official, setOfficial] = useState<DrawNode[] | null>(null);
   const [activeTab, setActiveTab] = useState<'standings' | 'matches' | 'draw'>('standings');
 
   useEffect(() => {
@@ -184,6 +188,10 @@ function TournamentDetailsContent() {
       .then((response: TournamentResponse) => setData(response))
       .catch(() => setError(true))
       .finally(() => setLoading(false));
+    fetch(`/api/tournaments/${id}/draw`)
+      .then((response) => (response.ok ? response.json() : null))
+      .then((response) => setOfficial(response?.official ? response.matches : null))
+      .catch(() => setOfficial(null));
   }, [id]);
 
   const orderedMatches = sortDrawMatches(data?.matchSummary ?? []);
@@ -231,7 +239,7 @@ function TournamentDetailsContent() {
               </div>
             </div>
 
-            {activeTab === 'draw' && <DrawSection data={data} />}
+            {activeTab === 'draw' && <DrawSection data={data} official={official} />}
 
             <div className="tournament-detail-grid">
               {activeTab === 'standings' && (
