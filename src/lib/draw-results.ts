@@ -185,6 +185,20 @@ export async function getDrawView(db: Db, tournamentId: string) {
       winnerId: row.match?.winnerId ?? null,
       walkover: row.match?.walkover ?? false,
       score,
+      sets: row.match
+        ? row.match.sets.map((set) => {
+            const sameOrder = row.player1Id === row.match!.player1Id;
+            const first = set.games.filter((game) => game.winnerId === row.player1Id).length;
+            const second = set.games.filter((game) => game.winnerId === row.player2Id).length;
+            return {
+              g1: first,
+              g2: second,
+              tiebreak: set.hasTiebreak,
+              tb1: sameOrder ? set.tiebreakPlayer1Points : set.tiebreakPlayer2Points,
+              tb2: sameOrder ? set.tiebreakPlayer2Points : set.tiebreakPlayer1Points,
+            };
+          })
+        : [],
     };
   });
   const kind = tournamentKind(tournament);

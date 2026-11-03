@@ -35,7 +35,6 @@ export default function TournamentResultsModal({ tournament, onClose, onChanged 
   const [sets, setSets] = useState<SetForm[]>([emptySet()]);
   const [playedAt, setPlayedAt] = useState('');
   const [order, setOrder] = useState<Player[] | null>(null);
-  const [newWinnerId, setNewWinnerId] = useState('');
   const [reason, setReason] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -57,16 +56,18 @@ export default function TournamentResultsModal({ tournament, onClose, onChanged 
     load().catch((err) => setError(err instanceof Error ? err.message : 'No se pudo cargar'));
   }, [load]);
 
-  const slot = active && !active.matchId ? active : null;
   const correcting = active?.matchId ? active : null;
 
   function openMatch(node: DrawNode) {
     setActive(node);
-    setSets([emptySet()]);
+    setSets(
+      node.matchId && node.sets && node.sets.length > 0
+        ? node.sets.map((set) => ({ g1: String(set.g1), g2: String(set.g2), tiebreak: set.tiebreak, tb1: set.tb1 === null ? '' : String(set.tb1), tb2: set.tb2 === null ? '' : String(set.tb2) }))
+        : [emptySet()],
+    );
     setPlayedAt('');
-    setWalkover(false);
-    setWoWinnerId('');
-    setNewWinnerId('');
+    setWalkover(Boolean(node.matchId && node.walkover));
+    setWoWinnerId(node.matchId && node.walkover ? node.winnerId ?? '' : '');
     setReason('');
     setError(null);
     setNotice(null);
@@ -97,16 +98,29 @@ export default function TournamentResultsModal({ tournament, onClose, onChanged 
     }
   }
 
-  function submitResult() {
-    if (!slot || !slot.player1 || !slot.player2) return;
-    const p1 = slot.player1.id;
-    const p2 = slot.player2.id;
+  async function submitResult() {
+    if (!active || !active.player1 || !active.player2) return;
+    const slot = active;
+    const p1 = active.player1.id;
+    const p2 = active.player2.id;
+    const isCorrection = Boolean(active.matchId);
+    if (isCorrection && !reason.trim()) return setError('Indicá el motivo de la corrección.');
+    if (isCorrection && finished && !(await confirm({ title: 'Corregir torneo finalizado', message: 'Esta corrección modifica un torneo ya finalizado y puede cambiar al campeón. Quedará registrada en la auditoría. ¿Continuar?', confirmLabel: 'Corregir' }))) return;
+    const correct = async (payload: Record<string, unknown>) => {
+      const current = view?.championId;
+      const data = await call(`/api/admin/matches/${active.matchId}`, { method: 'PATCH', body: JSON.stringify({ ...payload, reason: reason.trim(), playedAt: playedAt || undefined }) });
+      setActive(null);
+      const message = data.championChanged ? `Corrección guardada. El campeón cambió (antes: ${current ?? '—'}).` : 'Corrección guardada.';
+      setNotice(message);
+      onChanged(message);
+    };
     if (walkover) {
       if (!woWinnerId) return setError('Indicá quién gana el W.O.');
       const filled = sets.filter((set) => set.g1 !== '' || set.g2 !== '');
       const partial = filled.map((set) => ({ gamesPlayer1: Number(set.g1), gamesPlayer2: Number(set.g2), winner: Number(set.g1) > Number(set.g2) ? p1 : p2, hasTiebreak: false, tiebreakPlayer1Points: null, tiebreakPlayer2Points: null }));
       if (filled.some((set) => !Number.isInteger(Number(set.g1)) || !Number.isInteger(Number(set.g2)) || set.g1 === '' || set.g2 === '' || set.g1 === set.g2)) return setError('Los sets parciales deben tener un ganador claro.');
       return run(async () => {
+        if (isCorrection) return correct({ sets: partial, walkover: true, winnerId: woWinnerId });
         await call('/api/add-match', { method: 'POST', body: JSON.stringify({ drawMatchId: slot.id, idPlayer1: p1, idPlayer2: p2, winner: woWinnerId, sets: partial, playedAt: playedAt || undefined, walkover: true }) });
         setActive(null);
         setNotice('W.O. registrado');
@@ -130,6 +144,7 @@ export default function TournamentResultsModal({ tournament, onClose, onChanged 
     const won1 = payloadSets.filter((set) => set.winner === p1).length;
     if (won1 * 2 === payloadSets.length) return setError('El partido no puede quedar empatado en sets.');
     run(async () => {
+      if (isCorrection) return correct({ sets: payloadSets, walkover: false });
       await call('/api/add-match', {
         method: 'POST',
         body: JSON.stringify({ drawMatchId: slot.id, idPlayer1: p1, idPlayer2: p2, winner: won1 * 2 > payloadSets.length ? p1 : p2, sets: payloadSets, playedAt: playedAt || undefined }),
@@ -141,7 +156,7 @@ export default function TournamentResultsModal({ tournament, onClose, onChanged 
   }
 
   async function finishTournament() {
-    if (!(await confirm({ title: '¿Finalizar torneo?', message: 'Esto no puede ser modificado posteriormente.', confirmLabel: 'Finalizar torneo' }))) return;
+    if (!(await confirm({ title: '¿Finalizar torneo?', message: 'Después solo se podrá corregir indicando un motivo, y queda registrado en la auditoría.', confirmLabel: 'Finalizar torneo' }))) return;
     run(async () => {
       const data = await call(`/api/admin/tournaments/${tournament.id}`, { method: 'PATCH', body: JSON.stringify({ action: 'finish' }) });
       onChanged(data.message ?? 'Torneo finalizado');
@@ -165,21 +180,6 @@ export default function TournamentResultsModal({ tournament, onClose, onChanged 
       if (target < 0 || target >= next.length) return current;
       [next[index], next[target]] = [next[target], next[index]];
       return next;
-    });
-  }
-
-  async function submitCorrection() {
-    if (!correcting?.matchId) return;
-    const current = view?.championId;
-    if (!reason.trim()) return setError('Indicá el motivo de la corrección.');
-    const body = { winnerId: newWinnerId || correcting.winnerId, reason: reason.trim() };
-    if (finished && !(await confirm({ title: 'Corregir torneo finalizado', message: 'Esta corrección modifica un torneo ya finalizado y puede cambiar al campeón. Quedará registrada en la auditoría. ¿Continuar?', confirmLabel: 'Corregir' }))) return;
-    run(async () => {
-      const data = await call(`/api/admin/matches/${correcting.matchId}`, { method: 'PATCH', body: JSON.stringify(body) });
-      setActive(null);
-      const message = data.championChanged ? `Corrección guardada. El campeón cambió (antes: ${current ?? '—'}).` : 'Corrección guardada. El campeón no cambió.';
-      setNotice(message);
-      onChanged(message);
     });
   }
 
@@ -236,7 +236,7 @@ export default function TournamentResultsModal({ tournament, onClose, onChanged 
               </div>
               {error && <div className="request-message error" role="alert" style={{ margin: '10px 0' }}>{error}</div>}
 
-              {slot && (
+              {active && (
                 <div className="match-sets-editor">
                   <label className="wo-toggle">
                     <input type="checkbox" checked={walkover} onChange={(event) => setWalkover(event.target.checked)} /> W.O. (abandono o no presentación)
@@ -246,11 +246,11 @@ export default function TournamentResultsModal({ tournament, onClose, onChanged 
                       <span>Ganador por W.O.</span>
                       <select value={woWinnerId} onChange={(event) => setWoWinnerId(event.target.value)} aria-label="Ganador por W.O.">
                         <option value="">Elegí quién avanza…</option>
-                        {[slot.player1, slot.player2].map((player) => player && <option key={player.id} value={player.id}>{player.name} gana (rival abandona)</option>)}
+                        {[active.player1, active.player2].map((player) => player && <option key={player.id} value={player.id}>{player.name} gana (rival abandona)</option>)}
                       </select>
                     </label>
                   )}
-                  <span className="match-sets-heading">{walkover ? 'Sets jugados antes del abandono (opcional)' : `Resultado: ${slot.player1?.name} (J1) vs ${slot.player2?.name} (J2)`}</span>
+                  <span className="match-sets-heading">{walkover ? 'Sets jugados antes del abandono (opcional)' : `Resultado: ${active.player1?.name} (J1) vs ${active.player2?.name} (J2)`}</span>
                   {sets.map((set, index) => (
                     <div className="match-set-row" key={index}>
                       <strong>Set {index + 1}</strong>
@@ -280,26 +280,21 @@ export default function TournamentResultsModal({ tournament, onClose, onChanged 
                     <input type="date" value={playedAt} onChange={(event) => setPlayedAt(event.target.value)} />
                     <small>Opcional. Por defecto, la fecha del torneo.</small>
                   </label>
-                  <button type="button" className="primary-button" disabled={busy} onClick={submitResult}>{walkover ? 'Registrar W.O.' : 'Guardar resultado'}</button>
+                  {correcting && (
+                    <>
+                      <p className="draw-warning">{finished ? 'Corregir un torneo finalizado puede cambiar al campeón. Se exige un motivo y queda registrado en la auditoría.' : 'Corregir el resultado puede reordenar el cuadro. Indicá el motivo; queda registrado.'}</p>
+                      <label className="field">
+                        <span>Motivo de la corrección <b>*</b></span>
+                        <input type="text" value={reason} onChange={(event) => setReason(event.target.value)} />
+                      </label>
+                    </>
+                  )}
+                  <button type="button" className="primary-button" disabled={busy} onClick={submitResult}>
+                    {correcting ? 'Guardar corrección' : walkover ? 'Registrar W.O.' : 'Guardar resultado'}
+                  </button>
                 </div>
               )}
 
-              {correcting && (
-                <div>
-                  <p className="draw-warning">{finished ? 'Corregir un torneo finalizado puede cambiar al campeón. Se exige un motivo y queda registrado en la auditoría.' : 'Corregir el ganador reordena el cuadro. Indicá el motivo; queda registrado.'}</p>
-                  <label className="field">
-                    <span>Ganador</span>
-                    <select value={newWinnerId || correcting.winnerId || ''} onChange={(event) => setNewWinnerId(event.target.value)} aria-label="Nuevo ganador">
-                      {[correcting.player1, correcting.player2].map((player) => player && <option key={player.id} value={player.id}>{player.name}</option>)}
-                    </select>
-                  </label>
-                  <label className="field">
-                    <span>Motivo de la corrección <b>*</b></span>
-                    <input type="text" value={reason} onChange={(event) => setReason(event.target.value)} />
-                  </label>
-                  <button type="button" className="primary-button" disabled={busy} onClick={submitCorrection}>Guardar corrección</button>
-                </div>
-              )}
             </section>
           </div>
         )}

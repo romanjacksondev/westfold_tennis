@@ -359,6 +359,7 @@ type DrawViewMatch = {
   position: number;
   isBye: boolean;
   walkover?: boolean;
+  score: string[];
   seed1: number | null;
   seed2: number | null;
   player1: { id: string } | null;
@@ -538,6 +539,37 @@ describe('official draw', () => {
 
     const corrected = await request(`/api/admin/matches/${matchId}`, { role: 'ADMIN', method: 'PATCH', body: { winnerId: otherPlayer } });
     assert.equal(corrected.status, 200);
+    assert.equal((await slotOf('it-draw-playoffs', 'PLAYOFF', 2, 0)).player1?.id, otherPlayer);
+
+    const p1 = semifinalOne.player1!.id;
+    const resets = await request(`/api/admin/matches/${matchId}`, {
+      role: 'ADMIN',
+      method: 'PATCH',
+      body: {
+        sets: [
+          { gamesPlayer1: 4, gamesPlayer2: 6, winner: otherPlayer },
+          { gamesPlayer1: 6, gamesPlayer2: 3, winner: p1 },
+          { gamesPlayer1: 5, gamesPlayer2: 7, winner: otherPlayer },
+        ],
+      },
+    });
+    assert.equal(resets.status, 200);
+    const rescored = await slotOf('it-draw-playoffs', 'PLAYOFF', 1, 0);
+    assert.deepEqual(rescored.score, ['4-6', '6-3', '5-7']);
+    assert.equal(rescored.winnerId, otherPlayer);
+    const flipped = await request(`/api/admin/matches/${matchId}`, {
+      role: 'ADMIN',
+      method: 'PATCH',
+      body: { sets: [{ gamesPlayer1: 6, gamesPlayer2: 2, winner: p1 }, { gamesPlayer1: 6, gamesPlayer2: 2, winner: p1 }] },
+    });
+    assert.equal(flipped.status, 200);
+    assert.equal((await slotOf('it-draw-playoffs', 'PLAYOFF', 2, 0)).player1?.id, p1);
+    const restored = await request(`/api/admin/matches/${matchId}`, {
+      role: 'ADMIN',
+      method: 'PATCH',
+      body: { sets: [{ gamesPlayer1: 2, gamesPlayer2: 6, winner: otherPlayer }, { gamesPlayer1: 2, gamesPlayer2: 6, winner: otherPlayer }] },
+    });
+    assert.equal(restored.status, 200);
     assert.equal((await slotOf('it-draw-playoffs', 'PLAYOFF', 2, 0)).player1?.id, otherPlayer);
 
     const changedPlayers = await request(`/api/admin/matches/${matchId}`, { role: 'ADMIN', method: 'PATCH', body: { player1Id: 'it-rival' } });

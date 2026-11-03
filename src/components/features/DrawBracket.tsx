@@ -20,6 +20,7 @@ export type DrawNode = {
   winnerId: string | null;
   walkover?: boolean;
   score: string[];
+  sets?: { g1: number; g2: number; tiebreak: boolean; tb1: number | null; tb2: number | null }[];
 };
 export type SlotRef = { drawMatchId: string; slot: 1 | 2 };
 

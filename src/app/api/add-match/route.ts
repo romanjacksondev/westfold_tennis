@@ -5,21 +5,8 @@ import { requireAdmin } from '@/lib/require-session';
 import { DrawError } from '@/lib/draw-persistence';
 import { linkResultToDraw } from '@/lib/draw-results';
 import { actorFromSession, audit } from '@/lib/audit';
+import { buildSetData, type MatchSetInput } from '@/lib/match-sets';
 import { NextRequest, NextResponse } from 'next/server';
-
-type MatchSet = {
-  gamesPlayer1: number | string;
-  gamesPlayer2: number | string;
-  winner: string;
-  hasTiebreak?: boolean;
-  tiebreakPlayer1Points?: number | string | null;
-  tiebreakPlayer2Points?: number | string | null;
-};
-
-function toScore(value: number | string | null | undefined) {
-  const score = Number(value);
-  return Number.isInteger(score) && score >= 0 ? score : null;
-}
 
 async function handlePost(request: NextRequest) {
   const { session, response } = await requireAdmin();
@@ -28,7 +15,7 @@ async function handlePost(request: NextRequest) {
   try {
     const body = await request.json();
     const walkover = body.walkover === true;
-    const sets = (Array.isArray(body.sets) ? body.sets : []) as MatchSet[];
+    const sets = (Array.isArray(body.sets) ? body.sets : []) as MatchSetInput[];
 
     if (!body.drawMatchId) {
       return NextResponse.json({ message: 'Los partidos se cargan desde el cuadro del torneo: elegí un partido pendiente' }, { status: 400 });
@@ -73,34 +60,7 @@ async function handlePost(request: NextRequest) {
       return NextResponse.json({ message: 'La fecha del partido es inválida' }, { status: 400 });
     }
 
-    const setData = sets.map((set) => {
-      const hasTiebreak = Boolean(set.hasTiebreak);
-      const tiebreakPlayer1Points = hasTiebreak ? toScore(set.tiebreakPlayer1Points) : null;
-      const tiebreakPlayer2Points = hasTiebreak ? toScore(set.tiebreakPlayer2Points) : null;
-
-      if (hasTiebreak && (tiebreakPlayer1Points === null || tiebreakPlayer2Points === null)) {
-        throw new Error('El resultado del tiebreak es inválido');
-      }
-
-      const gamesPlayer1 = Number(set.gamesPlayer1);
-      const gamesPlayer2 = Number(set.gamesPlayer2);
-      if (!Number.isInteger(gamesPlayer1) || !Number.isInteger(gamesPlayer2) || gamesPlayer1 < 0 || gamesPlayer2 < 0) {
-        throw new Error('El resultado del set es inválido');
-      }
-
-      return {
-        winnerId: set.winner,
-        hasTiebreak,
-        tiebreakPlayer1Points,
-        tiebreakPlayer2Points,
-        games: {
-          create: [
-            ...Array.from({ length: gamesPlayer1 }, () => ({ winnerId: body.idPlayer1 })),
-            ...Array.from({ length: gamesPlayer2 }, () => ({ winnerId: body.idPlayer2 })),
-          ],
-        },
-      };
-    });
+    const setData = buildSetData(sets, body.idPlayer1, body.idPlayer2);
 
     const match = await prisma.$transaction(async (tx) => {
       const created = await tx.match.create({

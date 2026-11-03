@@ -7,6 +7,7 @@ import { actorFromSession } from '@/lib/audit';
 import { auditActionFor, auditAdminMutation, snapshotRecord } from '@/lib/admin-audit';
 import { logger } from '@/lib/logger';
 import { withApiLogging } from '@/lib/api-logging';
+import { buildSetData, type MatchSetInput } from '@/lib/match-sets';
 import { DrawError } from '@/lib/draw-persistence';
 import { confirmDraw } from '@/lib/draw-service';
 import { changeDrawWinner, closeTournament, refreshChampion, unlinkDrawResult } from '@/lib/draw-results';
@@ -42,7 +43,7 @@ async function updateRecord(request: NextRequest, context: Context) {
     if (resource === 'matches') {
       const current = await prisma.match.findFirst({
         where: { id, deletedAt: null },
-        include: { drawMatch: { select: { id: true } }, tournament: { select: { id: true, status: true, championId: true } } },
+        include: { drawMatch: { select: { id: true, player1Id: true } }, tournament: { select: { id: true, status: true, championId: true } } },
       });
       if (current?.drawMatch && current.tournament) {
         const changed = (['tournamentId', 'player1Id', 'player2Id', 'stage'] as const).filter(
@@ -60,7 +61,22 @@ async function updateRecord(request: NextRequest, context: Context) {
         if (finished && !reason) {
           return NextResponse.json({ message: 'Corregir un torneo finalizado requiere indicar el motivo' }, { status: 400 });
         }
-        const winnerId = data.winnerId ? String(data.winnerId) : current.winnerId;
+        const walkover = typeof data.walkover === 'boolean' ? data.walkover : current.walkover;
+        const newSets = Array.isArray(data.sets) ? (data.sets as MatchSetInput[]) : null;
+        let winnerId = data.winnerId ? String(data.winnerId) : current.winnerId;
+        if (newSets) {
+          const players = [current.player1Id, current.player2Id];
+          if (newSets.some((set) => !players.includes(set.winner))) {
+            return NextResponse.json({ message: 'El ganador de cada set debe ser uno de los dos jugadores' }, { status: 400 });
+          }
+          if (!walkover) {
+            const first = newSets.filter((set) => set.winner === current.player1Id).length;
+            if (newSets.length === 0 || first * 2 === newSets.length) {
+              return NextResponse.json({ message: 'El partido no puede quedar empatado en sets' }, { status: 400 });
+            }
+            winnerId = first * 2 > newSets.length ? current.player1Id : current.player2Id;
+          }
+        }
         if (winnerId !== current.player1Id && winnerId !== current.player2Id) {
           return NextResponse.json({ message: 'El ganador debe ser uno de los dos jugadores del partido' }, { status: 400 });
         }
@@ -69,7 +85,19 @@ async function updateRecord(request: NextRequest, context: Context) {
           return NextResponse.json({ message: 'La fecha del partido es inválida' }, { status: 400 });
         }
         const outcome = await prisma.$transaction(async (tx) => {
-          const updated = await tx.match.update({ where: { id }, data: { winnerId, playedAt } });
+          if (newSets) {
+            await tx.game.deleteMany({ where: { set: { matchId: id } } });
+            await tx.set.deleteMany({ where: { matchId: id } });
+          }
+          const updated = await tx.match.update({
+            where: { id },
+            data: {
+              winnerId,
+              playedAt,
+              walkover,
+              ...(newSets ? { sets: { create: buildSetData(newSets, current.drawMatch!.player1Id ?? current.player1Id, current.drawMatch!.player1Id === current.player2Id ? current.player1Id : current.player2Id) } } : {}),
+            },
+          });
           if (winnerId !== current.winnerId) await changeDrawWinner(tx, current.drawMatch!.id, winnerId);
           let championAfter = championBefore;
           if (finished) {
@@ -84,8 +112,8 @@ async function updateRecord(request: NextRequest, context: Context) {
             entity: 'Tournament',
             entityId: current.tournament.id,
             actor: actorFromSession(session),
-            before: { championId: championBefore, winnerId: current.winnerId },
-            after: { championId: outcome.championAfter, winnerId },
+            before: { championId: championBefore, winnerId: current.winnerId, walkover: current.walkover },
+            after: { championId: outcome.championAfter, winnerId, ...(newSets ? { sets: newSets.length, walkover } : {}) },
             metadata: { reason, matchId: id, championChanged: outcome.championAfter !== championBefore },
           });
         }
